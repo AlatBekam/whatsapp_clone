@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 
 class home extends StatefulWidget {
@@ -13,7 +14,7 @@ class _homeState extends State<home> {
   int _currentIndex = 0;
 
   void _changeTab(int index) {
-    setState((){
+    setState(() {
       _currentIndex = index;
     });
   }
@@ -28,10 +29,7 @@ class _homeState extends State<home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
 
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
@@ -42,7 +40,7 @@ class _homeState extends State<home> {
 }
 
 class ChatPage extends StatelessWidget {
-  const ChatPage ({super.key});
+  const ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +68,10 @@ class ChatPage extends StatelessWidget {
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
                 ),
-              ]
-            )
+              ],
+            ),
           ],
-        )
+        ),
       ),
 
       body: Column(
@@ -113,21 +111,11 @@ class ChatPage extends StatelessWidget {
                   },
                 );
               },
-              
             ),
           ),
         ],
       ),
     );
-  }
-}
-
-class StatusPage extends StatelessWidget {
-  const StatusPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Status Page"));
   }
 }
 
