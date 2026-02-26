@@ -11,8 +11,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final args = settings.arguments as Map<String, dynamic>;
       final title = args['title'] as String;
       final index = args['index'] as int;
-      return MaterialPageRoute(builder: (context) => Chatpage(title: title, index: index));
-      return MaterialPageRoute(builder: (context) => const home());
+      return MaterialPageRoute(
+        builder: (context) => Chatpage(title: title, index: index),
+      );
 
     case '/splashScreen':
       return MaterialPageRoute(builder: (context) => SplashScreen());
