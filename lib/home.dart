@@ -9,8 +9,8 @@ class home extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: warna.Hitam(),
-        foregroundColor: warna.Putih(),
+        backgroundColor: warna.Putih(),
+        foregroundColor: warna.Hijau(),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           spacing: 10,
@@ -24,13 +24,13 @@ class home extends StatelessWidget {
                   'assets/camera.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Putih(),
+                  color: warna.Hitam(),
                 ),
                 SvgPicture.asset(
                   'assets/three-dots-vertical.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Putih(),
+                  color: warna.Hitam(),
                 ),
               ],
             ),
@@ -38,34 +38,47 @@ class home extends StatelessWidget {
         ),
       ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          spacing: 20,
-          children: List.generate(100, (index) {
-            return Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 20,
-                children: [
-                  SvgPicture.asset(
-                    'assets/person-circle.svg',
-                    width: 40,
-                    // ignore: deprecated_member_use
-                    color: warna.Hitam(),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 5,
-                    children: [
-                      Text('Person'),
-                      Text('lorem ipsum dolor sit amet'),
-                    ],
-                  ),
-                ],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: TextField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsetsDirectional.fromSTEB(10, 10, 3, 5),
+                  prefixIcon: Icon(Icons.search),
+                  fillColor: Color.fromARGB(255, 215, 215, 215),
+                  filled: true,
+                  border: InputBorder.none,
+                ),
               ),
-            );
-          }),
-        ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 100,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text("Chat $index"),
+                  subtitle: Text("Message $index"),
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text("C$index"),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/chat',
+                      arguments: {'title': 'Chat $index', 'index': index},
+                    );
+                  },
+                );
+              },
+              
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -74,5 +87,6 @@ class home extends StatelessWidget {
 class warna {
   static Hitam() => Colors.black;
   static Putih() => Colors.white;
+  static Hijau() => Color(0xFF25D366);
   // static Hitam() => Colors.black;
 }
