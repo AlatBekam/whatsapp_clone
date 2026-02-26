@@ -15,7 +15,7 @@ class _splashScreen extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // TODO: implement buildd
     return Scaffold(
       body: Center(child: SvgPicture.asset('asset/whatsapp.svg')),
     );
