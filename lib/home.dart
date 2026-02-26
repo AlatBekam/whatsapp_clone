@@ -1,12 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 
-class home extends StatelessWidget {
+class home extends StatefulWidget {
   const home({super.key});
 
   @override
+  State<home> createState() => _homeState();
+}
+
+class _homeState extends State<home> {
+  int _currentIndex = 0;
+
+  void _changeTab(int index) {
+    setState((){
+      _currentIndex = index;
+    });
+  }
+
+  final List<Widget> _pages = [
+    ChatPage(),
+    StatusPage(),
+    KomunitasPage(),
+    PanggilanPage(),
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
+
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _changeTab,
+      ),
+    );
+  }
+}
+
+class ChatPage extends StatelessWidget {
+  const ChatPage ({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: warna.Putih(),
@@ -16,7 +55,6 @@ class home extends StatelessWidget {
           spacing: 10,
           children: [
             Text('WhatsApp'),
-
             Row(
               spacing: 20,
               children: [
@@ -32,10 +70,10 @@ class home extends StatelessWidget {
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
                 ),
-              ],
-            ),
+              ]
+            )
           ],
-        ),
+        )
       ),
 
       body: Column(
@@ -81,6 +119,33 @@ class home extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class StatusPage extends StatelessWidget {
+  const StatusPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Status Page"));
+  }
+}
+
+class KomunitasPage extends StatelessWidget {
+  const KomunitasPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Komunitas Page"));
+  }
+}
+
+class PanggilanPage extends StatelessWidget {
+  const PanggilanPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Panggilan Page"));
   }
 }
 
