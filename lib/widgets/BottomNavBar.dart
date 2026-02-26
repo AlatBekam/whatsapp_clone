@@ -11,30 +11,41 @@ class BottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  Widget _buildItem(
-      {required Widget icon,
-      required String label,
-      required int index}) {
+  Widget _buildItem({required Widget icon, required String label, required int index, TextStyle? style}) {
     final bool isSelected = currentIndex == index;
+    final DefaultTextStyle = TextStyle(
+      color: const Color.fromARGB(255, 0, 0, 0),
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+    );
 
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              isSelected ? Colors.green : Colors.black54,
-              BlendMode.srcIn,
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: isSelected ? Colors.green : Colors.transparent,
+                  width: 2,
+                ),
+              ),
             ),
-            child: icon,
+            padding: const EdgeInsets.only(bottom: 4),
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isSelected ? Colors.green : const Color.fromARGB(255, 0, 0, 0),
+                BlendMode.srcIn,
+              ),
+              child: icon,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              color: isSelected ? Colors.green : Colors.black54,
-            ),
+            style: DefaultTextStyle.merge(style),
           )
         ],
       ),
@@ -47,30 +58,33 @@ class BottomNavBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: const BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(blurRadius: 10, color: Colors.black12),
-        ],
+        border: Border(
+          top: BorderSide(
+            color: const Color.fromARGB(255, 200, 200, 200),
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildItem(
-            icon: SvgPicture.asset('assets/logochat.svg', width: 19),
+            icon: SvgPicture.asset('assets/logochat.svg', width: 19, color: const Color.fromARGB(255, 0, 0, 0)),
             label: "Chat",
             index:0,
           ),
           _buildItem(
-            icon: SvgPicture.asset('assets/logochat.svg', width: 19),
+            icon: SvgPicture.asset('assets/logopembaruan.svg', width: 20, color: const Color.fromARGB(255, 0, 0, 0)),
             label: "Pembaruan",
             index:1,
           ),
           _buildItem(
-            icon: SvgPicture.asset('assets/logochat.svg', width: 19),
+            icon: SvgPicture.asset('assets/logokomunitas.svg', width: 20, color: const Color.fromARGB(255, 0, 0, 0)),
             label: "Komunitas",
             index:2,
           ),
           _buildItem(
-            icon: SvgPicture.asset('assets/logochat.svg', width: 19),
+            icon: SvgPicture.asset('assets/logotelepon.svg', width: 20, color: const Color.fromARGB(255, 0, 0, 0)),
             label: "Panggilan",
             index:3,
           ),
