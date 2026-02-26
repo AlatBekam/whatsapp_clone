@@ -12,8 +12,10 @@ class weatherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Inisialisasi router
       onGenerateRoute: router.generateRoute,
-      initialRoute: "/",
+      // inisialisasi halaman router awal disaat app terbuka
+      initialRoute: "/splashScreen",
     );
   }
 }
