@@ -19,3 +19,17 @@ class weatherApp extends StatelessWidget {
     );
   }
 }
+
+// ignore: camel_case_types
+// class weatherApp extends StatelessWidget {
+//   const weatherApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       onGenerateRoute: router.generateRoute,
+//       // inisialisasi halaman router awal disaat app terbuka
+//       initialRoute: "/channels",
+//     );
+//   }
+// }
