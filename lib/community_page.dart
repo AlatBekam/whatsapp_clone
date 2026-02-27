@@ -13,19 +13,51 @@ class CommunityPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           spacing: 10,
           children: [
-            Text('Komunitas'),
+            Text('Komunitas',
+              style: TextStyle(
+                color: warna.Hitam(),
+                fontSize: 20,
+              ),
+            ),
             Row(
               spacing: 20,
               children: [
-                SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
-                  width: 25,
-                  color: warna.Hitam(),
+                PopupMenuButton<int>(
+                  padding: EdgeInsets.zero,
+                  child: SvgPicture.asset(
+                    'assets/three-dots-vertical.svg',
+                    width: 19,  
+                    color: warna.Hitam(),
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          SizedBox(width: 5, height: 10),
+                          Padding(padding: EdgeInsets.only(left: 2)),
+                          Text('Pengaturan',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  onSelected: (v) {
+                    if (v == 1) {
+                      // Aksi ketika "Pengaturan" dipilih
+                    }
+                  },
                 ),
               ],
             ),
           ],
-        )
+        ),
+        backgroundColor: warna.Putih(),
       ),
       body: CommunityBody(),
     );
