@@ -4,6 +4,14 @@ import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 
+Map<String, dynamic> dummyJsonData = {
+  "data": [
+    {"title": "Alice", "subtitle": "Hey there!"},
+    {"title": "Bob", "subtitle": "What's up?"},
+    {"title": "Charlie", "subtitle": "Let's catch up soon."},
+  ],
+};
+
 class home extends StatefulWidget {
   const home({super.key});
 
@@ -40,8 +48,90 @@ class _homeState extends State<home> {
   }
 }
 
-class ChatPage extends StatelessWidget {
+Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
+    ListView.builder(
+      itemCount: listData.length,
+      itemBuilder: (context, index) {
+        var item = listData[index];
+        return ListTile(
+          title: Text(item['title'] ?? "Chat $index"),
+          subtitle: Text(item['subtitle'] ?? "Message $index"),
+          leading: CircleAvatar(
+            backgroundColor: Colors.green,
+            child: Text("C$index"),
+          ),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              '/chat',
+              arguments: {
+                'title': item['title'] ?? "Chat $index",
+                'index': index,
+              },
+            );
+          },
+        );
+      },
+    );
+
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+  List<TabModel> children = [
+    TabModel(
+      title: "Chat",
+      widget: widgetitemlist(
+        listData: [
+          {'title': 'Alice', 'subtitle': 'Hey there!'},
+          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+        ],
+      ),
+    ),
+    TabModel(
+      title: "Status",
+      widget: widgetitemlist(
+        listData: [
+          {'title': 'Alice', 'subtitle': 'Hey there!'},
+          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+        ],
+      ),
+    ),
+    TabModel(
+      title: "Komunitas",
+      widget: widgetitemlist(
+        listData: [
+          {'title': 'Alice', 'subtitle': 'Hey there!'},
+          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+        ],
+      ),
+    ),
+    TabModel(
+      title: "Panggilan",
+      widget: widgetitemlist(
+        listData: [
+          {'title': 'Alice', 'subtitle': 'Hey there!'},
+          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+        ],
+      ),
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,48 +163,19 @@ class ChatPage extends StatelessWidget {
             ),
           ],
         ),
+        bottom: TabBar(
+          tabs: children.map<Widget>((child) {
+            return Tab(text: child.title);
+          }).toList(),
+          controller: _tabController,
+        ),
       ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: TextField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsetsDirectional.fromSTEB(10, 10, 3, 5),
-                  prefixIcon: Icon(Icons.search),
-                  fillColor: Color.fromARGB(255, 215, 215, 215),
-                  filled: true,
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 100,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("Chat $index"),
-                  subtitle: Text("Message $index"),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Text("C$index"),
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/chat',
-                      arguments: {'title': 'Chat $index', 'index': index},
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+      body: TabBarView(
+        controller: _tabController,
+        children: children.map<Widget>((child) {
+          return child.widget;
+        }).toList(),
       ),
     );
   }
@@ -138,4 +199,9 @@ class PanggilanPage extends StatelessWidget {
   }
 }
 
+class TabModel {
+  final String title;
+  final Widget widget;
 
+  TabModel({required this.title, required this.widget});
+}
