@@ -117,63 +117,32 @@ class _StatusPageState extends State<StatusPage> {
                         ],
                       ),
 
-                      ...List.generate(2, (index) {
-                        return ListTile(
-                          leading: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: SvgPicture.asset(
-                              'assets/person-circle.svg',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          title: Text(
-                            'Channel $index',
-                            style: TextStyle(fontSize: ukText - 2),
-                          ),
-                          trailing: Text('12:13'),
-                          subtitle: Text('Lorem Ipsum Dolor Amet'),
-                          contentPadding: EdgeInsets.only(left: 5, right: 5),
-                        );
-                      }),
+                      ...TemplateChat(
+                        listData: [
+                          {'title': 'Akbar', 'subtitle': 'Hey there!'},
+                          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+                          {
+                            'title': 'Charlie',
+                            'subtitle': 'Let\'s catch up soon.',
+                          },
+                        ],
+                      ),
 
                       Text(
                         'Find Channels to Follow',
                         style: TextStyle(fontSize: ukText - 7),
                       ),
 
-                      ...List.generate(4, (index) {
-                        return ListTile(
-                          leading: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: SvgPicture.asset(
-                              'assets/person-circle.svg',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          title: Text(
-                            'Channel $index',
-                            style: TextStyle(fontSize: ukText - 2),
-                          ),
-                          subtitle: Text('10${index}K Followers'),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              print('ads');
-                            },
-                            child: Text('Follow'),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              backgroundColor: warna.buttonHijau(),
-                              foregroundColor: warna.Hitam(),
-                            ),
-                          ),
-                          contentPadding: EdgeInsets.only(left: 5, right: 5),
-                        );
-                      }),
+                      ...TemplateChat(
+                        listData: [
+                          {'title': 'Alice', 'subtitle': 'Hey there!'},
+                          {'title': 'Bob', 'subtitle': 'What\'s up?'},
+                          {
+                            'title': 'Charlie',
+                            'subtitle': 'Let\'s catch up soon.',
+                          },
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -185,3 +154,38 @@ class _StatusPageState extends State<StatusPage> {
     );
   }
 }
+
+// list
+List<dynamic> TemplateChat({required List<Map<String, dynamic>> listData}) =>
+    List.generate(listData.length, (index) {
+      var item = listData[index];
+      return ListTile(
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(shape: BoxShape.circle),
+          child: SvgPicture.asset(
+            'assets/person-circle.svg',
+            fit: BoxFit.contain,
+          ),
+        ),
+        title: Text(
+          item['title'] ?? 'Channel $index',
+          style: TextStyle(fontSize: ukText - 2),
+        ),
+        subtitle: Text('10${index}K Followers'),
+        trailing: ElevatedButton(
+          onPressed: () {
+            print('ads');
+          },
+          child: Text('Follow'),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            backgroundColor: warna.buttonHijau(),
+            foregroundColor: warna.Hitam(),
+          ),
+        ),
+        contentPadding: EdgeInsets.only(left: 5, right: 5),
+      );
+    });
