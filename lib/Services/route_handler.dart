@@ -16,6 +16,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/splashScreen':
       return MaterialPageRoute(builder: (context) => SplashScreen());
 
+    case '/status_page':
+      return MaterialPageRoute(builder: (context) => SplashScreen());
+
     default:
       return MaterialPageRoute(builder: (context) => const home());
   }
