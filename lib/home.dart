@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/community_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 
@@ -23,7 +24,7 @@ class _homeState extends State<home> {
   final List<Widget> _pages = [
     ChatPage(),
     StatusPage(),
-    KomunitasPage(),
+    CommunityPage(),
     PanggilanPage(),
   ];
 
@@ -117,15 +118,6 @@ class ChatPage extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class KomunitasPage extends StatelessWidget {
-  const KomunitasPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Komunitas Page"));
   }
 }
 
