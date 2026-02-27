@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/home.dart';
+import 'package:whatsapp_clone/Services/Theme.dart';
 
 class StatusPage extends StatelessWidget {
   const StatusPage({Key? key}) : super(key: key);
