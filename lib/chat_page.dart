@@ -53,14 +53,17 @@ class Chatpage extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(16),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 15,
           children: [
           Expanded(
             child: TextField(
               decoration: InputDecoration(
               hintText: 'Type a message',
               prefixIcon: Icon(Icons.emoji_emotions),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
       ),
