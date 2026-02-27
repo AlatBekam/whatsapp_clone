@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
+import 'package:whatsapp_clone/Services/Theme.dart';
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -149,9 +150,4 @@ class PanggilanPage extends StatelessWidget {
   }
 }
 
-class warna {
-  static Hitam() => Colors.black;
-  static Putih() => Colors.white;
-  static Hijau() => Color(0xFF25D366);
-  // static Hitam() => Colors.black;
-}
+
