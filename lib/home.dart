@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/CommunityPage.dart';
 
 Map<String, dynamic> dummyJsonData = {
   "data": [
@@ -178,15 +179,6 @@ class _ChatPageState extends State<ChatPage>
         }).toList(),
       ),
     );
-  }
-}
-
-class KomunitasPage extends StatelessWidget {
-  const KomunitasPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Komunitas Page"));
   }
 }
 
