@@ -1,35 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-
-StatusDummyData() => [
-  {'title': 'Alice', 'subtitle': 'Today, 10:00 AM', 'isNew': true},
-  {'title': 'Bob', 'subtitle': 'Today, 9:30 AM', 'isNew': true},
-  {'title': 'Charlie', 'subtitle': 'Yesterday, 8:45 PM', 'isNew': false},
-];
-
-channelDummyData() => [
-  {
-    'title': 'Tech News',
-    'subtitle': 'Latest updates in technology',
-    'isFollowing': false,
-  },
-  {
-    'title': 'Cooking Tips',
-    'subtitle': 'Delicious recipes and cooking tips',
-    'isFollowing': false,
-  },
-  {
-    'title': 'Sports',
-    'subtitle': 'Live scores and sports news',
-    'isFollowing': false,
-  },
-  {
-    'title': 'Entertainment',
-    'subtitle': 'Celebrity gossip and movie news',
-    'isFollowing': false,
-  },
-];
+import 'package:whatsapp_clone/Services/data_dummy.dart';
 
 double ukText = 21;
 
@@ -91,7 +63,7 @@ class _StatusPageState extends State<StatusPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 5,
-                    children: [
+                    children: <Widget>[
                       Text('Status', style: TextStyle(fontSize: ukText)),
 
                       if (_channelData
@@ -101,38 +73,121 @@ class _StatusPageState extends State<StatusPage> {
                           children: [
                             SizedBox(
                               height: 200,
-                              child: ListView.builder(
+                              child: ListView(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: 20,
-                                itemBuilder: (context, index) {
-                                  return Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(20),
-                                        child: Container(
-                                          margin: EdgeInsets.all(3),
-                                          width: 120,
-                                          color: warna.Hijau(),
-                                        ),
-                                      ),
+                                children: [
+                                  ...TemplateStatusBox(
+                                    listData: _statusData
+                                        .where((item) => item['isNew'] == true)
+                                        .toList(),
+                                    onStatusTap: (item) {
+                                      setState(() {
+                                        item['isNew'] = !item['isNew'];
+                                      });
+                                    },
+                                  ),
 
-                                      Positioned(
-                                        top: 13,
-                                        left: 13,
-                                        child: Container(
-                                          width: 45,
-                                          height: 45,
-                                          decoration: BoxDecoration(
-                                            color: warna.Putih(),
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                  ...TemplateStatusBox(
+                                    listData: _statusData
+                                        .where((item) => item['isNew'] == false)
+                                        .toList(),
+                                    onStatusTap: (item) {
+                                      setState(() {
+                                        item['isNew'] = !item['isNew'];
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
+                              // child: ListView.builder(
+                              //   scrollDirection: Axis.horizontal,
+                              //   itemCount: 20,
+                              //   itemBuilder: (context, index) {
+                              //     return Stack(
+                              //       children: [
+                              //         ClipRRect(
+                              //           borderRadius:
+                              //               BorderRadiusGeometry.circular(20),
+                              //           child: Container(
+                              //             margin: EdgeInsets.all(3),
+                              //             width: 120,
+                              //             color: warna.Hijau(),
+                              //           ),
+                              //         ),
+
+                              //         Positioned(
+                              //           top: 13,
+                              //           left: 13,
+                              //           child: Column(
+                              //             mainAxisAlignment:
+                              //                 MainAxisAlignment.spaceBetween,
+                              //             children: [
+                              //               Container(
+                              //                 width: 45,
+                              //                 height: 45,
+                              //                 decoration: BoxDecoration(
+                              //                   color: warna.Putih(),
+                              //                   shape: BoxShape.circle,
+                              //                 ),
+                              //               ),
+
+                              //               Column(
+                              //                 mainAxisAlignment: MainAxisAlignment.end,
+                              //                 children: [
+                              //                   Text(
+                              //                     'Channel ${index + 1}',
+                              //                     style: TextStyle(
+                              //                       color: warna.Putih(),
+                              //                       fontSize: ukText - 5,
+                              //                     ),
+                              //                   ),
+                              //                   Text(
+                              //                     '10${index}K Followers',
+                              //                     style: TextStyle(
+                              //                       color: warna.Putih(),
+                              //                       fontSize: ukText - 7,
+                              //                     ),
+                              //                   ),
+                              //                 ],
+                              //               )
+                              //             ],
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     );
+                              //   },
+                              // ),
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Channels',
+                                  style: TextStyle(fontSize: ukText),
+                                ),
+                                ClipRRect(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    10,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, "/channels");
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      shadowColor: Colors.transparent,
+                                      backgroundColor: warna.buttonPutih(),
+                                      foregroundColor: warna.Hitam(),
+                                    ),
+
+                                    child: Text(
+                                      'Explore',
+                                      style: TextStyle(fontSize: ukText - 6),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
 
                             ...TemplateChannel(
@@ -251,10 +306,13 @@ class _StatusPageState extends State<StatusPage> {
                           ],
                         ),
 
-                      Text(
-                        'Find Channels to Follow',
-                        style: TextStyle(fontSize: ukText - 7),
-                      ),
+                      if (_channelData
+                          .where((item) => item['isFollowing'] == false)
+                          .isNotEmpty)
+                        Text(
+                          'Find Channels to Follow',
+                          style: TextStyle(fontSize: ukText - 7),
+                        ),
 
                       ...TemplateAddChannel(
                         listData: _channelData
@@ -273,12 +331,42 @@ class _StatusPageState extends State<StatusPage> {
                           onPressed: () {
                             Navigator.pushNamed(context, "/channels");
                           },
-                          child: Text('Explore Channels'),
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             shadowColor: Colors.transparent,
                             backgroundColor: warna.buttonPutih(),
                             foregroundColor: warna.Hitam(),
+                          ),
+                          child: Row(
+                            spacing: 5,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/grid.svg', width: 20),
+                              Text('Add Channels'),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            print('asd');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            backgroundColor: warna.buttonPutih(),
+                            foregroundColor: warna.Hitam(),
+                          ),
+                          child: Row(
+                            spacing: 5,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/plus.svg', width: 25),
+                              Text('Add Channels'),
+                            ],
                           ),
                         ),
                       ),
@@ -455,6 +543,103 @@ List<dynamic> TemplateStatus({
     contentPadding: EdgeInsets.only(left: 5, right: 5),
     onTap: () => onStatusTap(item),
   );
+});
+
+List<dynamic> TemplateStatusBox({
+  required List<Map<String, dynamic>> listData,
+  required Function(Map<String, dynamic>) onStatusTap,
+}) => List.generate(listData.length, (index) {
+  var item = listData[index];
+  return GestureDetector(
+    onTap: () => onStatusTap(item),
+    child: Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadiusGeometry.circular(20),
+          child: Container(
+            margin: EdgeInsets.all(3),
+            width: 120,
+            color: warna.Hijau(),
+          ),
+        ),
+
+        Positioned(
+          // top: 13,
+          // left: 13,
+          child: Container(
+            padding: EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: warna.Putih(),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Text(
+                  item['title'] ?? 'Title $index',
+                  style: TextStyle(color: warna.Putih(), fontSize: ukText - 5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+  // Stack(
+  //       children: [
+  //         ClipRRect(
+  //           borderRadius:
+  //               BorderRadiusGeometry.circular(20),
+  //           child: Container(
+  //             margin: EdgeInsets.all(3),
+  //             width: 120,
+  //             color: warna.Hijau(),
+  //           ),
+  //         ),
+
+  //         Positioned(
+  //           top: 13,
+  //           left: 13,
+  //           child: Column(
+  //             mainAxisAlignment:
+  //                 MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 width: 45,
+  //                 height: 45,
+  //                 decoration: BoxDecoration(
+  //                   color: warna.Putih(),
+  //                   shape: BoxShape.circle,
+  //                 ),
+  //               ),
+
+  //               Column(
+  //                 mainAxisAlignment: MainAxisAlignment.end,
+  //                 children: [
+  //                   Text(
+  //                     'Channel ${index + 1}',
+  //                     style: TextStyle(
+  //                       color: warna.Putih(),
+  //                       fontSize: ukText - 5,
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     '10${index}K Followers',
+  //                     style: TextStyle(
+  //                       color: warna.Putih(),
+  //                       fontSize: ukText - 7,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
 });
 
 // class
