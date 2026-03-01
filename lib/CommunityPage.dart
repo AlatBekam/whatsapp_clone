@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/CreateCommunityPage.dart';
 
 class KomunitasPage extends StatelessWidget {
-    const KomunitasPage({super.key});
+    // final int IndexKomunitas;
+    // final int IndexGrupFromKomunitas;
+
+    const KomunitasPage(
+      {super.key, 
+      }
+    );
 
     @override
     // State<KomunitasPage> createState() => _KomunitasPageState();
@@ -72,7 +79,7 @@ class KomunitasPage extends StatelessWidget {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => PengaturanPage(),
+                                                builder: (context) => CreateCommunity(),
                                             ),
                                         );
                                     },
@@ -81,12 +88,14 @@ class KomunitasPage extends StatelessWidget {
                                         child: Row(
                                             spacing: 15,
                                             children: [
-                                                Container(
+                                              Stack(
+                                                children: [
+                                                  Container(
                                                     width: 40,
                                                     height: 38,
                                                     decoration: BoxDecoration(
-                                                        color: warna.AbuAbu(),
-                                                        borderRadius: BorderRadius.circular(9),
+                                                      color: warna.AbuAbu(),
+                                                      borderRadius: BorderRadius.circular(9),
                                                     ),
                                                     child: Center(
                                                         child: SvgPicture.asset(
@@ -94,27 +103,114 @@ class KomunitasPage extends StatelessWidget {
                                                         color: warna.Putih(),
                                                         width: 25,
                                                         height: 25,
-                                                        )
+                                                      )
                                                     )
-                                                ),
-                                                Text(
-                                                    'New Community',
-                                                    style: TextStyle(
-                                                        color: warna.Hitam(),
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w500,
+                                                  ),
+                                                  Positioned(
+                                                    bottom: -1,
+                                                    right: -1,
+                                                    child: 
+                                                      Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: warna.Hijau(),
+                                                        borderRadius: BorderRadius.circular(20),
+                                                        border: Border.all(
+                                                          color: warna.Putih(),
+                                                          width: 1.5,
+                                                        )
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        size: 15,
+                                                        color: warna.Putih(),
+                                                      ), 
                                                     ),
+                                                  )
+                                                ]
+                                              ),
+                                              Text(
+                                                'New Community',
+                                                style: TextStyle(
+                                                  color: warna.Hitam(),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
+                                              ),
                                             ],
                                         ),
                                     ),
                                 )
                             ),
-                            // widget lain untuk menampilkan komunitas
+                            CommunityCard(),
                         ],
                     )
                 ],
             ),
         );
     }
+}
+
+// FUNGSI COMMUNITY CARD
+Widget CommunityCard() {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      color: warna.Putih(),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // pakai inkwell
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: warna.AbuAbu(),
+                width: 2,
+              )
+            )
+          ),
+          child: Row(
+            spacing: 15,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: warna.AbuAbu(),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Container(
+                  width: 40,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: warna.AbuAbu(),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                    'assets/logokomunitas.svg',
+                    color: warna.Putih(),
+                    width: 25,
+                    height: 25,
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                'COMMUNITY KE-1',
+                style: TextStyle(
+                  color: warna.Hitam(),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            ],
+          ),
+        ),
+        // PENGUMUMAN DAN GRUP
+      ],
+    ),
+  );
 }
