@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
+import 'package:whatsapp_clone/chat_page_open.dart';
 import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
 
@@ -8,13 +9,16 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
       return MaterialPageRoute(builder: (context) => home());
-    case '/chat':
+    case '/chatOpen':
       final args = settings.arguments as Map<String, dynamic>;
       final title = args['title'] as String;
       final index = args['index'] as int;
       return MaterialPageRoute(
-        builder: (context) => Chatpage(title: title, index: index),
+        builder: (context) => ChatPageOpen(title: title, index: index),
       );
+
+    case '/chat':
+      return MaterialPageRoute(builder: (context) => ChatPage());
 
     case '/splashScreen':
       return MaterialPageRoute(builder: (context) => SplashScreen());

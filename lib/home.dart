@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
-
-Map<String, dynamic> dummyJsonData = {
-  "data": [
-    {"title": "Alice", "subtitle": "Hey there!"},
-    {"title": "Bob", "subtitle": "What's up?"},
-    {"title": "Charlie", "subtitle": "Let's catch up soon."},
-  ],
-};
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -30,7 +23,8 @@ class _homeState extends State<home> {
   }
 
   final List<Widget> _pages = [
-    ChatPage(),
+    // ChatPage(),
+    StatusPage(),
     StatusPage(),
     KomunitasPage(),
     PanggilanPage(),
@@ -38,149 +32,44 @@ class _homeState extends State<home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+    return BottomNavBar();
+    // return Scaffold(
+    //   body: IndexedStack(index: _currentIndex, children: _pages),
 
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _changeTab,
-      ),
-    );
+    //   bottomNavigationBar: BottomNavBar(),
+    //   // bottomNavigationBar: BottomNavBar(
+    //   //   currentIndex: _currentIndex,
+    //   //   onTap: _changeTab,
+    //   // ),
+    // );
   }
 }
 
-Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
-    ListView.builder(
-      itemCount: listData.length,
-      itemBuilder: (context, index) {
-        var item = listData[index];
-        return ListTile(
-          title: Text(item['title'] ?? "Chat $index"),
-          subtitle: Text(item['subtitle'] ?? "Message $index"),
-          leading: CircleAvatar(
-            backgroundColor: Colors.green,
-            child: Text("C$index"),
-          ),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/chat',
-              arguments: {
-                'title': item['title'] ?? "Chat $index",
-                'index': index,
-              },
-            );
-          },
-        );
-      },
-    );
-
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
-
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage>
-    with SingleTickerProviderStateMixin {
-  TabController? _tabController;
-  List<TabModel> children = [
-    TabModel(
-      title: "Chat",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Status",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Komunitas",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Panggilan",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: warna.Putih(),
-        foregroundColor: warna.Hijau(),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          spacing: 10,
-          children: [
-            Text('WhatsApp'),
-            Row(
-              spacing: 20,
-              children: [
-                SvgPicture.asset(
-                  'assets/camera.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-                SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-              ],
-            ),
-          ],
-        ),
-        bottom: TabBar(
-          tabs: children.map<Widget>((child) {
-            return Tab(text: child.title);
-          }).toList(),
-          controller: _tabController,
-        ),
-      ),
-
-      body: TabBarView(
-        controller: _tabController,
-        children: children.map<Widget>((child) {
-          return child.widget;
-        }).toList(),
-      ),
-    );
-  }
-}
+// Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
+//     ListView.builder(
+//       itemCount: listData.length,
+//       itemBuilder: (context, index) {
+//         var item = listData[index];
+//         return ListTile(
+//           title: Text(item['title'] ?? "Chat $index"),
+//           subtitle: Text(item['subtitle'] ?? "Message $index"),
+//           leading: CircleAvatar(
+//             backgroundColor: Colors.green,
+//             child: Text("C$index"),
+//           ),
+//           onTap: () {
+//             Navigator.pushNamed(
+//               context,
+//               '/chat',
+//               arguments: {
+//                 'title': item['title'] ?? "Chat $index",
+//                 'index': index,
+//               },
+//             );
+//           },
+//         );
+//       },
+//     );
 
 class PanggilanPage extends StatelessWidget {
   const PanggilanPage({super.key});

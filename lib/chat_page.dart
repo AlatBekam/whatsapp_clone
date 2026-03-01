@@ -1,87 +1,146 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/home.dart';
 
-class Chatpage extends StatelessWidget {
-  final String title;
-  final int index;
+// Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
+//     ListView.builder(
+//       itemCount: listData.length,
+//       itemBuilder: (context, index) {
+//         var item = listData[index];
+//         return ListTile(
+//           title: Text(item['title'] ?? "Chat $index"),
+//           subtitle: Text(item['subtitle'] ?? "Message $index"),
+//           leading: CircleAvatar(
+//             backgroundColor: Colors.green,
+//             child: Text("C$index"),
+//           ),
+//           onTap: () {
+//             Navigator.pushNamed(
+//               context,
+//               '/chat',
+//               arguments: {
+//                 'title': item['title'] ?? "Chat $index",
+//                 'index': index,
+//               },
+//             );
+//           },
+//         );
+//       },
+//     );
 
-  const Chatpage({super.key, required this.title, required this.index});
-  
-  get children => null;
+// class ChatPage extends StatefulWidget {
+//   const ChatPage({super.key});
+
+//   @override
+//   State<ChatPage> createState() => _ChatPageState();
+// }
+
+// class _ChatPageState extends State<ChatPage>
+//     with SingleTickerProviderStateMixin {
+//   TabController? _tabController;
+//   List<TabModel> children = [
+//     TabModel(
+//       title: "Chat",
+//       widget: widgetitemlist(
+//         listData: [
+//           {'title': 'Alice', 'subtitle': 'Hey there!'},
+//           {'title': 'Bob', 'subtitle': 'What\'s up?'},
+//           {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+//         ],
+//       ),
+//     ),
+//     TabModel(
+//       title: "Status",
+//       widget: widgetitemlist(
+//         listData: [
+//           {'title': 'Alice', 'subtitle': 'Hey there!'},
+//           {'title': 'Bob', 'subtitle': 'What\'s up?'},
+//           {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+//         ],
+//       ),
+//     ),
+//     TabModel(
+//       title: "Komunitas",
+//       widget: widgetitemlist(
+//         listData: [
+//           {'title': 'Alice', 'subtitle': 'Hey there!'},
+//           {'title': 'Bob', 'subtitle': 'What\'s up?'},
+//           {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+//         ],
+//       ),
+//     ),
+//     TabModel(
+//       title: "Panggilan",
+//       widget: widgetitemlist(
+//         listData: [
+//           {'title': 'Alice', 'subtitle': 'Hey there!'},
+//           {'title': 'Bob', 'subtitle': 'What\'s up?'},
+//           {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+//         ],
+//       ),
+//     ),
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _tabController = TabController(length: 4, vsync: this);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: warna.Putih(),
+//         foregroundColor: warna.Hijau(),
+//         title: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           spacing: 10,
+//           children: [
+//             Text('WhatsApp'),
+//             Row(
+//               spacing: 20,
+//               children: [
+//                 SvgPicture.asset(
+//                   'assets/camera.svg',
+//                   width: 25,
+//                   // ignore: deprecated_member_use
+//                   color: warna.Hitam(),
+//                 ),
+//                 SvgPicture.asset(
+//                   'assets/three-dots-vertical.svg',
+//                   width: 25,
+//                   // ignore: deprecated_member_use
+//                   color: warna.Hitam(),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//         bottom: TabBar(
+//           tabs: children.map<Widget>((child) {
+//             return Tab(text: child.title);
+//           }).toList(),
+//           controller: _tabController,
+//         ),
+//       ),
+
+//       body: TabBarView(
+//         controller: _tabController,
+//         children: children.map<Widget>((child) {
+//           return child.widget;
+//         }).toList(),
+//       ),
+//     );
+//   }
+// }
+
+class ChatPage extends StatelessWidget {
+  const ChatPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Text('C$index'),
-                ),
-                SizedBox(width: 10),
-                Text(title),
-              ],
-            ),
-            Row(
-              spacing: 20,
-              children: [
-                SvgPicture.asset(
-                  'assets/camera.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-                SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-              ],
-            ),
-          ],
-        )
-      ),
-      body: Center(
-        child: Text('This is the chat page for chat $index'),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          spacing: 15,
-          children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-              hintText: 'Type a message',
-              prefixIcon: Icon(Icons.emoji_emotions),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-      ),
-    ),
-    Container(
-      decoration: BoxDecoration(
-        color: warna.Hijau(),
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        onPressed: () {},
-        icon: Icon(Icons.send),
-        color: Colors.white,
-      ),
-    ),
-  ],
-        ),
-      ),    
-    );
+    return Center(child: Text("Chat Page"));
   }
 }
