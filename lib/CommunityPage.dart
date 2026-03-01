@@ -5,7 +5,13 @@ import 'package:whatsapp_clone/PengaturanPage.dart';
 import 'package:whatsapp_clone/CreateCommunityPage.dart';
 
 class KomunitasPage extends StatelessWidget {
-    const KomunitasPage({super.key});
+    // final int IndexKomunitas;
+    // final int IndexGrupFromKomunitas;
+
+    const KomunitasPage(
+      {super.key, 
+      }
+    );
 
     @override
     // State<KomunitasPage> createState() => _KomunitasPageState();
@@ -97,7 +103,7 @@ class KomunitasPage extends StatelessWidget {
                                                         color: warna.Putih(),
                                                         width: 25,
                                                         height: 25,
-                                                        )
+                                                      )
                                                     )
                                                   ),
                                                   Positioned(
@@ -125,25 +131,86 @@ class KomunitasPage extends StatelessWidget {
                                                   )
                                                 ]
                                               ),
-                                                
-                                                Text(
-                                                    'New Community',
-                                                    style: TextStyle(
-                                                        color: warna.Hitam(),
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w500,
-                                                    ),
+                                              Text(
+                                                'New Community',
+                                                style: TextStyle(
+                                                  color: warna.Hitam(),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
+                                              ),
                                             ],
                                         ),
                                     ),
                                 )
                             ),
-                            // widget lain untuk menampilkan komunitas
+                            CommunityCard(),
                         ],
                     )
                 ],
             ),
         );
     }
+}
+
+// FUNGSI COMMUNITY CARD
+Widget CommunityCard() {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      color: warna.Putih(),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // pakai inkwell
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: warna.AbuAbu(),
+                width: 2,
+              )
+            )
+          ),
+          child: Row(
+            spacing: 15,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: warna.AbuAbu(),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Container(
+                  width: 40,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: warna.AbuAbu(),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                    'assets/logokomunitas.svg',
+                    color: warna.Putih(),
+                    width: 25,
+                    height: 25,
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                'COMMUNITY KE-1',
+                style: TextStyle(
+                  color: warna.Hitam(),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            ],
+          ),
+        ),
+        // PENGUMUMAN DAN GRUP
+      ],
+    ),
+  );
 }
