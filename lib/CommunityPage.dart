@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/CreateCommunityPage.dart';
 
 class KomunitasPage extends StatelessWidget {
     const KomunitasPage({super.key});
@@ -72,7 +73,7 @@ class KomunitasPage extends StatelessWidget {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => PengaturanPage(),
+                                                builder: (context) => CreateCommunity(),
                                             ),
                                         );
                                     },
@@ -81,12 +82,14 @@ class KomunitasPage extends StatelessWidget {
                                         child: Row(
                                             spacing: 15,
                                             children: [
-                                                Container(
+                                              Stack(
+                                                children: [
+                                                  Container(
                                                     width: 40,
                                                     height: 38,
                                                     decoration: BoxDecoration(
-                                                        color: warna.AbuAbu(),
-                                                        borderRadius: BorderRadius.circular(9),
+                                                      color: warna.AbuAbu(),
+                                                      borderRadius: BorderRadius.circular(9),
                                                     ),
                                                     child: Center(
                                                         child: SvgPicture.asset(
@@ -96,7 +99,33 @@ class KomunitasPage extends StatelessWidget {
                                                         height: 25,
                                                         )
                                                     )
-                                                ),
+                                                  ),
+                                                  Positioned(
+                                                    bottom: -1,
+                                                    right: -1,
+                                                    child: 
+                                                      Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: warna.Hijau(),
+                                                        borderRadius: BorderRadius.circular(20),
+                                                        border: Border.all(
+                                                          color: warna.Putih(),
+                                                          width: 1.5,
+                                                        )
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        size: 15,
+                                                        color: warna.Putih(),
+                                                      ), 
+                                                    ),
+                                                  )
+                                                ]
+                                              ),
+                                                
                                                 Text(
                                                     'New Community',
                                                     style: TextStyle(
