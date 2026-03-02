@@ -239,12 +239,13 @@ Widget CommunityCard(BuildContext context) {
                   );
                 },
                 child: 
-                Container( //HARUS MASUK
+                Container(
                   decoration: BoxDecoration(
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: 
                   Row(
+                    spacing: 15,
                     children: [
                       Container(
                         width: 35,
@@ -263,13 +264,139 @@ Widget CommunityCard(BuildContext context) {
                           ),
                         ),
                       ),
-                      // CONTAINER
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pengumuman',
+                            style: TextStyle(
+                              color: warna.Hitam(),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            'Name: Text',
+                            style: TextStyle(
+                              color: warna.AbuAbuTua(),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
               ),
             ),
-            Container(), //ISINYA ROW UNTUK PENGUMUMAN
+            Material(
+              color: warna.Putih(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute
+                      (builder: (context) => CreateCommunity()
+                    ),
+                  );
+                },
+                child: 
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: 
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 33,
+                        decoration: BoxDecoration(
+                          color: warna.AbuAbu(),
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        margin: EdgeInsets.only(left: 2),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/logokomunitas.svg',
+                            color: warna.Putih(),
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'GRUP KE-1',
+                            style: TextStyle(
+                              color: warna.Hitam(),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            'Name: Text',
+                            style: TextStyle(
+                              color: warna.AbuAbuTua(),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Material(
+              color: warna.Putih(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute
+                      (builder: (context) => CreateCommunity()
+                    ),
+                  );
+                },
+                child: 
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  child: 
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 33,
+                        child: Center(
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: warna.AbuAbuTua(),
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Lihat Semua',
+                        style: TextStyle(
+                          color: warna.AbuAbuTua(),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       )
