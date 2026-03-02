@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/status_page.dart';
-import 'package:whatsapp_clone/community_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
@@ -33,7 +32,7 @@ class _homeState extends State<home> {
   final List<Widget> _pages = [
     ChatPage(),
     StatusPage(),
-    CommunityPage(),
+    KomunitasPage(),
     PanggilanPage(),
   ];
 
