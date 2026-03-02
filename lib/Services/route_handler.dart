@@ -4,6 +4,7 @@ import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/community_page.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
+import 'package:whatsapp_clone/Panggilan.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -26,6 +27,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/channels':
       return MaterialPageRoute(builder: (context) => channels());
 
+
+    case '/panggilan_page':
+      return MaterialPageRoute(builder: (context) => Panggilan());
     default:
       return MaterialPageRoute(builder: (context) => const home());
   }
