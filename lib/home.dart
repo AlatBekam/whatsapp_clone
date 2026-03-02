@@ -6,7 +6,6 @@ import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 
-
 Map<String, dynamic> dummyJsonData = {
   "data": [
     {"title": "Alice", "subtitle": "Hey there!"},
@@ -34,7 +33,6 @@ class _homeState extends State<home> {
   final List<Widget> _pages = [
     ChatPage(),
     StatusPage(),
-    KomunitasPage(),
     KomunitasPage(),
     Calling(),
   ];

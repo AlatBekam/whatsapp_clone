@@ -3,6 +3,8 @@ import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
+import 'package:whatsapp_clone/login.dart';
+import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -19,6 +21,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     case '/splashScreen':
       return MaterialPageRoute(builder: (context) => SplashScreen());
+
+    case '/login':
+      return MaterialPageRoute(builder: (context) => Login());
+
+    case '/register':
+      return MaterialPageRoute(builder: (context) => register());
 
     case '/status_page':
       return MaterialPageRoute(builder: (context) => SplashScreen());

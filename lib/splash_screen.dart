@@ -19,7 +19,9 @@ class _splashScreen extends State<SplashScreen>
     // Pembuatan delay selama 5000 milidetik disaat aplikasi dibuka
     Future.delayed(Duration(milliseconds: 500), () {
       // setelah delay selesai, maka halaman akan didirect ke '/'
-      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+
+      // Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     });
   }
 
