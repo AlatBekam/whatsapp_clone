@@ -9,5 +9,6 @@ class warna {
   static HijauTua() => Color.fromARGB(255, 13, 85, 39);
   static Transparan() => Colors.transparent;
   static AbuAbu() => Color.fromARGB(255, 200, 200, 200);
+  static AbuAbuTua() =>  Color.fromARGB(255, 98, 97, 97);
   // static Hitam() => Colors.black;
 }

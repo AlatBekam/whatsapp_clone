@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
+import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {

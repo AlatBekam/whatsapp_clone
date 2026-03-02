@@ -144,7 +144,7 @@ class KomunitasPage extends StatelessWidget {
                                     ),
                                 )
                             ),
-                            CommunityCard(),
+                            CommunityCard(context),
                         ],
                     )
                 ],
@@ -154,63 +154,252 @@ class KomunitasPage extends StatelessWidget {
 }
 
 // FUNGSI COMMUNITY CARD
-Widget CommunityCard() {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: warna.Putih(),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // pakai inkwell
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: warna.AbuAbu(),
-                width: 2,
-              )
-            )
-          ),
-          child: Row(
-            spacing: 15,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: warna.AbuAbu(),
-                  borderRadius: BorderRadius.circular(9),
+Widget CommunityCard(BuildContext context) {
+  return Column(
+    children: [
+      Container(
+        margin: EdgeInsets.only(top: 6),
+        child: 
+        Material(
+          color: warna.Putih(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateCommunity(),
                 ),
-                child: Container(
-                  width: 40,
-                  height: 38,
-                  decoration: BoxDecoration(
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
                     color: warna.AbuAbu(),
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                    'assets/logokomunitas.svg',
-                    color: warna.Putih(),
-                    width: 25,
-                    height: 25,
+                    width: 1
+                  )
+                )
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Row(
+                      spacing: 15,
+                      children: [
+                        Container(
+                          child: Container(
+                            width: 40,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: warna.AbuAbu(),
+                              borderRadius: BorderRadius.circular(9),
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                'assets/logokomunitas.svg',
+                                color: warna.Putih(),
+                                width: 20,
+                                height: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'COMMUNITY KE-1',
+                          style: TextStyle(
+                            color: warna.Hitam(),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
                     ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Material(
+              color: warna.Putih(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute
+                      (builder: (context) => CreateCommunity()
+                    ),
+                  );
+                },
+                child: 
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: 
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 33,
+                        decoration: BoxDecoration(
+                          color: warna.Hijau(),
+                          borderRadius: BorderRadius.circular(9)
+                        ),
+                        margin: EdgeInsets.only(left: 2),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/speaker.svg',
+                            color: warna.HijauTua(),
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pengumuman',
+                            style: TextStyle(
+                              color: warna.Hitam(),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            'Name: Text',
+                            style: TextStyle(
+                              color: warna.AbuAbuTua(),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),
-              Text(
-                'COMMUNITY KE-1',
-                style: TextStyle(
-                  color: warna.Hitam(),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+            ),
+            Material(
+              color: warna.Putih(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute
+                      (builder: (context) => CreateCommunity()
+                    ),
+                  );
+                },
+                child: 
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: 
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 33,
+                        decoration: BoxDecoration(
+                          color: warna.AbuAbu(),
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        margin: EdgeInsets.only(left: 2),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/logokomunitas.svg',
+                            color: warna.Putih(),
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'GRUP KE-1',
+                            style: TextStyle(
+                              color: warna.Hitam(),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            'Name: Text',
+                            style: TextStyle(
+                              color: warna.AbuAbuTua(),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            Material(
+              color: warna.Putih(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute
+                      (builder: (context) => CreateCommunity()
+                    ),
+                  );
+                },
+                child: 
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  child: 
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 33,
+                        child: Center(
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: warna.AbuAbuTua(),
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Lihat Semua',
+                        style: TextStyle(
+                          color: warna.AbuAbuTua(),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        // PENGUMUMAN DAN GRUP
-      ],
-    ),
+      )
+    ],
   );
 }
