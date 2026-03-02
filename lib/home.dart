@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
+
 
 Map<String, dynamic> dummyJsonData = {
   "data": [
@@ -34,6 +35,8 @@ class _homeState extends State<home> {
     StatusPage(),
     KomunitasPage(),
     PanggilanPage(),
+    CommunityPage(),
+    Calling(),
   ];
 
   @override
@@ -182,14 +185,14 @@ class _ChatPageState extends State<ChatPage>
   }
 }
 
-class PanggilanPage extends StatelessWidget {
-  const PanggilanPage({super.key});
+// class PanggilanPage extends StatelessWidget {
+//   const PanggilanPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Panggilan Page"));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Center(child: Text("Panggilan Page"));
+//   }
+// }
 
 class TabModel {
   final String title;

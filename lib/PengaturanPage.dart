@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';    
+    
 
 class PengaturanPage extends StatelessWidget {
     const PengaturanPage({super.key});
