@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
+
 
 class CreateCommunity extends StatelessWidget {
   const CreateCommunity({super.key});
