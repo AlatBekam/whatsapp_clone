@@ -25,6 +25,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/channels':
       return MaterialPageRoute(builder: (context) => channels());
 
+    case '/kontak':
+      return MaterialPageRoute(builder: (context) => SplashScreen());
+
     default:
       return MaterialPageRoute(builder: (context) => const home());
   }
