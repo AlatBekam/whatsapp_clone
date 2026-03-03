@@ -7,7 +7,7 @@ class Chatpage extends StatelessWidget {
   final int index;
 
   const Chatpage({super.key, required this.title, required this.index});
-  
+
   get children => null;
 
   @override
@@ -15,7 +15,7 @@ class Chatpage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
@@ -45,43 +45,44 @@ class Chatpage extends StatelessWidget {
               ],
             ),
           ],
-        )
+        ),
       ),
-      body: Center(
-        child: Text('This is the chat page for chat $index'),
-      ),
+      body: Center(child: Text('This is the chat page for chat $index')),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           spacing: 15,
           children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-              hintText: 'Type a message',
-              prefixIcon: Icon(Icons.emoji_emotions),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Type a message',
+                  prefixIcon: Icon(Icons.emoji_emotions),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: warna.Hijau(),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.send),
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
-    ),
-    Container(
-      decoration: BoxDecoration(
-        color: warna.Hijau(),
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        onPressed: () {},
-        icon: Icon(Icons.send),
-        color: Colors.white,
-      ),
-    ),
-  ],
-        ),
-      ),    
     );
   }
 }
