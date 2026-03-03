@@ -34,7 +34,7 @@ class _homeState extends State<home> {
   final List<Widget> _pages = [
     ChatPage(),
     StatusPage(),
-    CommunityPage(),
+    KomunitasPage(),
     Calling(),
   ];
 
