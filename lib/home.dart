@@ -35,7 +35,6 @@ class _homeState extends State<home> {
     ChatPage(),
     StatusPage(),
     KomunitasPage(),
-    KomunitasPage(),
     Calling(),
   ];
 

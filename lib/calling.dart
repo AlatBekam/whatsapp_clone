@@ -30,6 +30,19 @@ IconData getCallIcon(CallType type) {
   }
 }
 
+List<IconAssets> iconAssets = [
+  IconAssets(lambang: 'assets/logotelepon.svg'),
+  IconAssets(lambang: 'assets/Dialpad.svg'),
+  IconAssets(lambang: 'assets/calendar.svg'),
+  IconAssets(lambang: 'assets/love.svg'),
+];
+
+class IconAssets {
+  final String? lambang;
+
+  IconAssets({required this.lambang});
+}
+
 enum CallType { incoming, outgoing, missed }
 
 class CallHistory {
@@ -50,7 +63,7 @@ class Calling extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Handle new call action
+          Navigator.pushNamed(context, '/Kontak');
         },
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
@@ -85,38 +98,70 @@ class Calling extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[200],
-                  child: SvgPicture.asset('assets/logotelepon.svg', height: 20, width: 20,),
+              Expanded(
+                child: SizedBox(
+                  height: 60,
+                  child: ListView.builder(scrollDirection: Axis.horizontal,
+                    itemCount: iconAssets.length,
+                    itemBuilder: (context, index) {
+                    var icon = iconAssets[index];  
+                    return Material(
+                      color: Colors.grey[200],
+                      shape: CircleBorder(),
+                      child: InkWell(
+                        customBorder: CircleBorder(),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/Kontak');
+                        },
+                        child: Container(
+                            width: 90,
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.black,
+                            child: SvgPicture.asset(icon.lambang!, height: 20, width: 20, ),
+                            radius: 30,
+                          ),
+                        ),
+                      ),
+                    );
+                    }
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[200],
-                  child: SvgPicture.asset('assets/Dialpad.svg'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[200],
-                  child: SvgPicture.asset('assets/calendar.svg'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[200],
-                  child: SvgPicture.asset('assets/love.svg', height: 25, width: 25),
-                ),
-              ),
+                
+              )
+              // Container(
+              //   margin: EdgeInsets.symmetric(horizontal: 5),
+              //   child: CircleAvatar(
+              //     radius: 30,
+              //     backgroundColor: Colors.grey[200],
+              //     child: SvgPicture.asset('assets/logotelepon.svg', height: 20, width: 20,),
+              //   ),
+              // ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(horizontal: 5),
+              //   child: CircleAvatar(
+              //     radius: 30,
+              //     backgroundColor: Colors.grey[200],
+              //     child: SvgPicture.asset('assets/Dialpad.svg'),
+              //   ),
+              // ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(horizontal: 5),
+              //   child: CircleAvatar(
+              //     radius: 30,
+              //     backgroundColor: Colors.grey[200],
+              //     child: SvgPicture.asset('assets/calendar.svg'),
+              //   ),
+              // ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(horizontal: 5),
+              //   child: CircleAvatar(
+              //     radius: 30,
+              //     backgroundColor: Colors.grey[200],
+              //     child: SvgPicture.asset('assets/love.svg', height: 25, width: 25),
+              //   ),
+              // ),
             ],
           ),
         Expanded(
