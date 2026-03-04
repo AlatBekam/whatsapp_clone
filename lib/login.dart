@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
@@ -71,15 +72,16 @@ class _LoginState extends State<Login> {
                       borderSide: BorderSide(width: 10.0),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    // suffixIcon: GestureDetector(
-                    //   onTap: () {
-                    //     // Aksi yang ingin dilakukan saat ikon ditekan
-                    //     setState(() {
-                    //       _obscureText = !_obscureText;
-                    //     });
-                    //   },
-                    //   child: Icon(Icons.visibility),
-                    // ),
+
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        // Aksi yang ingin dilakukan saat ikon ditekan
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      child: Icon(Icons.visibility),
+                    ),
                   ),
 
                   validator: (passwordd) {
@@ -154,9 +156,13 @@ class _LoginState extends State<Login> {
     // print(body);
 
     if (body['success']) {
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('token', jsonEncode(body['token']));
-      localStorage.setString('user', jsonEncode(body['user']));
+      String token = body['token'];
+
+      authService().addToken(token);
+      // await storedToken.write(key: 'token', value: token);
+      // SharedPreferences localStorage = await SharedPreferences.getInstance();
+      // localStorage.setString('token', jsonEncode(body['token']));
+      // localStorage.setString('user', jsonEncode(body['user']));
       Navigator.pushReplacementNamed(context, '/');
     }
   }

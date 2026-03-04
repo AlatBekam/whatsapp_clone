@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/status_page.dart';
 
 class channels extends StatefulWidget {
@@ -10,6 +11,9 @@ class channels extends StatefulWidget {
   State<channels> createState() => _channelsState();
 }
 
+Map<String, dynamic> ChannelData = ApiServices().getData('/channels');
+
+// print(ChannelData),
 class _channelsState extends State<channels> {
   @override
   Widget build(BuildContext context) {

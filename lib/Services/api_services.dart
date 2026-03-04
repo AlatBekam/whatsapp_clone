@@ -1,23 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServices {
+  final FlutterSecureStorage storedToken = FlutterSecureStorage();
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
-  var token;
-
-  static _getToken() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    String? storedToken = localStorage.getString('token');
-
-    if (storedToken != null) {
-      var data = jsonDecode(storedToken);
-      print(data);
-    } else {
-      print("Token tidak ditemukan");
-    }
-  }
 
   Map<String, String> _setHeaders() => {'Content-type': 'application/json'};
 
@@ -25,12 +14,30 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    await _getToken();
     return await http.post(
       fullURL,
       headers: _setHeaders(),
       body: jsonEncode(data),
     );
+  }
+
+  register(data, apiUrl) async {
+    var fullUrl = _baseUrl + apiUrl;
+    Uri fullURL = Uri.parse(fullUrl);
+
+    return await http.post(
+      fullURL,
+      headers: _setHeaders(),
+      body: jsonEncode(data),
+    );
+  }
+
+  getData(apiUrl) async {
+    var fullUrl = _baseUrl + apiUrl;
+    Uri fullURL = Uri.parse(fullUrl);
+
+    await authService().getToken();
+    return await http.get(fullURL, headers: _setHeaders());
   }
 
   // static Future<List<Map<String, dynamic>>> fetchUser() async {
@@ -62,4 +69,20 @@ class ApiServices {
   //     print('Error creating user: $e');
   //   }
   // }
+}
+
+class authService {
+  final FlutterSecureStorage _storedToken = FlutterSecureStorage();
+
+  Future<void> addToken(String token) async {
+    await _storedToken.write(key: 'token', value: token);
+  }
+
+  Future<String?> getToken() async {
+    return await _storedToken.read(key: 'token');
+  }
+
+  Future<void> removeToken() async {
+    await _storedToken.delete(key: 'token');
+  }
 }
