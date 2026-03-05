@@ -179,11 +179,9 @@ class _ChatPageState extends State<ChatPage>
             ),
             onSelected: (value) {
               if (value == 'Logout') {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                  builder: (context) => Login(),
-                  ),
+                Navigator.pushNamedAndRemoveUntil(
+                  context,  
+                  '/login',
                   (route) => false,
                 );
               }
