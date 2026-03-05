@@ -10,7 +10,7 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case '/':
+    case '/home':
       return MaterialPageRoute(builder: (context) => home());
     case '/chat':
       final args = settings.arguments as Map<String, dynamic>;
@@ -39,6 +39,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => channels());
 
     default:
-      return MaterialPageRoute(builder: (context) => const home());
+      return MaterialPageRoute(
+        builder: (context) =>
+            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
+      );
   }
 }

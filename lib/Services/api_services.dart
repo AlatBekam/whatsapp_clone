@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,10 @@ class ApiServices {
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
 
   Map<String, String> _setHeaders() => {'Content-type': 'application/json'};
+  Map<String, String> _setHeadersToken(token) => {
+    if (token != null) 'Authorization': 'Bearer $token',
+    'Content-type': 'application/json',
+  };
 
   auth(data, apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
@@ -32,12 +37,23 @@ class ApiServices {
     );
   }
 
-  getData(apiUrl) async {
+  Future getData(apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    await authService().getToken();
-    return await http.get(fullURL, headers: _setHeaders());
+    final token = await authService().getToken();
+    // print("TOKEN: $token");
+    final response = await http.get(fullURL, headers: _setHeadersToken(token));
+    // print(_setHeadersToken(token));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+
+    if (response.statusCode == 401) {
+      // print(jsonDecode(response.body));
+      throw Exception("UNAUTHORIZED");
+    }
   }
 
   // static Future<List<Map<String, dynamic>>> fetchUser() async {

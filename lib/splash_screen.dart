@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -27,7 +25,7 @@ class _splashScreen extends State<SplashScreen> {
     if (!mounted) return;
 
     if (token != null) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
     } else {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     }
