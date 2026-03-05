@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/Services/data_dummy.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 double ukText = 21;
+List<Map<String, dynamic>> channelData = [];
+Map<String, dynamic>? userData = {};
 
 class StatusPage extends StatefulWidget {
   const StatusPage({super.key});
@@ -15,12 +19,16 @@ class StatusPage extends StatefulWidget {
 class _StatusPageState extends State<StatusPage> {
   final List<Map<String, dynamic>> _statusData = [];
   final List<Map<String, dynamic>> _channelData = [];
+  final List<Map<String, dynamic>> _followedChannel = [];
+  final List<Map<String, dynamic>> _discoverChannel = [];
 
   @override
   void initState() {
     super.initState();
     _statusData.addAll(StatusDummyData());
     _channelData.addAll(channelDummyData());
+    _getChannel();
+    _getUser();
   }
 
   @override
@@ -66,9 +74,7 @@ class _StatusPageState extends State<StatusPage> {
                     children: <Widget>[
                       Text('Status', style: TextStyle(fontSize: ukText)),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == true)
-                          .isNotEmpty)
+                      if (userData?['followed_channels_by_id'] != null)
                         Column(
                           children: [
                             SizedBox(
@@ -190,17 +196,19 @@ class _StatusPageState extends State<StatusPage> {
                               ],
                             ),
 
-                            ...TemplateChannel(
-                              listData: _channelData
-                                  .where((item) => item['isFollowing'] == true)
-                                  .toList(),
-                            ),
+                            ...TemplateChannel(listData: _followedChannel),
                           ],
                         ),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == true)
-                          .isEmpty)
+                      // if (_channelData
+                      //     .where((item) => item['isFollowing'] == true)
+                      //     .isEmpty)
+                      // if (channelData
+                      //     .where(
+                      //       (item) => item['followed_channels_by_id'] != null,
+                      //     )
+                      //     .isNotEmpty)
+                      if (userData?['followed_channels_by_id'] == null)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -306,18 +314,14 @@ class _StatusPageState extends State<StatusPage> {
                           ],
                         ),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == false)
-                          .isNotEmpty)
+                      if (userData?['followed_channels_by_id'] != null)
                         Text(
                           'Find Channels to Follow',
                           style: TextStyle(fontSize: ukText - 7),
                         ),
 
                       ...TemplateAddChannel(
-                        listData: _channelData
-                            .where((item) => item['isFollowing'] == false)
-                            .toList(),
+                        listData: _discoverChannel,
                         onStatusTap: (item) {
                           setState(() {
                             item['isFollowing'] = !item['isFollowing'];
@@ -433,6 +437,53 @@ class _StatusPageState extends State<StatusPage> {
       ),
     );
   }
+
+  Future<void> _getChannel() async {
+    var data = await ApiServices().getData('private/channels');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      channelData = List<Map<String, dynamic>>.from(data);
+    });
+  }
+
+  Future<void> _getUser() async {
+    String? token = await authService().getToken();
+    var userID;
+    if (token != null) {
+      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+
+      userID = decodeToken['id'];
+    }
+
+    var data = await ApiServices().getData('public/users/$userID');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      userData = data;
+    });
+
+    splitChannel();
+  }
+
+  void splitChannel() {
+    final followedIds = Set.from(userData?['followed_channels_by_id'] ?? []);
+
+    for (var a in channelData) {
+      if (followedIds.contains(a['channel_id'])) {
+        _followedChannel.add(a);
+      } else {
+        _discoverChannel.add(a);
+      }
+    }
+    setState(() {});
+  }
 }
 
 // list
@@ -483,10 +534,10 @@ List<dynamic> TemplateAddChannel({
       child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
     ),
     title: Text(
-      item['title'] ?? 'Channel $index',
+      item['channel_name'] ?? 'Channel $index',
       style: TextStyle(fontSize: ukText - 2),
     ),
-    subtitle: Text('10${index}K Followers'),
+    subtitle: Text(item['description'] ?? 'No subtitle'),
     trailing: ElevatedButton(
       child: Text('Follow'),
       style: ElevatedButton.styleFrom(
@@ -515,10 +566,10 @@ List<dynamic> TemplateChannel({required List<Map<String, dynamic>> listData}) =>
           ),
         ),
         title: Text(
-          item['title'] ?? 'Channel $index',
+          item['channel_name'] ?? 'Channel $index',
           style: TextStyle(fontSize: ukText - 2),
         ),
-        subtitle: Text(item['subtitle'] ?? 'No subtitle'),
+        subtitle: Text(item['description'] ?? 'No subtitle'),
         contentPadding: EdgeInsets.only(left: 5, right: 5),
       );
     });

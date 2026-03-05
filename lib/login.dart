@@ -1,14 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart' as router;
-import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/status_page.dart';
 
@@ -51,6 +45,7 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
+
                   validator: (username) {
                     if (username == null) {
                       return 'Please enter Username!';
@@ -150,20 +145,15 @@ class _LoginState extends State<Login> {
 
     var dataUser = {'name': user, 'password': password};
 
-    var res = await ApiServices().auth(dataUser, 'private/login');
+    var res = await ApiServices().auth(dataUser, 'public/login');
     // print(res.body);
     var body = jsonDecode(res.body);
-    // print(body);
 
     if (body['success']) {
       String token = body['token'];
 
-      authService().addToken(token);
-      // await storedToken.write(key: 'token', value: token);
-      // SharedPreferences localStorage = await SharedPreferences.getInstance();
-      // localStorage.setString('token', jsonEncode(body['token']));
-      // localStorage.setString('user', jsonEncode(body['user']));
-      Navigator.pushReplacementNamed(context, '/');
+      await authService().addToken(token);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
     }
   }
 }
