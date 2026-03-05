@@ -9,6 +9,7 @@ import 'package:whatsapp_clone/splash_screen.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
 import 'package:whatsapp_clone/CreateCommunityPage.dart';
+import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -52,6 +53,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     case '/CreateCommunity':
       return MaterialPageRoute(builder: (context) => CreateCommunity());
+
+    case '/CommunityInfo':
+      final args = settings.arguments as Map<String, dynamic>;
+
+      return MaterialPageRoute(
+        builder: (context) => KomunitasInfoPage(),
+        settings: RouteSettings(arguments: args),
+    );
 
     default:
       return MaterialPageRoute(builder: (context) => const home());

@@ -91,12 +91,14 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          await ApiServices().createCommunity(
+          var response = await ApiServices().createCommunity(
             nama.text,
             deskripsi.text
           );
-          // Untuk sekarang hanya kembali ke halaman sebelumnya
-          Navigator.pop(context);
+
+          if (response.statusCode == 200) {
+            Navigator.pop(context, true);
+          }
         },
         child: Icon(Icons.arrow_forward),
       ),
