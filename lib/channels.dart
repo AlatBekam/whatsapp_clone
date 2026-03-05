@@ -101,6 +101,9 @@ class _channelsState extends State<channels> {
 
                       ...TemplateChannel(
                         listData: channelData.take(3).toList(),
+                        onStatusTap: (item) {
+                          setState(() {});
+                        },
                       ),
 
                       Row(
@@ -137,6 +140,9 @@ class _channelsState extends State<channels> {
                             )
                             .take(3)
                             .toList(),
+                        onStatusTap: (item) {
+                          setState(() {});
+                        },
                       ),
 
                       Row(
@@ -176,6 +182,9 @@ class _channelsState extends State<channels> {
                             )
                             .take(3)
                             .toList(),
+                        onStatusTap: (item) {
+                          setState(() {});
+                        },
                       ),
                     ],
                   ),
