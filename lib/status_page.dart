@@ -1,9 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/Services/data_dummy.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 double ukText = 21;
+List<Map<String, dynamic>> channelData = [];
+List<Map<String, dynamic>> statusData = [];
+List<Map<String, dynamic>> viewedStatusData = [];
+Map<String, dynamic>? userData = {};
 
 class StatusPage extends StatefulWidget {
   const StatusPage({super.key});
@@ -14,13 +22,21 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> {
   final List<Map<String, dynamic>> _statusData = [];
-  final List<Map<String, dynamic>> _channelData = [];
+  final List<Map<String, dynamic>> _followedChannel = [];
+  final List<Map<String, dynamic>> _discoverChannel = [];
+  final List<Map<String, dynamic>> _nonViewedStatus = [];
+  final List<Map<String, dynamic>> _viewedStatus = [];
+  Set<String> followedIds = {};
+  Set<String> viewedIds = {};
 
   @override
   void initState() {
     super.initState();
     _statusData.addAll(StatusDummyData());
-    _channelData.addAll(channelDummyData());
+    _getChannel();
+    _getUser();
+    _getStatus();
+    _getViewedStatus();
   }
 
   @override
@@ -66,9 +82,9 @@ class _StatusPageState extends State<StatusPage> {
                     children: <Widget>[
                       Text('Status', style: TextStyle(fontSize: ukText)),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == true)
-                          .isNotEmpty)
+                      if ((userData?['followed_channels_by_id'] as List?)
+                              ?.isNotEmpty ??
+                          false)
                         Column(
                           children: [
                             SizedBox(
@@ -77,86 +93,22 @@ class _StatusPageState extends State<StatusPage> {
                                 scrollDirection: Axis.horizontal,
                                 children: [
                                   ...TemplateStatusBox(
-                                    listData: _statusData
-                                        .where((item) => item['isNew'] == true)
-                                        .toList(),
+                                    listData: _nonViewedStatus,
                                     onStatusTap: (item) {
-                                      setState(() {
-                                        item['isNew'] = !item['isNew'];
-                                      });
+                                      _viewStatus(item['StatusID']);
                                     },
                                   ),
 
+                                  Text('pisah'),
+
                                   ...TemplateStatusBox(
-                                    listData: _statusData
-                                        .where((item) => item['isNew'] == false)
-                                        .toList(),
+                                    listData: _viewedStatus,
                                     onStatusTap: (item) {
-                                      setState(() {
-                                        item['isNew'] = !item['isNew'];
-                                      });
+                                      setState(() {});
                                     },
                                   ),
                                 ],
                               ),
-                              // child: ListView.builder(
-                              //   scrollDirection: Axis.horizontal,
-                              //   itemCount: 20,
-                              //   itemBuilder: (context, index) {
-                              //     return Stack(
-                              //       children: [
-                              //         ClipRRect(
-                              //           borderRadius:
-                              //               BorderRadiusGeometry.circular(20),
-                              //           child: Container(
-                              //             margin: EdgeInsets.all(3),
-                              //             width: 120,
-                              //             color: warna.Hijau(),
-                              //           ),
-                              //         ),
-
-                              //         Positioned(
-                              //           top: 13,
-                              //           left: 13,
-                              //           child: Column(
-                              //             mainAxisAlignment:
-                              //                 MainAxisAlignment.spaceBetween,
-                              //             children: [
-                              //               Container(
-                              //                 width: 45,
-                              //                 height: 45,
-                              //                 decoration: BoxDecoration(
-                              //                   color: warna.Putih(),
-                              //                   shape: BoxShape.circle,
-                              //                 ),
-                              //               ),
-
-                              //               Column(
-                              //                 mainAxisAlignment: MainAxisAlignment.end,
-                              //                 children: [
-                              //                   Text(
-                              //                     'Channel ${index + 1}',
-                              //                     style: TextStyle(
-                              //                       color: warna.Putih(),
-                              //                       fontSize: ukText - 5,
-                              //                     ),
-                              //                   ),
-                              //                   Text(
-                              //                     '10${index}K Followers',
-                              //                     style: TextStyle(
-                              //                       color: warna.Putih(),
-                              //                       fontSize: ukText - 7,
-                              //                     ),
-                              //                   ),
-                              //                 ],
-                              //               )
-                              //             ],
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     );
-                              //   },
-                              // ),
                             ),
 
                             Row(
@@ -191,16 +143,19 @@ class _StatusPageState extends State<StatusPage> {
                             ),
 
                             ...TemplateChannel(
-                              listData: _channelData
-                                  .where((item) => item['isFollowing'] == true)
-                                  .toList(),
+                              listData: _followedChannel,
+                              onStatusTap: (item) {
+                                setState(() {
+                                  unfollowChannel(item['channel_id']);
+                                });
+                              },
                             ),
                           ],
                         ),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == true)
-                          .isEmpty)
+                      if ((userData?['followed_channels_by_id'] as List?)
+                              ?.isEmpty ??
+                          false)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -252,42 +207,28 @@ class _StatusPageState extends State<StatusPage> {
                               ),
                             ),
 
-                            if (_statusData
-                                .where((item) => item['isNew'] == true)
-                                .isNotEmpty)
+                            if (_nonViewedStatus.isNotEmpty)
                               Text(
                                 'New Update',
                                 style: TextStyle(fontSize: ukText - 7),
                               ),
 
                             ...TemplateStatus(
-                              listData: _statusData
-                                  .where((item) => item['isNew'] == true)
-                                  .toList(),
+                              listData: _nonViewedStatus,
                               onStatusTap: (item) {
-                                setState(() {
-                                  item['isNew'] = !item['isNew'];
-                                });
+                                _viewStatus(item['StatusID']);
                               },
                             ),
 
-                            if (_statusData
-                                .where((item) => item['isNew'] == false)
-                                .isNotEmpty)
+                            if (_viewedStatus.isNotEmpty)
                               Text(
                                 'Viewed Update',
                                 style: TextStyle(fontSize: ukText - 7),
                               ),
 
                             ...TemplateStatus(
-                              listData: _statusData
-                                  .where((item) => item['isNew'] == false)
-                                  .toList(),
-                              onStatusTap: (item) {
-                                setState(() {
-                                  item['isNew'] = !item['isNew'];
-                                });
-                              },
+                              listData: _viewedStatus,
+                              onStatusTap: (item) {},
                             ),
 
                             Column(
@@ -306,24 +247,20 @@ class _StatusPageState extends State<StatusPage> {
                           ],
                         ),
 
-                      if (_channelData
-                          .where((item) => item['isFollowing'] == false)
-                          .isNotEmpty)
+                      if (userData?['followed_channels_by_id'] != null)
                         Text(
                           'Find Channels to Follow',
                           style: TextStyle(fontSize: ukText - 7),
                         ),
 
                       ...TemplateAddChannel(
-                        listData: _channelData
-                            .where((item) => item['isFollowing'] == false)
-                            .toList(),
+                        listData: _discoverChannel,
                         onStatusTap: (item) {
                           setState(() {
-                            item['isFollowing'] = !item['isFollowing'];
+                            _followChannel(item['channel_id']);
                           });
                         },
-                      ),
+                      ).take(4),
 
                       SizedBox(
                         width: double.infinity,
@@ -370,59 +307,6 @@ class _StatusPageState extends State<StatusPage> {
                           ),
                         ),
                       ),
-
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Text('Channels', style: TextStyle(fontSize: ukText)),
-                      //     ClipRRect(
-                      //       borderRadius: BorderRadiusGeometry.circular(10),
-                      //       child: ElevatedButton(
-                      //         onPressed: () {
-                      //           Navigator.pushNamed(context, "/channels");
-                      //         },
-                      //         style: ElevatedButton.styleFrom(
-                      //           elevation: 0,
-                      //           shadowColor: Colors.transparent,
-                      //           backgroundColor: warna.buttonPutih(),
-                      //           foregroundColor: warna.Hitam(),
-                      //         ),
-
-                      //         child: Text(
-                      //           'Explore',
-                      //           style: TextStyle(fontSize: ukText - 6),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-
-                      // ...TemplateAddChannel(
-                      //   listData: _channelData
-                      //       .where((item) => item['isFollowing'] == false)
-                      //       .toList(),
-                      //   onStatusTap: (item) {
-                      //     setState(() {
-                      //       item['isFollowing'] = !item['isFollowing'];
-                      //     });
-                      //   },
-                      // ),
-
-                      // Text(
-                      //   'Find Channels to Follow',
-                      //   style: TextStyle(fontSize: ukText - 7),
-                      // ),
-
-                      // ...TemplateChat(
-                      //   listData: [
-                      //     {'title': 'Alice', 'subtitle': 'Hey there!'},
-                      //     {'title': 'Bob', 'subtitle': 'What\'s up?'},
-                      //     {
-                      //       'title': 'Charlie',
-                      //       'subtitle': 'Let\'s catch up soon.',
-                      //     },
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -433,9 +317,181 @@ class _StatusPageState extends State<StatusPage> {
       ),
     );
   }
+
+  Future<void> _getChannel() async {
+    var data = await ApiServices().getData('private/channels');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      channelData = List<Map<String, dynamic>>.from(data);
+    });
+  }
+
+  Future<void> _getStatus() async {
+    var data = await ApiServices().getData('public/users/statuses');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      statusData = List<Map<String, dynamic>>.from(data);
+    });
+  }
+
+  Future<void> _getViewedStatus() async {
+    var data = await ApiServices().getData('private/users/statuses');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      viewedStatusData = List<Map<String, dynamic>>.from(data);
+    });
+
+    // print("View Status $viewedStatusData");
+  }
+
+  Future<void> _getUser() async {
+    String? token = await authService().getToken();
+    var userID;
+    if (token != null) {
+      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+
+      userID = decodeToken['id'];
+    }
+
+    var data = await ApiServices().getData('public/users/$userID');
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      userData = data;
+      followedIds = Set<String>.from(
+        userData?['followed_channels_by_id'] ?? [],
+      );
+      viewedIds = Set<String>.from(
+        viewedStatusData
+            .where((index) => index['ViewerID'] == userID)
+            .map((index) => index['StatusID'])
+            .toSet(),
+      );
+    });
+
+    print(userData);
+    print((userData?['followed_channels_by_id'] as List?)?.isEmpty ?? false);
+    print((userData?['followed_channels_by_id'] as List?)?.isNotEmpty ?? false);
+    _splitChannel();
+    _splitStatus();
+  }
+
+  void _splitChannel() {
+    _followedChannel.clear();
+    _discoverChannel.clear();
+
+    for (var a in channelData) {
+      if (followedIds.contains(a['channel_id'])) {
+        _followedChannel.add(a);
+      } else {
+        _discoverChannel.add(a);
+      }
+    }
+    setState(() {});
+  }
+
+  void _splitStatus() {
+    _viewedStatus.clear();
+    _nonViewedStatus.clear();
+
+    for (var a in statusData) {
+      if (viewedIds.contains(a['StatusID'])) {
+        _viewedStatus.add(a);
+      } else {
+        _nonViewedStatus.add(a);
+      }
+    }
+
+    setState(() {});
+  }
+
+  Future<void> _followChannel(String channelID) async {
+    followedIds.add(channelID);
+    var dataFollow = {'followed_channels_by_id': followedIds.toList()};
+    await ApiServices().updateUser(dataFollow, 'private/users');
+
+    if (!mounted) {
+      return;
+    }
+
+    _splitChannel();
+    _getUser();
+  }
+
+  Future<void> unfollowChannel(String channelID) async {
+    followedIds.remove(channelID);
+
+    var dataFollow = {'followed_channels_by_id': followedIds.toList()};
+    await ApiServices().updateUser(dataFollow, 'private/users');
+
+    if (!mounted) {
+      return;
+    }
+
+    _splitChannel();
+    _getUser();
+  }
+
+  Future<void> _viewStatus(String statusID) async {
+    viewedIds.add(statusID);
+    var dataViewed = {'StatusID': statusID};
+    await ApiServices().postData(dataViewed, 'private/users/status/view');
+
+    if (!mounted) {
+      return;
+    }
+
+    _splitStatus();
+  }
 }
 
 // list
+List<dynamic> TemplateAddChannel({
+  required List<Map<String, dynamic>> listData,
+  required Function(Map<String, dynamic>) onStatusTap,
+}) => List.generate(listData.length, (index) {
+  var item = listData[index];
+  return ListTile(
+    leading: Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(shape: BoxShape.circle),
+      child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
+    ),
+    title: Text(
+      item['channel_name'] ?? 'Channel $index',
+      style: TextStyle(fontSize: ukText - 2),
+    ),
+    subtitle: Text(item['description'] ?? 'No subtitle'),
+    trailing: ElevatedButton(
+      child: Text('Follow'),
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        backgroundColor: warna.buttonHijau(),
+        foregroundColor: warna.Hitam(),
+      ),
+      onPressed: () => onStatusTap(item),
+    ),
+    contentPadding: EdgeInsets.only(left: 5, right: 5),
+  );
+});
+
 List<dynamic> TemplateChat({required List<Map<String, dynamic>> listData}) =>
     List.generate(listData.length, (index) {
       var item = listData[index];
@@ -470,58 +526,32 @@ List<dynamic> TemplateChat({required List<Map<String, dynamic>> listData}) =>
       );
     });
 
-List<dynamic> TemplateAddChannel({
+List<dynamic> TemplateChannel({
   required List<Map<String, dynamic>> listData,
   required Function(Map<String, dynamic>) onStatusTap,
 }) => List.generate(listData.length, (index) {
   var item = listData[index];
-  return ListTile(
-    leading: Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(shape: BoxShape.circle),
-      child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
-    ),
-    title: Text(
-      item['title'] ?? 'Channel $index',
-      style: TextStyle(fontSize: ukText - 2),
-    ),
-    subtitle: Text('10${index}K Followers'),
-    trailing: ElevatedButton(
-      child: Text('Follow'),
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        shadowColor: Colors.transparent,
-        backgroundColor: warna.buttonHijau(),
-        foregroundColor: warna.Hitam(),
+  return GestureDetector(
+    onLongPress: () => onStatusTap(item),
+    child: ListTile(
+      leading: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(shape: BoxShape.circle),
+        child: SvgPicture.asset(
+          'assets/person-circle.svg',
+          fit: BoxFit.contain,
+        ),
       ),
-      onPressed: () => onStatusTap(item),
+      title: Text(
+        item['channel_name'] ?? 'Channel $index',
+        style: TextStyle(fontSize: ukText - 2),
+      ),
+      subtitle: Text(item['description'] ?? 'No subtitle'),
+      contentPadding: EdgeInsets.only(left: 5, right: 5),
     ),
-    contentPadding: EdgeInsets.only(left: 5, right: 5),
   );
 });
-
-List<dynamic> TemplateChannel({required List<Map<String, dynamic>> listData}) =>
-    List.generate(listData.length, (index) {
-      var item = listData[index];
-      return ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(shape: BoxShape.circle),
-          child: SvgPicture.asset(
-            'assets/person-circle.svg',
-            fit: BoxFit.contain,
-          ),
-        ),
-        title: Text(
-          item['title'] ?? 'Channel $index',
-          style: TextStyle(fontSize: ukText - 2),
-        ),
-        subtitle: Text(item['subtitle'] ?? 'No subtitle'),
-        contentPadding: EdgeInsets.only(left: 5, right: 5),
-      );
-    });
 
 List<dynamic> TemplateStatus({
   required List<Map<String, dynamic>> listData,
@@ -536,10 +566,10 @@ List<dynamic> TemplateStatus({
       child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
     ),
     title: Text(
-      item['title'] ?? 'Channel $index',
+      item['StatusID'] ?? 'Channel $index',
       style: TextStyle(fontSize: ukText - 2),
     ),
-    subtitle: Text('10${index}K Followers'),
+    subtitle: Text(item['CreatedAt'].toString().substring(11, 19)),
     contentPadding: EdgeInsets.only(left: 5, right: 5),
     onTap: () => onStatusTap(item),
   );
@@ -581,7 +611,7 @@ List<dynamic> TemplateStatusBox({
                   ),
                 ),
                 Text(
-                  item['title'] ?? 'Title $index',
+                  item['StatusID'] ?? 'Title $index',
                   style: TextStyle(color: warna.Putih(), fontSize: ukText - 5),
                 ),
               ],
@@ -591,186 +621,4 @@ List<dynamic> TemplateStatusBox({
       ],
     ),
   );
-  // Stack(
-  //       children: [
-  //         ClipRRect(
-  //           borderRadius:
-  //               BorderRadiusGeometry.circular(20),
-  //           child: Container(
-  //             margin: EdgeInsets.all(3),
-  //             width: 120,
-  //             color: warna.Hijau(),
-  //           ),
-  //         ),
-
-  //         Positioned(
-  //           top: 13,
-  //           left: 13,
-  //           child: Column(
-  //             mainAxisAlignment:
-  //                 MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               Container(
-  //                 width: 45,
-  //                 height: 45,
-  //                 decoration: BoxDecoration(
-  //                   color: warna.Putih(),
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //               ),
-
-  //               Column(
-  //                 mainAxisAlignment: MainAxisAlignment.end,
-  //                 children: [
-  //                   Text(
-  //                     'Channel ${index + 1}',
-  //                     style: TextStyle(
-  //                       color: warna.Putih(),
-  //                       fontSize: ukText - 5,
-  //                     ),
-  //                   ),
-  //                   Text(
-  //                     '10${index}K Followers',
-  //                     style: TextStyle(
-  //                       color: warna.Putih(),
-  //                       fontSize: ukText - 7,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               )
-  //             ],
-  //           ),
 });
-
-// class
-                      // ...TemplateStatus(
-                      //   listData: _statusData
-                      //       .where((item) => item['isNew'] == true)
-                      //       .toList(),
-                      //   onStatusTap: (item) {
-                      //     setState(() {
-                      //       item['isNew'] = !item['isNew'];
-                      //     });
-                      //   },
-                      // ),
-
-
-
-
-
-                      // ListTile(
-                      //   title: Text(
-                      //     "Add Status",
-                      //     style: TextStyle(fontSize: ukText - 2),
-                      //   ),
-                      //   subtitle: Text(
-                      //     'Disappears after 24 hours',
-                      //     style: TextStyle(fontSize: ukText - 5),
-                      //   ),
-
-                      //   leading: Stack(
-                      //     children: [
-                      //       Container(
-                      //         width: 50,
-                      //         height: 50,
-                      //         decoration: BoxDecoration(shape: BoxShape.circle),
-                      //         child: SvgPicture.asset(
-                      //           'assets/person-circle.svg',
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //       ),
-
-                      //       Positioned(
-                      //         top: 30,
-                      //         left: 30,
-                      //         child: Container(
-                      //           width: 20,
-                      //           height: 20,
-                      //           decoration: BoxDecoration(
-                      //             color: warna.Hijau(),
-                      //             shape: BoxShape.circle,
-                      //           ),
-                      //           child: SvgPicture.asset('assets/plus.svg'),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-
-                      //   contentPadding: EdgeInsets.only(left: 5, right: 5),
-                      // ),
-
-                      // Text(
-                      //   'New Update',
-                      //   style: TextStyle(fontSize: ukText - 7),
-                      // ),
-
-                      // ...TemplateStatus(
-                      //   listData: _statusData
-                      //       .where((item) => item['isNew'] == true)
-                      //       .toList(),
-                      //   onStatusTap: (item) {
-                      //     setState(() {
-                      //       item['isNew'] = !item['isNew'];
-                      //     });
-                      //   },
-                      // ),
-
-                      // Text(
-                      //   'Viewed Update',
-                      //   style: TextStyle(fontSize: ukText - 7),
-                      // ),
-
-                      // ...TemplateStatus(
-                      //   listData: _statusData
-                      //       .where((item) => item['isNew'] == false)
-                      //       .toList(),
-                      //   onStatusTap: (item) {
-                      //     setState(() {
-                      //       item['isNew'] = !item['isNew'];
-                      //     });
-                      //   },
-                      // ),
-
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [
-                      //     Text('Channels', style: TextStyle(fontSize: ukText)),
-                      //     Text(
-                      //       'Stay updated on topic that matter to you. Find channels to follow below.',
-                      //       style: TextStyle(fontSize: ukText - 7),
-                      //     ),
-                      //   ],
-                      // ),
-
-                      // ...TemplateChat(
-                      //   listData: [
-                      //     {
-                      //       'title': 'Tech News',
-                      //       'subtitle': 'Latest updates in tech',
-                      //     },
-                      //     {
-                      //       'title': 'Sports',
-                      //       'subtitle': 'Scores and highlights',
-                      //     },
-                      //     {
-                      //       'title': 'Entertainment',
-                      //       'subtitle': 'Celebrity news',
-                      //     },
-                      //   ],
-                      // ),
-
-                      // SizedBox(
-                      //   width: double.infinity,
-                      //   child: ElevatedButton(
-                      //     onPressed: () {
-                      //       Navigator.pushNamed(context, "/channels");
-                      //     },
-                      //     child: Text('Explore Channels'),
-                      //     style: ElevatedButton.styleFrom(
-                      //       elevation: 0,
-                      //       shadowColor: Colors.transparent,
-                      //       backgroundColor: warna.buttonPutih(),
-                      //       foregroundColor: warna.Hitam(),
-                      //     ),
-                      //   ),
-                      // ),

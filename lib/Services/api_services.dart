@@ -2,20 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServices {
-  final FlutterSecureStorage storedToken = FlutterSecureStorage();
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
 
-  Future<Map<String, String>> _setHeaders() async {
-    String? token = await authService().getToken();
+  Map<String, String> _setHeadersToken(String? token) => {
+    if (token != null) 'Authorization': 'Bearer $token',
+    'Content-type': 'application/json',
 
-    return {
-      'Content-type': 'application/json',
-      'Authorization': 'Bearer $token'
-    };
-  }
+    if (token == null) 'Content-type': 'application/json',
+  };
 
   auth(data, apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
@@ -23,7 +19,19 @@ class ApiServices {
 
     return await http.post(
       fullURL,
-      headers: await _setHeaders(),
+      headers: _setHeadersToken(null),
+      body: jsonEncode(data),
+    );
+  }
+
+  updateUser(data, apiURL) async {
+    var fullUrl = _baseUrl + apiURL;
+    Uri fullURL = Uri.parse(fullUrl);
+
+    final token = await authService().getToken();
+    return await http.post(
+      fullURL,
+      headers: _setHeadersToken(token),
       body: jsonEncode(data),
     );
   }
@@ -34,62 +42,50 @@ class ApiServices {
 
     return await http.post(
       fullURL,
-      headers: await _setHeaders(),
+      headers: _setHeadersToken(null),
       body: jsonEncode(data),
     );
   }
 
-  getData(apiUrl) async {
+  Future getData(apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    String? token = await authService().getToken();
+    final token = await authService().getToken();
+    // print("TOKEN: $token");
+    final response = await http.get(fullURL, headers: _setHeadersToken(token));
+    // print(_setHeadersToken(token));
 
-    return await http.get(
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+
+    if (response.statusCode == 401) {
+      // print(jsonDecode(response.body));
+      throw Exception("UNAUTHORIZED");
+    }
+  }
+
+  Future postData(data, apiUrl) async {
+    var fullUrl = _baseUrl + apiUrl;
+    Uri fullURL = Uri.parse(fullUrl);
+
+    final token = await authService().getToken();
+    await http.post(
       fullURL,
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
+      headers: _setHeadersToken(token),
+      body: jsonEncode(data),
     );
   }
 
-  // static Future<List<Map<String, dynamic>>> fetchUser() async {
-  //   try {
-  //     final response = await http.get(Uri.parse('$baseUrl/users'));
-  //   }
-
-  //   // Simulate an API call with a delay
-  //   // await Future.delayed(Duration(seconds: 2));
-  //   // return [
-  //   //   {'title': 'Alice', 'subtitle': 'Hey there!'},
-  //   //   {'title': 'Bob', 'subtitle': 'What\'s up?'},
-  //   //   {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-  //   // ];
-  // }
-
-  // static Future<void> createUser(String name, String email) async {
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('$baseUrl/users'),
-  //       body: {'name': name, 'email': email},
-  //     );
-  //     if (response.statusCode == 201) {
-  //       print('User created successfully');
-  //     } else {
-  //       print('Failed to create user: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     print('Error creating user: $e');
-  //   }
-  // }
+  // ini bise pake postData tok, drpd buat kelas masing-masing
   Future createCommunity(String name, String desc) async {
     var url = "private/community";
 
     Map data = {
       "community_name": name,
       "description": desc,
-      "announcement_group_id": null
+      "announcement_group_id": null,
     };
 
     return await auth(data, url);
@@ -146,5 +142,3 @@ class authService {
     await _storedToken.delete(key: 'token');
   }
 }
-
-
