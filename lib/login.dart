@@ -150,7 +150,7 @@ class _LoginState extends State<Login> {
 
     var dataUser = {'name': user, 'password': password};
 
-    var res = await ApiServices().auth(dataUser, 'private/login');
+    var res = await ApiServices().auth(dataUser, 'public/login');
     // print(res.body);
     var body = jsonDecode(res.body);
     // print(body);
