@@ -57,7 +57,7 @@ class ApiServices {
       fullURL,
       headers: {
         'Content-type': 'application/json',
-        'Authorization': 'Bearer $token'
+        'Authorization': 'Bearer $token',
       },
     );
   }
@@ -72,6 +72,7 @@ class ApiServices {
       headers: _setHeadersToken(token),
       body: jsonEncode(data),
     );
+  }
 
   // ini bise pake postData tok, drpd buat kelas masing-masing
   Future createCommunity(String name, String desc) async {
@@ -80,7 +81,7 @@ class ApiServices {
     Map data = {
       "community_name": name,
       "description": desc,
-      "announcement_group_id": null
+      "announcement_group_id": null,
     };
 
     return await auth(data, url);
@@ -102,5 +103,3 @@ class authService {
     await _storedToken.delete(key: 'token');
   }
 }
-
-
