@@ -51,15 +51,19 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    String? token = await authService().getToken();
+    final token = await authService().getToken();
+    // print("TOKEN: $token");
+    final response = await http.get(fullURL, headers: _setHeadersToken(token));
+    // print(_setHeadersToken(token));
 
-    return await http.get(
-      fullURL,
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+
+    if (response.statusCode == 401) {
+      // print(jsonDecode(response.body));
+      throw Exception("UNAUTHORIZED");
+    }
   }
 
   Future postData(data, apiUrl) async {
