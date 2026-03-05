@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 
-Map<String, dynamic> dummyJsonData = {
-  "data": [
-    {"title": "Alice", "subtitle": "Hey there!"},
-    {"title": "Bob", "subtitle": "What's up?"},
-    {"title": "Charlie", "subtitle": "Let's catch up soon."},
-  ],
-};
+List<Map<String, dynamic>> datauser = [];
+final ApiServices api = ApiServices();
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -51,14 +48,14 @@ class _homeState extends State<home> {
   }
 }
 
-Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
+Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) =>
     ListView.builder(
-      itemCount: listData.length,
+      itemCount: datauser.length,
       itemBuilder: (context, index) {
-        var item = listData[index];
+        var item = datauser[index];
         return ListTile(
-          title: Text(item['title'] ?? "Chat $index"),
-          subtitle: Text(item['subtitle'] ?? "Message $index"),
+          title: Text(item['name']?.toString() ?? "Chat $index"),
+          subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
           leading: CircleAvatar(
             backgroundColor: Colors.green,
             child: Text("C$index"),
@@ -68,7 +65,7 @@ Widget widgetitemlist({required List<Map<String, dynamic>> listData}) =>
               context,
               '/chat',
               arguments: {
-                'title': item['title'] ?? "Chat $index",
+                'title': item['name']?.toString() ?? "Chat $index",
                 'index': index,
               },
             );
@@ -84,56 +81,68 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>
-    with SingleTickerProviderStateMixin {
-  TabController? _tabController;
-  List<TabModel> children = [
-    TabModel(
-      title: "Chat",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Status",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Komunitas",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-    TabModel(
-      title: "Panggilan",
-      widget: widgetitemlist(
-        listData: [
-          {'title': 'Alice', 'subtitle': 'Hey there!'},
-          {'title': 'Bob', 'subtitle': 'What\'s up?'},
-          {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
-        ],
-      ),
-    ),
-  ];
+class _ChatPageState extends State<ChatPage>{
+Future<void> _getUser() async {
+  try {
+    final data = await api.getData('public/users');
+    print("DATA: $data");
+    setState((){
+      datauser = List<Map<String, dynamic>>.from(data);
+    });
+  } catch (e) {
+    print("ERROR: $e");
+  }
+}
+    // with SingleTickerProviderStateMixin {
+  // TabController? _tabController;
+  // List<TabModel> children = [
+  //   TabModel(
+  //     title: "Chat",
+  //     widget: widgetitemlist(
+  //       listData: [
+  //         {'title': 'Alice', 'subtitle': 'Hey there!'},
+  //         {'title': 'Bob', 'subtitle': 'What\'s up?'},
+  //         {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+  //       ],
+  //     ),
+  //   ),
+  //   TabModel(
+  //     title: "Status",
+  //     widget: widgetitemlist(
+  //       listData: [
+  //         {'title': 'Alice', 'subtitle': 'Hey there!'},
+  //         {'title': 'Bob', 'subtitle': 'What\'s up?'},
+  //         {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+  //       ],
+  //     ),
+  //   ),
+  //   TabModel(
+  //     title: "Komunitas",
+  //     widget: widgetitemlist(
+  //       listData: [
+  //         {'title': 'Alice', 'subtitle': 'Hey there!'},
+  //         {'title': 'Bob', 'subtitle': 'What\'s up?'},
+  //         {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+  //       ],
+  //     ),
+  //   ),
+  //   TabModel(
+  //     title: "Panggilan",
+  //     widget: widgetitemlist(
+  //       listData: [
+  //         {'title': 'Alice', 'subtitle': 'Hey there!'},
+  //         {'title': 'Bob', 'subtitle': 'What\'s up?'},
+  //         {'title': 'Charlie', 'subtitle': 'Let\'s catch up soon.'},
+  //       ],
+  //     ),
+  //   ),
+  // ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _getUser();
+    // _tabController = TabController(length: children.length, vsync: this);
   }
 
   @override
@@ -207,20 +216,21 @@ class _ChatPageState extends State<ChatPage>
           )
         ],
 
-        bottom: TabBar(
-          tabs: children.map<Widget>((child) {
-            return Tab(text: child.title);
-          }).toList(),
-          controller: _tabController,
-        ),
-      ),
+      //   bottom: TabBar(
+      //     tabs: children.map<Widget>((child) {
+      //       return Tab(text: child.title);
+      //     }).toList(),
+      //     controller: _tabController,
+      //   ),
+      // ),
 
-      body: TabBarView(
-        controller: _tabController,
-        children: children.map<Widget>((child) {
-          return child.widget;
-        }).toList(),
+      // body: TabBarView(
+      //   controller: _tabController,
+      //   children: children.map<Widget>((child) {
+      //     return child.widget;
+      //   }).toList(),
       ),
+      body: widgetitemlist(datauser: datauser),
     );
   }
 }
@@ -240,3 +250,4 @@ class TabModel {
 
   TabModel({required this.title, required this.widget});
 }
+
