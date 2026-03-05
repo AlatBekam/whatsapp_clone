@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
@@ -155,16 +156,55 @@ class _ChatPageState extends State<ChatPage>
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
                 ),
-                SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
               ],
             ),
           ],
         ),
+        actions: [
+          PopupMenuButton<String>(
+            color: warna.Merah(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 8,
+            constraints: BoxConstraints(
+              minWidth: 100,
+              maxWidth: 150,
+            ),
+            offset: Offset(0, 40),
+            icon: SvgPicture.asset(
+              'assets/three-dots-vertical.svg',
+              width: 19,
+              color: warna.Hitam(),
+            ),
+            onSelected: (value) {
+              if (value == 'Logout') {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,  
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'Logout',
+                child: Center(
+                  child:
+                    Text('Logout', 
+                      style: TextStyle(
+                        color: warna.Putih(),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                )
+              ),
+            ]
+          )
+        ],
+
         bottom: TabBar(
           tabs: children.map<Widget>((child) {
             return Tab(text: child.title);

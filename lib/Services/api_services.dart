@@ -51,19 +51,15 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    final token = await authService().getToken();
-    // print("TOKEN: $token");
-    final response = await http.get(fullURL, headers: _setHeadersToken(token));
-    // print(_setHeadersToken(token));
+    String? token = await authService().getToken();
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    }
-
-    if (response.statusCode == 401) {
-      // print(jsonDecode(response.body));
-      throw Exception("UNAUTHORIZED");
-    }
+    return await http.get(
+      fullURL,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
   }
 
   Future postData(data, apiUrl) async {
@@ -76,6 +72,18 @@ class ApiServices {
       headers: _setHeadersToken(token),
       body: jsonEncode(data),
     );
+
+  // ini bise pake postData tok, drpd buat kelas masing-masing
+  Future createCommunity(String name, String desc) async {
+    var url = "private/community";
+
+    Map data = {
+      "community_name": name,
+      "description": desc,
+      "announcement_group_id": null
+    };
+
+    return await auth(data, url);
   }
 }
 
@@ -94,3 +102,5 @@ class authService {
     await _storedToken.delete(key: 'token');
   }
 }
+
+

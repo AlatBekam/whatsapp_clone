@@ -6,6 +6,9 @@ import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
+import 'package:whatsapp_clone/CommunityPage.dart';
+import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -37,6 +40,18 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     case '/channels':
       return MaterialPageRoute(builder: (context) => channels());
+
+    case '/kontak':
+      return MaterialPageRoute(builder: (context) => SplashScreen());
+
+    case '/Community':
+      return MaterialPageRoute(builder: (context) => KomunitasPage());
+
+    case '/Pengaturan':
+      return MaterialPageRoute(builder: (context) => PengaturanPage());
+
+    case '/CreateCommunity':
+      return MaterialPageRoute(builder: (context) => CreateCommunity());
 
     default:
       return MaterialPageRoute(
