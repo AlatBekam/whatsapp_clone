@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
 import 'package:whatsapp_clone/CreateCommunityPage.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 
 class KomunitasPage extends StatelessWidget {
     // final int IndexKomunitas;
@@ -45,11 +46,9 @@ class KomunitasPage extends StatelessWidget {
                         ),
                         onSelected: (value) {
                             if (value == 'Pengaturan') {
-                                Navigator.push(
+                                Navigator.pushNamed(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PengaturanPage(),
-                                    ),
+                                    '/Pengaturan'
                                 );
                             }
                         },
@@ -76,11 +75,9 @@ class KomunitasPage extends StatelessWidget {
                                 color: warna.Putih(),
                                 child: InkWell(
                                     onTap: () {
-                                        Navigator.push(
+                                        Navigator.pushNamed(
                                             context,
-                                            MaterialPageRoute(
-                                                builder: (context) => CreateCommunity(),
-                                            ),
+                                            '/CreateCommunity'
                                         );
                                     },
                                     child: Container(
@@ -164,11 +161,9 @@ Widget CommunityCard(BuildContext context) {
           color: warna.Putih(),
           child: InkWell(
             onTap: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => CreateCommunity(),
-                ),
+                '/CreateCommunity'
               );
             },
             child: Container(
@@ -231,11 +226,9 @@ Widget CommunityCard(BuildContext context) {
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute
-                      (builder: (context) => CreateCommunity()
-                    ),
+                    '/CreateCommunity'
                   );
                 },
                 child: 
@@ -294,11 +287,9 @@ Widget CommunityCard(BuildContext context) {
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute
-                      (builder: (context) => CreateCommunity()
-                    ),
+                    '/CreateCommunity'
                   );
                 },
                 child: 
@@ -357,11 +348,9 @@ Widget CommunityCard(BuildContext context) {
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute
-                      (builder: (context) => CreateCommunity()
-                    ),
+                    '/CreateCommunity',
                   );
                 },
                 child: 
