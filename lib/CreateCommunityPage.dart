@@ -3,9 +3,13 @@ import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 
 class CreateCommunity extends StatelessWidget {
-  const CreateCommunity({super.key});
+  CreateCommunity({super.key});
+
+  final TextEditingController nama = TextEditingController();
+  final TextEditingController deskripsi = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +56,7 @@ class CreateCommunity extends StatelessWidget {
                 ),
               ),
               TextField(
+                  controller: nama,
                   decoration: InputDecoration(
                     hintText: 'Nama Komunitas',
                     contentPadding: EdgeInsets.symmetric(
@@ -67,6 +72,7 @@ class CreateCommunity extends StatelessWidget {
                 SizedBox(height: 20),
 
                 TextField(
+                  controller: deskripsi,
                   decoration: InputDecoration(
                     hintText: 'Deskripsi Komunitas',
                     contentPadding: EdgeInsets.symmetric(
@@ -85,16 +91,10 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          // TODO: Kirim / Simpan data ke database di sini
-          // Contoh:
-          // await simpanKeDatabase();
-          //
-          // atau kirim data ke halaman sebelumnya:
-          // Navigator.pop(context, {
-          //   'nama': namaController.text,
-          //   'deskripsi': deskripsiController.text,
-          // });
-
+          await ApiServices().createCommunity(
+            nama.text,
+            deskripsi.text
+          );
           // Untuk sekarang hanya kembali ke halaman sebelumnya
           Navigator.pop(context);
         },

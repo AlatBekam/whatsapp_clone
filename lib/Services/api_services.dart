@@ -8,7 +8,14 @@ class ApiServices {
   final FlutterSecureStorage storedToken = FlutterSecureStorage();
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
 
-  Map<String, String> _setHeaders() => {'Content-type': 'application/json'};
+  Future<Map<String, String>> _setHeaders() async {
+    String? token = await authService().getToken();
+
+    return {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+  }
 
   auth(data, apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
@@ -16,7 +23,7 @@ class ApiServices {
 
     return await http.post(
       fullURL,
-      headers: _setHeaders(),
+      headers: await _setHeaders(),
       body: jsonEncode(data),
     );
   }
@@ -27,7 +34,7 @@ class ApiServices {
 
     return await http.post(
       fullURL,
-      headers: _setHeaders(),
+      headers: await _setHeaders(),
       body: jsonEncode(data),
     );
   }
@@ -36,8 +43,15 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    await authService().getToken();
-    return await http.get(fullURL, headers: _setHeaders());
+    String? token = await authService().getToken();
+
+    return await http.get(
+      fullURL,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
   }
 
   // static Future<List<Map<String, dynamic>>> fetchUser() async {
@@ -69,6 +83,17 @@ class ApiServices {
   //     print('Error creating user: $e');
   //   }
   // }
+  Future createCommunity(String name, String desc) async {
+    var url = "private/community";
+
+    Map data = {
+      "community_name": name,
+      "description": desc,
+      "announcement_group_id": null
+    };
+
+    return await auth(data, url);
+  }
 }
 
 class authService {
@@ -86,3 +111,5 @@ class authService {
     await _storedToken.delete(key: 'token');
   }
 }
+
+

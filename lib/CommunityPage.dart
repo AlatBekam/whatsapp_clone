@@ -1,13 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
 import 'package:whatsapp_clone/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
+import 'Services/api_services.dart';
 
 class KomunitasPage extends StatelessWidget {
     // final int IndexKomunitas;
     // final int IndexGrupFromKomunitas;
+    Future getCommunity() async {
+      var res = await ApiServices().getData("private/community");
+      return jsonDecode(res.body);
+    }
 
     const KomunitasPage(
       {super.key, 
@@ -141,7 +147,23 @@ class KomunitasPage extends StatelessWidget {
                                     ),
                                 )
                             ),
-                            CommunityCard(context),
+                            FutureBuilder(
+                              future: getCommunity(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                var data = snapshot.data;
+                                return Column(
+                                  children: List.generate(data.length, (index) {
+                                    return CommunityCard(
+                                      context,
+                                      data[index]['community_name'],
+                                    );
+                                  }),
+                                );
+                              },
+                            ),
                         ],
                     )
                 ],
@@ -151,7 +173,7 @@ class KomunitasPage extends StatelessWidget {
 }
 
 // FUNGSI COMMUNITY CARD
-Widget CommunityCard(BuildContext context) {
+Widget CommunityCard(BuildContext context, String name) {
   return Column(
     children: [
       Container(
@@ -202,7 +224,7 @@ Widget CommunityCard(BuildContext context) {
                           ),
                         ),
                         Text(
-                          'COMMUNITY KE-1',
+                          name,
                           style: TextStyle(
                             color: warna.Hitam(),
                             fontSize: 15,
