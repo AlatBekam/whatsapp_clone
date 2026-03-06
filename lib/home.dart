@@ -65,8 +65,8 @@ Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) =>
               context,
               '/chat',
               arguments: {
-                'title': item['name']?.toString() ?? "Chat $index",
-                'index': index,
+                'title': item['name']?.toString() ?? "Chat",
+                'user_id': item['id']?.toString() ?? "0",
               },
             );
           },

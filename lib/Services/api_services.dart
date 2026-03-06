@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServices {
@@ -41,6 +42,13 @@ class ApiServices {
     );
   }
 
+  Future dptToken() async {
+    final token = await authService().getToken();
+    var iD = JwtDecoder.decode(token!)['id'].toString();
+    return iD;
+    }
+
+
   Future getData(apiUrl) async {
     // Ensure proper URL concatenation
     String normalizedUrl = apiUrl.startsWith('/') ? apiUrl : '/$apiUrl';
@@ -51,6 +59,8 @@ class ApiServices {
     print("Token used: $token");
     print("Request URL: $fullURL");
     print("Headers: ${_setHeadersToken(token)}");
+    var idUser = JwtDecoder.decode(token!)['id'];
+    ;
     
     final response = await http.get(fullURL, headers: _setHeadersToken(token));
     

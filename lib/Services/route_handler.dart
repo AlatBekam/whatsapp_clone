@@ -15,11 +15,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/chat':
       final args = settings.arguments as Map<String, dynamic>?;
       final title = args?['title'] as String? ?? "Chat";
-      final index = args?['index'] as int? ?? 0;
+      final userId = args?['user_id'] as String? ?? "0";
       return MaterialPageRoute(
         builder: (context) => Chatpage(
           title: title, 
-          index: index,
+          userId: userId,
         ),
       );
 

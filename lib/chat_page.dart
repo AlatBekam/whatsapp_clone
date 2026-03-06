@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
@@ -8,12 +9,13 @@ List<Map<String, dynamic>> datachat = [];
 
 class Chatpage extends StatefulWidget {
   final String title;
-  final int index;
+  final String userId;
+  
 
   const Chatpage({
     super.key, 
     required this.title, 
-    required this.index
+    required this.userId
   });
 
   @override
@@ -25,11 +27,28 @@ class _ChatpageState extends State<Chatpage> {
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
   bool _isSending = false;
+  String? _currentUserId;
 
   @override
   void initState() {
     super.initState();
+    _getCurrentUserId();
     _getChatData();
+  }
+
+  Future<void> _getCurrentUserId() async {
+    try {
+      final token = await authService().getToken();
+      if (token != null) {
+        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+        setState(() {
+          _currentUserId = decodeToken['id']?.toString();
+        });
+        print("Current user ID: $_currentUserId");
+      }
+    } catch (e) {
+      print("Error getting current user ID: $e");
+    }
   }
 
   @override
@@ -49,18 +68,17 @@ class _ChatpageState extends State<Chatpage> {
       // Debug: Print received data
       print("GET Response: $data");
       print("Data Type: ${data.runtimeType}");
+      print("Current user ID: $_currentUserId");
       
       // Handle null or non-list responses
       List<Map<String, dynamic>> parsedData = [];
-      if (data != null) {
-        if (data is List) {
-          parsedData = List<Map<String, dynamic>>.from(data);
-        } else if (data is Map && data['messages'] != null) {
-          // Handle case where response has 'messages' key
-          parsedData = List<Map<String, dynamic>>.from(data['messages']);
-        } else if (data is Map) {
-          // Debug: Print all keys in the map
-          print("Map keys: ${data.keys}");
+      if (data != null && data is Map && data['chats'] != null) {
+        final chats = data['chats'] as List<dynamic>;
+        for (var chat in chats) {
+          if (chat['messages'] != null) {
+            final messages = List<Map<String, dynamic>>.from(chat['messages']);
+            parsedData.addAll(messages);
+          }
         }
       }
       
@@ -98,7 +116,7 @@ class _ChatpageState extends State<Chatpage> {
       // Debug: Print data yang akan dikirim
       final requestData = {
         'message': messageText,
-        'receiver_id': widget.index.toString(),
+        'receiver_id': widget.userId,
       };
       print("Sending message data: $requestData");
       
@@ -132,6 +150,18 @@ class _ChatpageState extends State<Chatpage> {
     }
   }
 
+  bool _checkIsMe(Map<String, dynamic> message) {
+    if (_currentUserId == null) return false;
+    
+    // Check sender_id - can be string or int
+    final senderId = message['sender_id'];
+    if (senderId == null) return false;
+    
+    // Compare as strings to handle both types
+    return senderId.toString() == _currentUserId ||
+           senderId.toString() == _currentUserId.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +173,7 @@ class _ChatpageState extends State<Chatpage> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.green,
-                  child: Text('C${widget.index}'),
+                  child: Text('C${widget.userId}'),
                 ),
                 SizedBox(width: 10),
                 Text(widget.title),
@@ -186,13 +216,19 @@ class _ChatpageState extends State<Chatpage> {
                         padding: EdgeInsets.all(10),
                         itemBuilder: (context, index) {
                           final message = _messages[index];
-                          final isMe = message['sender_id']?.toString() == 'me' || 
-                                       message['sender_id']?.toString() == '1';
+                          // Support multiple field names for message content
+                          final messageContent = message['content']?.toString() ?? 
+                                                 message['message']?.toString() ?? 
+                                                 message['text']?.toString() ?? '';
+                          final isMe = _checkIsMe(message);
+                          final timestamp = message['timestamp']?.toString() ?? 
+                                           message['created_at']?.toString() ??
+                                           message['time']?.toString() ?? '';
                           
                           return _MessageBubble(
-                            message: message['message']?.toString() ?? '',
+                            message: messageContent,
                             isMe: isMe,
-                            time: message['created_at']?.toString() ?? '',
+                            time: timestamp,
                           );
                         },
                       ),
@@ -243,6 +279,7 @@ class _ChatpageState extends State<Chatpage> {
                           onPressed: _sendMessage,
                           icon: Icon(Icons.send),
                           color: Colors.white,
+                          
                         ),
                 ),
               ],
