@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/status_page.dart';
-import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
@@ -176,10 +175,7 @@ Future<void> _getUser() async {
               borderRadius: BorderRadius.circular(8),
             ),
             elevation: 8,
-            constraints: BoxConstraints(
-              minWidth: 100,
-              maxWidth: 150,
-            ),
+            constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
             offset: Offset(0, 40),
             icon: SvgPicture.asset(
               'assets/three-dots-vertical.svg',
@@ -188,11 +184,9 @@ Future<void> _getUser() async {
             ),
             onSelected: (value) {
               if (value == 'Logout') {
-                Navigator.pushAndRemoveUntil(
+                Navigator.pushNamedAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
-                  builder: (context) => Login(),
-                  ),
+                  '/login',
                   (route) => false,
                 );
               }
@@ -201,19 +195,19 @@ Future<void> _getUser() async {
               PopupMenuItem(
                 value: 'Logout',
                 child: Center(
-                  child:
-                    Text('Logout', 
-                      style: TextStyle(
-                        color: warna.Putih(),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: warna.Putih(),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
                     ),
-                )
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ]
-          )
+            ],
+          ),
         ],
 
       //   bottom: TabBar(

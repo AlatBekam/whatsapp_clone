@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/Services/api_services.dart';
 
 class CreateCommunity extends StatelessWidget {
-  const CreateCommunity({super.key});
+  CreateCommunity({super.key});
+
+  final TextEditingController nama = TextEditingController();
+  final TextEditingController deskripsi = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +16,13 @@ class CreateCommunity extends StatelessWidget {
         backgroundColor: warna.Putih(),
         title: Text(
           'Komunitas Baru',
-            style: TextStyle(
-            color: warna.Hitam(),
-            fontSize: 19,
-            ),
+          style: TextStyle(color: warna.Hitam(), fontSize: 19),
         ),
       ),
       body: Container(
         decoration: BoxDecoration(
           color: warna.Putih(),
-          border: Border(
-            top: BorderSide(
-              color: warna.AbuAbu(),
-              width: 1
-            )
-          )
+          border: Border(top: BorderSide(color: warna.AbuAbu(), width: 1)),
         ),
         child: Container(
           padding: EdgeInsets.only(left: 20, right: 20),
@@ -48,55 +42,53 @@ class CreateCommunity extends StatelessWidget {
                     color: warna.Putih(),
                     width: 80,
                     height: 80,
-                  )
+                  ),
                 ),
               ),
               TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Nama Komunitas',
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                controller: nama,
+                decoration: InputDecoration(
+                  hintText: 'Nama Komunitas',
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+              ),
 
-                SizedBox(height: 20),
+              SizedBox(height: 20),
 
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Deskripsi Komunitas',
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 40,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+              TextField(
+                controller: deskripsi,
+                decoration: InputDecoration(
+                  hintText: 'Deskripsi Komunitas',
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 40,
                   ),
-                )
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ],
           ),
-        )
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          // TODO: Kirim / Simpan data ke database di sini
-          // Contoh:
-          // await simpanKeDatabase();
-          //
-          // atau kirim data ke halaman sebelumnya:
-          // Navigator.pop(context, {
-          //   'nama': namaController.text,
-          //   'deskripsi': deskripsiController.text,
-          // });
+          var response = await ApiServices().createCommunity(
+            nama.text,
+            deskripsi.text
+          );
 
-          // Untuk sekarang hanya kembali ke halaman sebelumnya
-          Navigator.pop(context);
+          if (response.statusCode == 200) {
+            Navigator.pop(context, true);
+          }
         },
         child: Icon(Icons.arrow_forward),
       ),

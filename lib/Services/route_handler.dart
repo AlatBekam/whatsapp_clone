@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
@@ -6,7 +7,9 @@ import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/splash_screen.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/PengaturanPage.dart';
+import 'package:whatsapp_clone/CreateCommunityPage.dart';
+import 'package:whatsapp_clone/status_page.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -32,8 +35,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/register':
       return MaterialPageRoute(builder: (context) => register());
 
-    case '/status_page':
-      return MaterialPageRoute(builder: (context) => SplashScreen());
+    case '/statusPage':
+      return MaterialPageRoute(builder: (context) => StatusPage());
 
     // case '/getToken':
     //   return MaterialPageRoute(builder: (context) => ApiServices.getToken());
@@ -41,8 +44,28 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/channels':
       return MaterialPageRoute(builder: (context) => channels());
 
+    case '/addChannel':
+      return MaterialPageRoute(builder: (context) => addChannel());
+
     case '/kontak':
       return MaterialPageRoute(builder: (context) => SplashScreen());
+
+    case '/Community':
+      return MaterialPageRoute(builder: (context) => KomunitasPage());
+
+    case '/Pengaturan':
+      return MaterialPageRoute(builder: (context) => PengaturanPage());
+
+    case '/CreateCommunity':
+      return MaterialPageRoute(builder: (context) => CreateCommunity());
+
+    case '/CommunityInfo':
+      final args = settings.arguments as Map<String, dynamic>;
+
+      return MaterialPageRoute(
+        builder: (context) => KomunitasInfoPage(),
+        settings: RouteSettings(arguments: args),
+    );
 
     default:
       return MaterialPageRoute(
