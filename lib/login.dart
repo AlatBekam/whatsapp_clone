@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/register.dart';
@@ -148,15 +149,20 @@ class _LoginState extends State<Login> {
 
     var dataUser = {'name': user, 'password': password};
 
-    var res = await ApiServices().auth(dataUser, 'public/login');
+    Response? res = await ApiServices().auth(
+      data: dataUser,
+      apiUrl: 'public/login',
+    );
     // print(res.body);
-    var body = jsonDecode(res.body);
+    Map<String, dynamic>? body = jsonDecode(res?.body ?? "");
 
-    if (body['success']) {
-      String token = body['token'];
+    if (body?['success'] ?? false) {
+      String token = body?['token'];
 
-      await authService().addToken(token);
+      await AuthService().addToken(token);
       Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
+    } else {
+      print("Error Here");
     }
   }
 }

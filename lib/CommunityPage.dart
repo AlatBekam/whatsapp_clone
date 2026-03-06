@@ -15,191 +15,182 @@ class KomunitasPage extends StatefulWidget {
 }
 
 class _KomunitasPageState extends State<KomunitasPage> {
-    late Future communityFuture;
+  late Future communityFuture;
 
-    Future getCommunity() async {
-      return await ApiServices().getCommunity();
-    }
+  Future getCommunity() async {
+    return await ApiServices().getCommunity();
+  }
 
-    @override
-    void initState() {
-      super.initState();
-      communityFuture = getCommunity();
-    }
+  @override
+  void initState() {
+    super.initState();
+    communityFuture = getCommunity();
+  }
 
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-            appBar: AppBar(
-                backgroundColor: warna.Putih(),
-                title: Text(
-                    'Community',
-                    style: TextStyle(
-                        color: warna.Hitam(),
-                        fontSize: 19,
-                        ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: warna.Putih(),
+        title: Text(
+          'Community',
+          style: TextStyle(color: warna.Hitam(), fontSize: 19),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            color: warna.Putih(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 8,
+            constraints: BoxConstraints(minWidth: 180, maxWidth: 300),
+            offset: Offset(0, 40),
+            icon: SvgPicture.asset(
+              'assets/three-dots-vertical.svg',
+              width: 19,
+              color: warna.Hitam(),
+            ),
+            onSelected: (value) {
+              if (value == 'Pengaturan') {
+                Navigator.pushNamed(context, '/Pengaturan');
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'Pengaturan',
+                child: Text(
+                  'Pengaturan',
+                  style: TextStyle(
+                    color: warna.Hitam(),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-                actions: [
-                    PopupMenuButton<String>(
-                        color: warna.Putih(),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 8,
-                        constraints: BoxConstraints(
-                            minWidth: 180,
-                            maxWidth: 300,
-                        ),
-                        offset: Offset(0, 40),
-                        icon: SvgPicture.asset(
-                            'assets/three-dots-vertical.svg',
-                            width: 19,
-                            color: warna.Hitam(),
-                        ),
-                        onSelected: (value) {
-                            if (value == 'Pengaturan') {
-                                Navigator.pushNamed(
-                                    context,
-                                    '/Pengaturan'
-                                );
-                            }
-                        },
-                        itemBuilder: (context) => [
-                            PopupMenuItem(
-                                value: 'Pengaturan',
-                                child: Text('Pengaturan', 
-                                style: TextStyle(
-                                    color: warna.Hitam(),
-                                    fontWeight: FontWeight.w400,
-                                    )
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      body: ListView(
+        children: [
+          Column(
+            children: [
+              Material(
+                color: warna.Putih(),
+                child: InkWell(
+                  onTap: () async {
+                    var result = await Navigator.pushNamed(
+                      context,
+                      '/CreateCommunity',
+                    );
+
+                    if (result == true) {
+                      setState(() {
+                        communityFuture = getCommunity();
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      spacing: 15,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: warna.AbuAbu(),
+                                borderRadius: BorderRadius.circular(9),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/logokomunitas.svg',
+                                  color: warna.Putih(),
+                                  width: 25,
+                                  height: 25,
                                 ),
+                              ),
                             ),
-                        ]
-                    )
-                ],
-            ),
-
-            body: ListView(
-                children: [
-                    Column(
-                        children: [
-                            Material(
-                                color: warna.Putih(),
-                                child: InkWell(
-                                    onTap: () async {
-                                        var result = await Navigator.pushNamed(
-                                          context, 
-                                          '/CreateCommunity'
-                                        );
-
-                                        if(result == true) {
-                                          setState(() {
-                                            communityFuture = getCommunity();
-                                          });
-                                        }
-                                    },
-                                    child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                        child: Row(
-                                            spacing: 15,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Container(
-                                                    width: 40,
-                                                    height: 38,
-                                                    decoration: BoxDecoration(
-                                                      color: warna.AbuAbu(),
-                                                      borderRadius: BorderRadius.circular(9),
-                                                    ),
-                                                    child: Center(
-                                                        child: SvgPicture.asset(
-                                                        'assets/logokomunitas.svg',
-                                                        color: warna.Putih(),
-                                                        width: 25,
-                                                        height: 25,
-                                                      )
-                                                    )
-                                                  ),
-                                                  Positioned(
-                                                    bottom: -1,
-                                                    right: -1,
-                                                    child: 
-                                                      Container(
-                                                      width: 20,
-                                                      height: 20,
-                                                      decoration: BoxDecoration(
-                                                        color: warna.Hijau(),
-                                                        borderRadius: BorderRadius.circular(20),
-                                                        border: Border.all(
-                                                          color: warna.Putih(),
-                                                          width: 1.5,
-                                                        )
-                                                      ),
-                                                      alignment: Alignment.center,
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        size: 15,
-                                                        color: warna.Putih(),
-                                                      ), 
-                                                    ),
-                                                  )
-                                                ]
-                                              ),
-                                              Text(
-                                                'New Community',
-                                                style: TextStyle(
-                                                  color: warna.Hitam(),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                        ),
-                                    ),
-                                )
+                            Positioned(
+                              bottom: -1,
+                              right: -1,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: warna.Hijau(),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: warna.Putih(),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.add,
+                                  size: 15,
+                                  color: warna.Putih(),
+                                ),
+                              ),
                             ),
-                            FutureBuilder(
-                              future: communityFuture,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                List data = snapshot.data;
+                          ],
+                        ),
+                        Text(
+                          'New Community',
+                          style: TextStyle(
+                            color: warna.Hitam(),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              FutureBuilder(
+                future: communityFuture,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  List data = snapshot.data;
 
-                                List<Map<String, dynamic>> communities =
-                                    data.map((e) => Map<String, dynamic>.from(e)).toList();
-                                return Column(
-                                  children: List.generate(communities.length, (index) {
-                                    return CommunityCard(
-                                      context,
-                                      communities[index],
-                                      () {
-                                        setState(() {
-                                          communityFuture = getCommunity();
-                                        });
-                                      }
-                                    );
-                                  }),
-                                );
-                              },
-                            ),
-                        ],
-                    )
-                ],
-            ),
-        );
-    }
+                  List<Map<String, dynamic>> communities = data
+                      .map((e) => Map<String, dynamic>.from(e))
+                      .toList();
+                  return Column(
+                    children: List.generate(communities.length, (index) {
+                      return CommunityCard(context, communities[index], () {
+                        setState(() {
+                          communityFuture = getCommunity();
+                        });
+                      });
+                    }),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // FUNGSI COMMUNITY CARD
-Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  VoidCallback refresh) {
+Widget CommunityCard(
+  BuildContext context,
+  Map<String, dynamic> community,
+  VoidCallback refresh,
+) {
   return Column(
     children: [
       Container(
         margin: EdgeInsets.only(top: 6),
-        child: 
-        Material(
+        child: Material(
           color: warna.Putih(),
           child: InkWell(
             onTap: () async {
@@ -213,8 +204,8 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
               final result = await Navigator.pushNamed(
                 context,
                 '/CommunityInfo',
-                arguments: community
-              );  
+                arguments: community,
+              );
               if (result == true) {
                 refresh();
               }
@@ -223,11 +214,8 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(
-                    color: warna.AbuAbu(),
-                    width: 1
-                  )
-                )
+                  bottom: BorderSide(color: warna.AbuAbu(), width: 1),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +249,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -279,18 +267,12 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/CreateCommunity'
-                  );
+                  Navigator.pushNamed(context, '/CreateCommunity');
                 },
-                child: 
-                Container(
-                  decoration: BoxDecoration(
-                  ),
+                child: Container(
+                  decoration: BoxDecoration(),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: 
-                  Row(
+                  child: Row(
                     spacing: 15,
                     children: [
                       Container(
@@ -298,7 +280,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                         height: 33,
                         decoration: BoxDecoration(
                           color: warna.Hijau(),
-                          borderRadius: BorderRadius.circular(9)
+                          borderRadius: BorderRadius.circular(9),
                         ),
                         margin: EdgeInsets.only(left: 2),
                         child: Center(
@@ -330,7 +312,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -340,18 +322,12 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/CreateCommunity'
-                  );
+                  Navigator.pushNamed(context, '/CreateCommunity');
                 },
-                child: 
-                Container(
-                  decoration: BoxDecoration(
-                  ),
+                child: Container(
+                  decoration: BoxDecoration(),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: 
-                  Row(
+                  child: Row(
                     spacing: 15,
                     children: [
                       Container(
@@ -359,7 +335,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                         height: 33,
                         decoration: BoxDecoration(
                           color: warna.AbuAbu(),
-                          borderRadius: BorderRadius.circular(20)
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         margin: EdgeInsets.only(left: 2),
                         child: Center(
@@ -391,7 +367,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -401,18 +377,12 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
               color: warna.Putih(),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/CreateCommunity',
-                  );
+                  Navigator.pushNamed(context, '/CreateCommunity');
                 },
-                child: 
-                Container(
-                  decoration: BoxDecoration(
-                  ),
+                child: Container(
+                  decoration: BoxDecoration(),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                  child: 
-                  Row(
+                  child: Row(
                     spacing: 15,
                     children: [
                       Container(
@@ -431,7 +401,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
                         style: TextStyle(
                           color: warna.AbuAbuTua(),
                           fontSize: 15,
-                          fontWeight: FontWeight.w400
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -441,7 +411,7 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
             ),
           ],
         ),
-      )
+      ),
     ],
   );
 }

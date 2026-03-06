@@ -249,7 +249,7 @@ class _channelsState extends State<channels> {
   }
 
   Future<void> _getUser() async {
-    String? token = await authService().getToken();
+    String? token = await AuthService().getToken();
     var userID;
     if (token != null) {
       Map<String, dynamic> decodeToken = JwtDecoder.decode(token);

@@ -32,7 +32,7 @@ class _ChatpageState extends State<Chatpage> {
 
   Future<void> _getCurrentUserId() async {
     try {
-      final token = await authService().getToken();
+      final token = await AuthService().getToken();
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
         setState(() {
@@ -115,7 +115,10 @@ class _ChatpageState extends State<Chatpage> {
       print("Sending message data: $requestData");
 
       // Kirim pesan ke server menggunakan endpoint /api/private/chats
-      final response = await ApiServices().auth(requestData, "private/chats");
+      final response = await ApiServices().auth(
+        data: requestData,
+        apiUrl: "private/chats",
+      );
 
       // Debug: Print response dari server
       print("POST Response Status: ${response.statusCode}");

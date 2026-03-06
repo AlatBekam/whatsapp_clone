@@ -369,7 +369,7 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   Future<void> _getUser() async {
-    String? token = await authService().getToken();
+    String? token = await AuthService().getToken();
     var userID;
     if (token != null) {
       Map<String, dynamic> decodeToken = JwtDecoder.decode(token);

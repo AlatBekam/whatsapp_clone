@@ -81,14 +81,29 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          var response = await ApiServices().createCommunity(
-            nama.text,
-            deskripsi.text
-          );
-
-          if (response.statusCode == 200) {
-            Navigator.pop(context, true);
+          // Map<String, dynamic> response = await ApiServices().createCommunity(
+          //   nama.text,
+          //   deskripsi.text,
+          // );
+          try {
+            var resp = await HttpServices.post(
+              "private/community",
+              data: {
+                "community_name": nama.text,
+                "description": deskripsi.text,
+              },
+            );
+            if (resp != null) {
+              Navigator.pop(context, true);
+            }
+          } catch (e) {
+            print("ERROR $e");
+          } finally {
+            print("Fungsi create selesai");
           }
+          // if (response['community_id'] != null) {
+          //   Navigator.pop(context, true);
+          // }
         },
         child: Icon(Icons.arrow_forward),
       ),

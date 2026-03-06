@@ -142,7 +142,10 @@ class _addChannelState extends State<addChannel> {
       'description': descriptionChannel,
     };
 
-    var res = await ApiServices().auth(dataChannel, 'public/channels');
+    var res = await ApiServices().auth(
+      data: dataChannel,
+      apiUrl: 'public/channels',
+    );
 
     var body = jsonDecode(res.body);
     if (body['success']) {
