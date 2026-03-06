@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
@@ -20,10 +21,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final title = args?['title'] as String? ?? "Chat";
       final userId = args?['user_id'] as String? ?? "0";
       return MaterialPageRoute(
-        builder: (context) => Chatpage(
-          title: title, 
-          userId: userId,
-        ),
+        builder: (context) => Chatpage(title: title, userId: userId),
       );
 
     case '/splashScreen':
@@ -65,7 +63,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => KomunitasInfoPage(),
         settings: RouteSettings(arguments: args),
-    );
+      );
 
     default:
       return MaterialPageRoute(

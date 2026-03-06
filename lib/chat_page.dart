@@ -4,19 +4,13 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
-
 List<Map<String, dynamic>> datachat = [];
 
 class Chatpage extends StatefulWidget {
   final String title;
   final String userId;
-  
 
-  const Chatpage({
-    super.key, 
-    required this.title, 
-    required this.userId
-  });
+  const Chatpage({super.key, required this.title, required this.userId});
 
   @override
   State<Chatpage> createState() => _ChatpageState();
@@ -61,15 +55,15 @@ class _ChatpageState extends State<Chatpage> {
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
-      final data = await ApiServices().getData("/private/chats");
-      
+      final data = await ApiServices().getData("private/chats");
+
       // Debug: Print received data
       print("GET Response: $data");
       print("Data Type: ${data.runtimeType}");
       print("Current user ID: $_currentUserId");
-      
+
       // Handle null or non-list responses
       List<Map<String, dynamic>> parsedData = [];
       if (data != null && data is Map && data['chats'] != null) {
@@ -81,9 +75,9 @@ class _ChatpageState extends State<Chatpage> {
           }
         }
       }
-      
+
       print("Parsed messages: $parsedData");
-      
+
       setState(() {
         _messages = parsedData;
         datachat = parsedData;
@@ -91,9 +85,9 @@ class _ChatpageState extends State<Chatpage> {
     } catch (e) {
       print("GET Error: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading messages: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading messages: $e')));
       }
     } finally {
       if (mounted) {
@@ -119,12 +113,9 @@ class _ChatpageState extends State<Chatpage> {
         'receiver_id': widget.userId,
       };
       print("Sending message data: $requestData");
-      
+
       // Kirim pesan ke server menggunakan endpoint /api/private/chats
-      final response = await ApiServices().auth(
-        requestData, 
-        "private/chats"
-      );
+      final response = await ApiServices().auth(requestData, "private/chats");
 
       // Debug: Print response dari server
       print("POST Response Status: ${response.statusCode}");
@@ -132,14 +123,14 @@ class _ChatpageState extends State<Chatpage> {
 
       // Refresh chat data setelah mengirim pesan
       await _getChatData();
-      
+
       _messageController.clear();
     } catch (e) {
       print("POST Error: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending message: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error sending message: $e')));
       }
     } finally {
       if (mounted) {
@@ -152,14 +143,14 @@ class _ChatpageState extends State<Chatpage> {
 
   bool _checkIsMe(Map<String, dynamic> message) {
     if (_currentUserId == null) return false;
-    
+
     // Check sender_id - can be string or int
     final senderId = message['sender_id'];
     if (senderId == null) return false;
-    
+
     // Compare as strings to handle both types
     return senderId.toString() == _currentUserId ||
-           senderId.toString() == _currentUserId.toString();
+        senderId.toString() == _currentUserId.toString();
   }
 
   @override
@@ -204,36 +195,40 @@ class _ChatpageState extends State<Chatpage> {
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
                 : _messages.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No messages yet.\nStart the conversation!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: _messages.length,
-                        padding: EdgeInsets.all(10),
-                        itemBuilder: (context, index) {
-                          final message = _messages[index];
-                          // Support multiple field names for message content
-                          final messageContent = message['content']?.toString() ?? 
-                                                 message['message']?.toString() ?? 
-                                                 message['text']?.toString() ?? '';
-                          final isMe = _checkIsMe(message);
-                          final timestamp = message['timestamp']?.toString() ?? 
-                                           message['created_at']?.toString() ??
-                                           message['time']?.toString() ?? '';
-                          
-                          return _MessageBubble(
-                            message: messageContent,
-                            isMe: isMe,
-                            time: timestamp,
-                          );
-                        },
-                      ),
+                ? Center(
+                    child: Text(
+                      'No messages yet.\nStart the conversation!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _messages.length,
+                    padding: EdgeInsets.all(10),
+                    itemBuilder: (context, index) {
+                      final message = _messages[index];
+                      // Support multiple field names for message content
+                      final messageContent =
+                          message['content']?.toString() ??
+                          message['message']?.toString() ??
+                          message['text']?.toString() ??
+                          '';
+                      final isMe = _checkIsMe(message);
+                      final timestamp =
+                          message['timestamp']?.toString() ??
+                          message['created_at']?.toString() ??
+                          message['time']?.toString() ??
+                          '';
+
+                      return _MessageBubble(
+                        message: messageContent,
+                        isMe: isMe,
+                        time: timestamp,
+                      );
+                    },
+                  ),
           ),
-          
+
           // Message input
           Container(
             padding: EdgeInsets.all(16),
@@ -279,7 +274,6 @@ class _ChatpageState extends State<Chatpage> {
                           onPressed: _sendMessage,
                           icon: Icon(Icons.send),
                           color: Colors.white,
-                          
                         ),
                 ),
               ],

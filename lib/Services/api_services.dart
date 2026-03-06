@@ -21,7 +21,7 @@ class ApiServices {
     Uri fullURL = Uri.parse(fullUrl);
 
     final token = await authService().getToken();
-    
+
     return await http.post(
       fullURL,
       headers: _setHeadersToken(null),
@@ -56,26 +56,24 @@ class ApiServices {
     final token = await authService().getToken();
     var iD = JwtDecoder.decode(token!)['id'].toString();
     return iD;
-    }
-
+  }
 
   Future getData(apiUrl) async {
     // Ensure proper URL concatenation
-    String normalizedUrl = apiUrl.startsWith('/') ? apiUrl : '/$apiUrl';
-    var fullUrl = _baseUrl + normalizedUrl;
+    var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
     final token = await authService().getToken();
-    print("Token used: $token");
-    print("Request URL: $fullURL");
-    print("Headers: ${_setHeadersToken(token)}");
+    print("1 Token used: $token");
+    print("2 Request URL: $fullURL");
+    print("3 Headers: ${_setHeadersToken(token)}");
     var idUser = JwtDecoder.decode(token!)['id'];
     ;
-    
+
     final response = await http.get(fullURL, headers: _setHeadersToken(token));
-    
-    print("Response Status: ${response.statusCode}");
-    print("Response Body: ${response.body}");
+
+    print("4 Response Status: ${response.statusCode}");
+    print("5 Response Body: ${response.body}");
 
     if (response.statusCode == 200) {
       final body = response.body;
@@ -88,7 +86,7 @@ class ApiServices {
     if (response.statusCode == 401) {
       throw Exception("UNAUTHORIZED");
     }
-    
+
     // Handle other status codes
     throw Exception("Server error: ${response.statusCode}");
   }
@@ -96,19 +94,19 @@ class ApiServices {
   /// Send a message to the server
   /// [receiverId] - ID of the message recipient
   /// [message] - The message content
-  Future<Map<String, dynamic>> sendMessage(String receiverId, String message) async {
+  Future<Map<String, dynamic>> sendMessage(
+    String receiverId,
+    String message,
+  ) async {
     var fullUrl = _baseUrl + "messages";
     Uri fullURL = Uri.parse(fullUrl);
 
     final token = await authService().getToken();
-    
+
     final response = await http.post(
       fullURL,
       headers: _setHeadersToken(token),
-      body: jsonEncode({
-        'receiver_id': receiverId,
-        'message': message,
-      }),
+      body: jsonEncode({'receiver_id': receiverId, 'message': message}),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -125,7 +123,7 @@ class ApiServices {
     Uri fullURL = Uri.parse(fullUrl);
 
     final token = await authService().getToken();
-    
+
     final response = await http.get(fullURL, headers: _setHeadersToken(token));
 
     if (response.statusCode == 200) {
