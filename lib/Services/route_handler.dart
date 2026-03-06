@@ -21,10 +21,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final title = args?['title'] as String? ?? "Chat";
       final userId = args?['user_id'] as String? ?? "0";
       return MaterialPageRoute(
-        builder: (context) => Chatpage(
-          title: title, 
-          userId: userId,
-        ),
+        builder: (context) => Chatpage(title: title, userId: userId),
       );
 
     case '/splashScreen':

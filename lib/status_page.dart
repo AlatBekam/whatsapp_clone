@@ -369,19 +369,18 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   Future<void> _getUser() async {
-    try {
-      String? token = await authService().getToken();
-      var userID;
-      if (token != null) {
-        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        userID = decodeToken['id'];
-      }
+    String? token = await authService().getToken();
+    var userID;
+    if (token != null) {
+      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+      userID = decodeToken['id'];
+    }
 
-      var data = await ApiServices().getData('public/users/$userID');
+    var data = await ApiServices().getData('public/users/$userID');
 
-      if (!mounted) {
-        return;
-      }
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       userData = data;
