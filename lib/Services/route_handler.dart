@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
@@ -62,7 +63,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => KomunitasInfoPage(),
         settings: RouteSettings(arguments: args),
-    );
+      );
 
     default:
       return MaterialPageRoute(
