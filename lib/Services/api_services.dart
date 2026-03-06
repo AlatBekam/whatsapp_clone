@@ -95,7 +95,7 @@ class ApiServices {
     var url = _baseUrl + "private/community";
     var response = await http.get(
       Uri.parse(url),
-      headers: await _setHeaders(),
+      headers: await _setHeadersToken(null),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -109,19 +109,16 @@ class ApiServices {
 
     return await http.delete(
       Uri.parse(url),
-      headers: await _setHeaders(),
+      headers: await _setHeadersToken(null),
     );
   }
 
   Future updateCommunity(String id, String name, String desc) async {
     var url = _baseUrl + "private/community/$id";
-    Map data = {
-      "community_name": name,
-      "description": desc
-    };
+    Map data = {"community_name": name, "description": desc};
     return await http.put(
       Uri.parse(url),
-      headers: await _setHeaders(),
+      headers: await _setHeadersToken(null),
       body: jsonEncode(data),
     );
   }
