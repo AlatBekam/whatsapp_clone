@@ -7,21 +7,27 @@ import 'package:whatsapp_clone/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'Services/api_services.dart';
 
-class KomunitasPage extends StatelessWidget {
-    // final int IndexKomunitas;
-    // final int IndexGrupFromKomunitas;
+class KomunitasPage extends StatefulWidget {
+  const KomunitasPage({super.key});
+
+  @override
+  State<KomunitasPage> createState() => _KomunitasPageState();
+}
+
+class _KomunitasPageState extends State<KomunitasPage> {
+    late Future communityFuture;
+
     Future getCommunity() async {
-      var res = await ApiServices().getData("private/community");
-      return jsonDecode(res.body);
+      return await ApiServices().getCommunity();
     }
 
-    const KomunitasPage(
-      {super.key, 
-      }
-    );
+    @override
+    void initState() {
+      super.initState();
+      communityFuture = getCommunity();
+    }
 
     @override
-    // State<KomunitasPage> createState() => _KomunitasPageState();
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(
@@ -80,11 +86,17 @@ class KomunitasPage extends StatelessWidget {
                             Material(
                                 color: warna.Putih(),
                                 child: InkWell(
-                                    onTap: () {
-                                        Navigator.pushNamed(
-                                            context,
-                                            '/CreateCommunity'
+                                    onTap: () async {
+                                        var result = await Navigator.pushNamed(
+                                          context, 
+                                          '/CreateCommunity'
                                         );
+
+                                        if(result == true) {
+                                          setState(() {
+                                            communityFuture = getCommunity();
+                                          });
+                                        }
                                     },
                                     child: Container(
                                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -148,17 +160,25 @@ class KomunitasPage extends StatelessWidget {
                                 )
                             ),
                             FutureBuilder(
-                              future: getCommunity(),
+                              future: communityFuture,
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
                                   return Center(child: CircularProgressIndicator());
                                 }
-                                var data = snapshot.data;
+                                List data = snapshot.data;
+
+                                List<Map<String, dynamic>> communities =
+                                    data.map((e) => Map<String, dynamic>.from(e)).toList();
                                 return Column(
-                                  children: List.generate(data.length, (index) {
+                                  children: List.generate(communities.length, (index) {
                                     return CommunityCard(
                                       context,
-                                      data[index]['community_name'],
+                                      communities[index],
+                                      () {
+                                        setState(() {
+                                          communityFuture = getCommunity();
+                                        });
+                                      }
                                     );
                                   }),
                                 );
@@ -173,7 +193,7 @@ class KomunitasPage extends StatelessWidget {
 }
 
 // FUNGSI COMMUNITY CARD
-Widget CommunityCard(BuildContext context, String name) {
+Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  VoidCallback refresh) {
   return Column(
     children: [
       Container(
@@ -182,11 +202,22 @@ Widget CommunityCard(BuildContext context, String name) {
         Material(
           color: warna.Putih(),
           child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(
+            onTap: () async {
+              //print("COMMUNITY SENT:");
+              //print(community);
+              // await Navigator.pushNamed(
+              //   context,
+              //   '/CommunityInfo',
+              //   arguments: community,
+              // );
+              final result = await Navigator.pushNamed(
                 context,
-                '/CreateCommunity'
-              );
+                '/CommunityInfo',
+                arguments: community
+              );  
+              if (result == true) {
+                refresh();
+              }
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -224,7 +255,7 @@ Widget CommunityCard(BuildContext context, String name) {
                           ),
                         ),
                         Text(
-                          name,
+                          community['community_name'],
                           style: TextStyle(
                             color: warna.Hitam(),
                             fontSize: 15,

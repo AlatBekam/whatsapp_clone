@@ -56,6 +56,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/CreateCommunity':
       return MaterialPageRoute(builder: (context) => CreateCommunity());
 
+    case '/CommunityInfo':
+      final args = settings.arguments as Map<String, dynamic>;
+
+      return MaterialPageRoute(
+        builder: (context) => KomunitasInfoPage(),
+        settings: RouteSettings(arguments: args),
+    );
+
     default:
       return MaterialPageRoute(
         builder: (context) =>

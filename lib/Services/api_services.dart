@@ -90,6 +90,41 @@ class ApiServices {
 
     return await auth(data, url);
   }
+
+  Future<List<dynamic>> getCommunity() async {
+    var url = _baseUrl + "private/community";
+    final token = await authService().getToken();
+    var response = await http.get(
+      Uri.parse(url),
+      headers: await _setHeadersToken(token),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Failed to load community");
+    }
+  }
+
+  Future deleteCommunity(String id) async {
+    var url = _baseUrl + "private/community/$id";
+    final token = await authService().getToken();
+
+    return await http.delete(
+      Uri.parse(url),
+      headers: await _setHeadersToken(token),
+    );
+  }
+
+  Future updateCommunity(String id, String name, String desc) async {
+    var url = _baseUrl + "private/community/$id";
+    final token = await authService().getToken();
+    Map data = {"community_name": name, "description": desc};
+    return await http.put(
+      Uri.parse(url),
+      headers: await _setHeadersToken(token),
+      body: jsonEncode(data),
+    );
+  }
 }
 
 class authService {
