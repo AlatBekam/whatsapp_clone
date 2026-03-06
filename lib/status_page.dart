@@ -11,6 +11,8 @@ double ukText = 21;
 List<Map<String, dynamic>> channelData = [];
 List<Map<String, dynamic>> statusData = [];
 List<Map<String, dynamic>> viewedStatusData = [];
+List<Map<String, dynamic>> globalFollowedChannel = [];
+List<Map<String, dynamic>> globalDiscoverChannel = [];
 Map<String, dynamic>? userData = {};
 
 class StatusPage extends StatefulWidget {
@@ -123,8 +125,12 @@ class _StatusPageState extends State<StatusPage> {
                                     10,
                                   ),
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, "/channels");
+                                    onPressed: () async {
+                                      await Navigator.pushNamed(
+                                        context,
+                                        "/channels",
+                                      );
+                                      _getUser();
                                     },
                                     style: ElevatedButton.styleFrom(
                                       elevation: 0,
@@ -265,8 +271,9 @@ class _StatusPageState extends State<StatusPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, "/channels");
+                          onPressed: () async {
+                            await Navigator.pushNamed(context, "/channels");
+                            _getUser();
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -288,8 +295,9 @@ class _StatusPageState extends State<StatusPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            print('asd');
+                          onPressed: () async {
+                            await Navigator.pushNamed(context, "/addChannel");
+                            _getUser();
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -376,6 +384,7 @@ class _StatusPageState extends State<StatusPage> {
       followedIds = Set<String>.from(
         userData?['followed_channels_by_id'] ?? [],
       );
+      // viewedStatusData
       viewedIds = Set<String>.from(
         viewedStatusData
             .where((index) => index['ViewerID'] == userID)
@@ -384,9 +393,6 @@ class _StatusPageState extends State<StatusPage> {
       );
     });
 
-    print(userData);
-    print((userData?['followed_channels_by_id'] as List?)?.isEmpty ?? false);
-    print((userData?['followed_channels_by_id'] as List?)?.isNotEmpty ?? false);
     _splitChannel();
     _splitStatus();
   }
@@ -402,6 +408,9 @@ class _StatusPageState extends State<StatusPage> {
         _discoverChannel.add(a);
       }
     }
+
+    globalDiscoverChannel = _discoverChannel;
+    globalFollowedChannel = _followedChannel;
     setState(() {});
   }
 
@@ -457,6 +466,7 @@ class _StatusPageState extends State<StatusPage> {
     }
 
     _splitStatus();
+    _getViewedStatus();
   }
 }
 

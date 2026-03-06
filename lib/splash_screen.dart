@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,11 +25,25 @@ class _splashScreen extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    if (token != null) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-    } else {
+    if (token == null) {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      return;
     }
+
+    Map<String, dynamic> decodeToken = JwtDecoder.decode(token!);
+    int userEXP = decodeToken['exp'];
+    int timeNow = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    if (userEXP <= timeNow) {
+      await authService().removeToken();
+
+      if (!mounted) return;
+
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      return;
+    }
+
+    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
   }
 
   @override

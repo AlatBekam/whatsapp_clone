@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/status_page.dart';
-import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
@@ -167,10 +166,7 @@ class _ChatPageState extends State<ChatPage>
               borderRadius: BorderRadius.circular(8),
             ),
             elevation: 8,
-            constraints: BoxConstraints(
-              minWidth: 100,
-              maxWidth: 150,
-            ),
+            constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
             offset: Offset(0, 40),
             icon: SvgPicture.asset(
               'assets/three-dots-vertical.svg',
@@ -180,7 +176,7 @@ class _ChatPageState extends State<ChatPage>
             onSelected: (value) {
               if (value == 'Logout') {
                 Navigator.pushNamedAndRemoveUntil(
-                  context,  
+                  context,
                   '/login',
                   (route) => false,
                 );
@@ -190,19 +186,19 @@ class _ChatPageState extends State<ChatPage>
               PopupMenuItem(
                 value: 'Logout',
                 child: Center(
-                  child:
-                    Text('Logout', 
-                      style: TextStyle(
-                        color: warna.Putih(),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: warna.Putih(),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
                     ),
-                )
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ]
-          )
+            ],
+          ),
         ],
 
         bottom: TabBar(

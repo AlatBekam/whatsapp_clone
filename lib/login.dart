@@ -6,6 +6,8 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/status_page.dart';
 
+// Map<String, dynamic>? userData = {};
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -51,6 +53,7 @@ class _LoginState extends State<Login> {
                       return 'Please enter Username!';
                     }
                     user = username;
+                    return null;
                   },
                 ),
               ),
@@ -104,7 +107,7 @@ class _LoginState extends State<Login> {
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: warna.Hijau(),
-                        foregroundColor: Colors.white,
+                        foregroundColor: warna.Putih(),
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
