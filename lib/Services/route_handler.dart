@@ -16,11 +16,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/home':
       return MaterialPageRoute(builder: (context) => home());
     case '/chat':
-      final args = settings.arguments as Map<String, dynamic>;
-      final title = args['title'] as String;
-      final index = args['index'] as int;
+      final args = settings.arguments as Map<String, dynamic>?;
+      final title = args?['title'] as String? ?? "Chat";
+      final userId = args?['user_id'] as String? ?? "0";
       return MaterialPageRoute(
-        builder: (context) => Chatpage(title: title, index: index),
+        builder: (context) => Chatpage(
+          title: title, 
+          userId: userId,
+        ),
       );
 
     case '/splashScreen':

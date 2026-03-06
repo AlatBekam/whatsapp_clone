@@ -327,15 +327,19 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   Future<void> _getChannel() async {
-    var data = await ApiServices().getData('private/channels');
+    try {
+      var data = await ApiServices().getData('private/channels');
 
-    if (!mounted) {
-      return;
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        channelData = List<Map<String, dynamic>>.from(data);
+      });
+    } catch (e) {
+      print("ERROR _getChannel: $e");
     }
-
-    setState(() {
-      channelData = List<Map<String, dynamic>>.from(data);
-    });
   }
 
   Future<void> _getStatus() async {
@@ -365,19 +369,19 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   Future<void> _getUser() async {
-    String? token = await authService().getToken();
-    var userID;
-    if (token != null) {
-      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+    try {
+      String? token = await authService().getToken();
+      var userID;
+      if (token != null) {
+        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+        userID = decodeToken['id'];
+      }
 
-      userID = decodeToken['id'];
-    }
+      var data = await ApiServices().getData('public/users/$userID');
 
-    var data = await ApiServices().getData('public/users/$userID');
-
-    if (!mounted) {
-      return;
-    }
+      if (!mounted) {
+        return;
+      }
 
     setState(() {
       userData = data;
