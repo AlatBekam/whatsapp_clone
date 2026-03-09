@@ -85,7 +85,6 @@ class CreateCommunity extends StatelessWidget {
             nama.text,
             deskripsi.text
           );
-
           if (response.statusCode == 200) {
             Navigator.pop(context, true);
           }

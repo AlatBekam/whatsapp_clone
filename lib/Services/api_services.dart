@@ -82,6 +82,18 @@ class ApiServices {
     );
   }
 
+  Future httpDELETEWithToken(String apiUrl) async {
+    var fullUrl = _baseUrl + apiUrl;
+    Uri fullURL = Uri.parse(fullUrl);
+
+    String? token = await AuthService().getToken();
+
+    return await http.delete(
+      fullURL,
+      headers: _setHeadersToken(token),
+    );
+  }
+
   Future createCommunity(String name, String desc) async {
     var url = "private/community";
 
