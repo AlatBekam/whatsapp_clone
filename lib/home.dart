@@ -152,33 +152,19 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>{
-  String? currentUserId;
-
+class _ChatPageState extends State<ChatPage> {
   Future<void> _getUser() async {
     try {
-      final data = await api.getData('public/users');
+      final data = await api.httpGET('public/users');
       print("DATA: $data");
-      setState((){
+      setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
       });
     } catch (e) {
       print("ERROR: $e");
     }
   }
-
-  Future<void> _getCurrentUserId() async {
-    try {
-      currentUserId = await ApiServices().dptToken();
-      print("Current User ID in ChatPage: $currentUserId");
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      print("Error getting current user ID: $e");
-    }
-  }
-    // with SingleTickerProviderStateMixin {
+  // with SingleTickerProviderStateMixin {
   // TabController? _tabController;
   // List<TabModel> children = [
   //   TabModel(
@@ -297,19 +283,19 @@ class _ChatPageState extends State<ChatPage>{
           ),
         ],
 
-      //   bottom: TabBar(
-      //     tabs: children.map<Widget>((child) {
-      //       return Tab(text: child.title);
-      //     }).toList(),
-      //     controller: _tabController,
-      //   ),
-      // ),
+        //   bottom: TabBar(
+        //     tabs: children.map<Widget>((child) {
+        //       return Tab(text: child.title);
+        //     }).toList(),
+        //     controller: _tabController,
+        //   ),
+        // ),
 
-      // body: TabBarView(
-      //   controller: _tabController,
-      //   children: children.map<Widget>((child) {
-      //     return child.widget;
-      //   }).toList(),
+        // body: TabBarView(
+        //   controller: _tabController,
+        //   children: children.map<Widget>((child) {
+        //     return child.widget;
+        //   }).toList(),
       ),
       body: widgetitemlist(datauser: datauser, currentUserId: currentUserId ?? ""),
     );
@@ -331,4 +317,3 @@ class TabModel {
 
   TabModel({required this.title, required this.widget});
 }
-

@@ -222,7 +222,10 @@ class _channelsState extends State<channels> {
   Future<void> _followChannel(String channelID) async {
     followedIds.add(channelID);
     var dataFollow = {'followed_channels_by_id': followedIds.toList()};
-    await ApiServices().updateUser(dataFollow, 'private/users');
+    await ApiServices().httpPUTWithToken(
+      data: dataFollow,
+      apiUrl: 'private/users',
+    );
 
     if (!mounted) {
       return;
@@ -237,7 +240,10 @@ class _channelsState extends State<channels> {
   }
 
   Future<void> _getChannel() async {
-    var data = await ApiServices().getData('private/channels');
+    var data = await ApiServices().httpGETWithToken('private/channels');
+    data = jsonDecode(data.body);
+
+    // print('data : ${data}');
 
     if (!mounted) {
       return;
@@ -249,7 +255,7 @@ class _channelsState extends State<channels> {
   }
 
   Future<void> _getUser() async {
-    String? token = await authService().getToken();
+    String? token = await AuthService().getToken();
     var userID;
     if (token != null) {
       Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
@@ -257,7 +263,7 @@ class _channelsState extends State<channels> {
       userID = decodeToken['id'];
     }
 
-    var data = await ApiServices().getData('public/users/$userID');
+    var data = await ApiServices().httpGET('public/users/$userID');
 
     if (!mounted) {
       return;

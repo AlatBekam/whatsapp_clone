@@ -328,7 +328,8 @@ class _StatusPageState extends State<StatusPage> {
 
   Future<void> _getChannel() async {
     try {
-      var data = await ApiServices().getData('private/channels');
+      var data = await ApiServices().httpGETWithToken('private/channels');
+      data = jsonDecode(data.body);
 
       if (!mounted) {
         return;
@@ -337,25 +338,33 @@ class _StatusPageState extends State<StatusPage> {
       setState(() {
         channelData = List<Map<String, dynamic>>.from(data);
       });
+
+      print('channel Data : ${channelData}');
     } catch (e) {
       print("ERROR _getChannel: $e");
     }
   }
 
   Future<void> _getStatus() async {
-    var data = await ApiServices().getData('public/users/statuses');
+    try {
+      var data = await ApiServices().httpGET('public/users/statuses');
+      data = jsonDecode(data.body);
 
-    if (!mounted) {
-      return;
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        statusData = List<Map<String, dynamic>>.from(data);
+      });
+    } catch (e) {
+      print("ERROR _getStatus: $e");
     }
-
-    setState(() {
-      statusData = List<Map<String, dynamic>>.from(data);
-    });
   }
 
   Future<void> _getViewedStatus() async {
-    var data = await ApiServices().getData('private/users/statuses');
+    var data = await ApiServices().httpGETWithToken('private/users/statuses');
+    data = jsonDecode(data.body);
 
     if (!mounted) {
       return;
@@ -369,14 +378,15 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   Future<void> _getUser() async {
-    String? token = await authService().getToken();
+    String? token = await AuthService().getToken();
     var userID;
     if (token != null) {
       Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
       userID = decodeToken['id'];
     }
 
-    var data = await ApiServices().getData('public/users/$userID');
+    var data = await ApiServices().httpGET('public/users/$userID');
+    data = jsonDecode(data.body);
 
     if (!mounted) {
       return;
@@ -435,7 +445,10 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> _followChannel(String channelID) async {
     followedIds.add(channelID);
     var dataFollow = {'followed_channels_by_id': followedIds.toList()};
-    await ApiServices().updateUser(dataFollow, 'private/users');
+    await ApiServices().httpPUTWithToken(
+      data: dataFollow,
+      apiUrl: 'private/users',
+    );
 
     if (!mounted) {
       return;
@@ -449,7 +462,10 @@ class _StatusPageState extends State<StatusPage> {
     followedIds.remove(channelID);
 
     var dataFollow = {'followed_channels_by_id': followedIds.toList()};
-    await ApiServices().updateUser(dataFollow, 'private/users');
+    await ApiServices().httpPUTWithToken(
+      data: dataFollow,
+      apiUrl: 'private/users',
+    );
 
     if (!mounted) {
       return;
@@ -462,7 +478,10 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> _viewStatus(String statusID) async {
     viewedIds.add(statusID);
     var dataViewed = {'StatusID': statusID};
-    await ApiServices().postData(dataViewed, 'private/users/status/view');
+    await ApiServices().httpPUTWithToken(
+      data: dataViewed,
+      apiUrl: 'private/users/status/view',
+    );
 
     if (!mounted) {
       return;
