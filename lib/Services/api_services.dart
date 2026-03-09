@@ -54,7 +54,7 @@ class ApiServices {
 
   Future dptToken() async {
     final token = await authService().getToken();
-    var iD = JwtDecoder.decode(token!)['id'].toString();
+    var iD = JwtDecoder.decode(token!)['id'].toString() ;
     return iD;
   }
 
@@ -139,6 +139,30 @@ class ApiServices {
       return [];
     } else {
       throw Exception("Failed to get messages: ${response.statusCode}");
+    }
+  }
+
+  /// Get or create a chat with a specific user and return chat info
+  /// [userId] - ID of the other user in the conversation
+  Future<Map<String, dynamic>?> getOrCreateChat(String userId) async {
+    var fullUrl = _baseUrl + "private/chats";
+    Uri fullURL = Uri.parse(fullUrl);
+
+    final token = await authService().getToken();
+    
+    final response = await http.post(
+      fullURL,
+      headers: _setHeadersToken(token),
+      body: jsonEncode({'user_id': userId}),
+    );
+
+    print("Get/Create Chat Response Status: ${response.statusCode}");
+    print("Get/Create Chat Response Body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      return null;
     }
   }
 

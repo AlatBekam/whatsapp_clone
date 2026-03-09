@@ -22,12 +22,14 @@ class _ChatpageState extends State<Chatpage> {
   bool _isLoading = false;
   bool _isSending = false;
   String? _currentUserId;
+  String? user_id;
+  String? currentChatId;
+  bool _argsLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _getCurrentUserId();
-    _getChatData();
   }
 
   Future<void> _getCurrentUserId() async {
@@ -46,32 +48,75 @@ class _ChatpageState extends State<Chatpage> {
   }
 
   @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_argsLoaded) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+
+      if (args is Map) {
+        user_id = args['user_id']?.toString();
+        currentChatId = args['currentChatId']?.toString();
+        print("Loaded user_id: $user_id");
+        print("Loaded currentChatId: $currentChatId");
+      }
+
+      _argsLoaded = true;
+      _getChatData();
+    }
   }
 
   Future<void> _getChatData() async {
+    // Use widget.userId as fallback if user_id is null
+    final String? targetUserId = user_id ?? widget.userId;
+    final String? targetChatId = currentChatId;
+    
+    print("Getting chat data for userId: $targetUserId, chatId: $targetChatId");
+    
+    if (targetUserId == null) {
+      print("Waiting for user ID to load...");
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final data = await ApiServices().getData("private/chats");
-
+      final data = await ApiServices().getData("/private/chats");
       // Debug: Print received data
       print("GET Response: $data");
       print("Data Type: ${data.runtimeType}");
-      print("Current user ID: $_currentUserId");
-
+      print("Filtering for user_id: $targetUserId and currentChatId: $targetChatId");
+      
       // Handle null or non-list responses
       List<Map<String, dynamic>> parsedData = [];
       if (data != null && data is Map && data['chats'] != null) {
         final chats = data['chats'] as List<dynamic>;
         for (var chat in chats) {
-          if (chat['messages'] != null) {
-            final messages = List<Map<String, dynamic>>.from(chat['messages']);
-            parsedData.addAll(messages);
+          print("Checking chat: chat_id=${chat['chat_id']}, user_id=${chat['user_id']}");
+          
+          // Try matching with chat_id if available, otherwise just match user_id
+          bool matches = false;
+          if (targetChatId != null) {
+            matches = chat['chat_id'].toString() == targetChatId;
+          } else {
+            // user_id is an array [1, 2], check if targetUserId is in the array
+            final chatUserIds = chat['user_id'];
+            if (chatUserIds is List) {
+              matches = chatUserIds.any((id) => id.toString() == targetUserId);
+            } else {
+              // If single value
+              matches = chatUserIds.toString() == targetUserId;
+            }
+          }
+          
+          if (matches) {
+            if (chat['messages'] != null) {
+              final messages = List<Map<String, dynamic>>.from(chat['messages']);
+              parsedData.addAll(messages);
+            }
+            break;
           }
         }
       }

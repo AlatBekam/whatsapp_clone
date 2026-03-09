@@ -20,11 +20,20 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   int _currentIndex = 0;
+  String? currentUserId;
 
+  @override
   void _changeTab(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadUserId();
   }
 
   final List<Widget> _pages = [
@@ -45,33 +54,96 @@ class _homeState extends State<home> {
       ),
     );
   }
+
+   Future<String?> getUserId() async {
+    return await ApiServices().dptToken();
+  }
+
+  Future<void> loadUserId() async {
+    currentUserId = await getUserId();
+    setState(() {
+      
+    });
+  }
+  }
+
+Widget widgetitemlist({
+  required List<Map<String, dynamic>> datauser,
+  required String currentUserId,
+}) {
+  var filteredUsers =
+      datauser.where((user) => user['id'].toString() != currentUserId).toList();
+
+  return ListView.builder(
+    itemCount: filteredUsers.length,
+    itemBuilder: (context, index) {
+      var item = filteredUsers[index];
+
+      return ListTile(
+        title: Text(item['name']?.toString() ?? 'id'),
+        subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
+        leading: CircleAvatar(
+          backgroundColor: Colors.green,
+          child: Text("C$index"),
+        ),
+        onTap: () async {
+          // Get or create chat first to get chat_id
+          final userId = item['id']?.toString() ?? "0";
+          final chatData = await ApiServices().getOrCreateChat(userId);
+          
+          String? chatId;
+          if (chatData != null) {
+            // Try to get chat_id from response - adjust based on your API response structure
+            chatId = chatData['chat_id']?.toString() ?? 
+                     chatData['id']?.toString() ??
+                     chatData['id_chat']?.toString();
+            print("Got chat_id: $chatId from chatData: $chatData");
+          }
+          
+          if (!context.mounted) return;
+          Navigator.pushNamed(
+            context,
+            '/chat',
+            arguments: {
+              'title': item['name']?.toString() ?? "Chat",
+              'user_id': userId,
+              'chat_id': chatId,
+            },
+          );
+        },
+      );
+    },
+  );
 }
 
-Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) =>
-    ListView.builder(
-      itemCount: datauser.length,
-      itemBuilder: (context, index) {
-        var item = datauser[index];
-        return ListTile(
-          title: Text(item['name']?.toString() ?? "Chat $index"),
-          subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
-          leading: CircleAvatar(
-            backgroundColor: Colors.green,
-            child: Text("C$index"),
-          ),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/chat',
-              arguments: {
-                'title': item['name']?.toString() ?? "Chat",
-                'user_id': item['id']?.toString() ?? "0",
-              },
-            );
-          },
-        );
-      },
-    );
+
+
+
+// Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) => 
+//     ListView.builder(
+//       itemCount: datauser.length,
+//       itemBuilder: (context, index) {
+//         var item = datauser[index];
+//         return ListTile(
+//           title: Text(item['name']?.toString() ?? 'id'),
+//           subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
+//           leading: CircleAvatar(
+//             backgroundColor: Colors.green,
+//             child: Text("C$index"),
+//           ),
+//           onTap: () {
+//             Navigator.pushNamed(
+//               context,
+//               '/chat',
+//               arguments: {
+//                 'title': item['name']?.toString() ?? "Chat",
+//                 'user_id': item['id']?.toString() ?? "0",
+//               },
+//             );
+//           },
+//         );
+//       },
+//     );
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -81,17 +153,31 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage>{
-Future<void> _getUser() async {
-  try {
-    final data = await api.getData('public/users');
-    print("DATA: $data");
-    setState((){
-      datauser = List<Map<String, dynamic>>.from(data);
-    });
-  } catch (e) {
-    print("ERROR: $e");
+  String? currentUserId;
+
+  Future<void> _getUser() async {
+    try {
+      final data = await api.getData('public/users');
+      print("DATA: $data");
+      setState((){
+        datauser = List<Map<String, dynamic>>.from(data);
+      });
+    } catch (e) {
+      print("ERROR: $e");
+    }
   }
-}
+
+  Future<void> _getCurrentUserId() async {
+    try {
+      currentUserId = await ApiServices().dptToken();
+      print("Current User ID in ChatPage: $currentUserId");
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      print("Error getting current user ID: $e");
+    }
+  }
     // with SingleTickerProviderStateMixin {
   // TabController? _tabController;
   // List<TabModel> children = [
@@ -141,6 +227,7 @@ Future<void> _getUser() async {
   void initState() {
     super.initState();
     _getUser();
+    _getCurrentUserId();
     // _tabController = TabController(length: children.length, vsync: this);
   }
 
@@ -224,7 +311,7 @@ Future<void> _getUser() async {
       //     return child.widget;
       //   }).toList(),
       ),
-      body: widgetitemlist(datauser: datauser),
+      body: widgetitemlist(datauser: datauser, currentUserId: currentUserId ?? ""),
     );
   }
 }
