@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/add_channel.dart';
+import 'package:whatsapp_clone/add_status.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
@@ -44,6 +45,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     case '/addChannel':
       return MaterialPageRoute(builder: (context) => addChannel());
+
+    case '/addStatus':
+      return MaterialPageRoute(builder: (context) => addStatus());
 
     case '/kontak':
       return MaterialPageRoute(builder: (context) => SplashScreen());

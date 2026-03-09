@@ -18,7 +18,6 @@ Map<String, dynamic>? userData = {};
 class StatusPage extends StatefulWidget {
   const StatusPage({super.key});
 
-  @override
   State<StatusPage> createState() => _StatusPageState();
 }
 
@@ -165,51 +164,60 @@ class _StatusPageState extends State<StatusPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ListTile(
-                              title: Text(
-                                "Add Status",
-                                style: TextStyle(fontSize: ukText - 2),
-                              ),
-                              subtitle: Text(
-                                'Disappears after 24 hours',
-                                style: TextStyle(fontSize: ukText - 5),
-                              ),
+                            GestureDetector(
+                              onTap: () async {
+                                await Navigator.pushNamed(
+                                  context,
+                                  "/addStatus",
+                                );
+                                _getUser();
+                              },
+                              child: ListTile(
+                                title: Text(
+                                  "Add Status",
+                                  style: TextStyle(fontSize: ukText - 2),
+                                ),
+                                subtitle: Text(
+                                  'Disappears after 24 hours',
+                                  style: TextStyle(fontSize: ukText - 5),
+                                ),
 
-                              leading: Stack(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/person-circle.svg',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-
-                                  Positioned(
-                                    top: 30,
-                                    left: 30,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
+                                leading: Stack(
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 50,
                                       decoration: BoxDecoration(
-                                        color: warna.Hijau(),
                                         shape: BoxShape.circle,
                                       ),
                                       child: SvgPicture.asset(
-                                        'assets/plus.svg',
+                                        'assets/person-circle.svg',
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
 
-                              contentPadding: EdgeInsets.only(
-                                left: 5,
-                                right: 5,
+                                    Positioned(
+                                      top: 30,
+                                      left: 30,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: warna.Hijau(),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/plus.svg',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                contentPadding: EdgeInsets.only(
+                                  left: 5,
+                                  right: 5,
+                                ),
                               ),
                             ),
 
