@@ -19,7 +19,7 @@ class _splashScreen extends State<SplashScreen> {
   }
 
   Future<void> _checkIfLogin() async {
-    String? token = await authService().getToken();
+    String? token = await AuthService().getToken();
 
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -35,7 +35,7 @@ class _splashScreen extends State<SplashScreen> {
     int timeNow = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     if (userEXP <= timeNow) {
-      await authService().removeToken();
+      await AuthService().removeToken();
 
       if (!mounted) return;
 

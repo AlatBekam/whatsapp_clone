@@ -159,7 +159,10 @@ class _registerState extends State<register> {
   void _register() async {
     var dataUser = {'name': user, 'email': email, 'password': password};
 
-    var res = await ApiServices().register(dataUser, 'public/users');
+    var res = await ApiServices().httpPOST(
+      data: dataUser,
+      apiUrl: 'public/users',
+    );
 
     var body = jsonDecode(res.body);
 

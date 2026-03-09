@@ -148,14 +148,17 @@ class _LoginState extends State<Login> {
 
     var dataUser = {'name': user, 'password': password};
 
-    var res = await ApiServices().auth(dataUser, 'public/login');
+    var res = await ApiServices().httpPOST(
+      data: dataUser,
+      apiUrl: 'public/login',
+    );
     // print(res.body);
     var body = jsonDecode(res.body);
 
     if (body['success']) {
       String token = body['token'];
 
-      await authService().addToken(token);
+      await AuthService().addToken(token);
       Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
     }
   }
