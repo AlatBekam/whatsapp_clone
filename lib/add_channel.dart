@@ -148,7 +148,7 @@ class _addChannelState extends State<addChannel> {
 
     var body = jsonDecode(res.body);
     if (body['success']) {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
   }
 }

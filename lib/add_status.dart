@@ -51,50 +51,148 @@ class _addStatusState extends State<addStatus> {
               Positioned(
                 bottom: 0,
                 child: SizedBox(
-                  height: 70,
+                  height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  child: Container(
-                    color: warna.AbuAbuTua(),
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 10,
-                      children: [
-                        Row(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: 130,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                height: 45,
+                                width: 45,
+                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: warna.Hitam(),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/close-X.svg',
+                                  color: warna.Putih(),
+                                ),
+                              ),
+                            ),
+
                             Container(
-                              child: Text(
-                                'sdasda',
-                                style: TextStyle(color: warna.Putih()),
+                              margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                              child: Row(
+                                spacing: 5,
+                                children: [
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: warna.Hitam(),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/letter-a.svg',
+                                      color: warna.Putih(),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: warna.Hitam(),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/color-palette.svg',
+                                      color: warna.Putih(),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            return null;
-                          },
+                      ),
+                      SizedBox(
+                        height: 70,
+                        width: MediaQuery.of(context).size.width,
+                        child: Container(
+                          color: warna.AbuAbuTua(),
+                          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 10,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: warna.Hitam(),
+                                      borderRadius: BorderRadius.circular(35),
+                                    ),
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      spacing: 5,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/logopembaruan.svg',
+                                          color: warna.Putih(),
+                                          width: 20,
+                                          height: 20,
+                                        ),
 
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: warna.Hijau(),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'assets/paper-plane-right.svg',
-                                width: 20,
-                                height: 20,
-                                color: warna.Putih(),
+                                        Text(
+                                          'Status (10 Excluded)',
+                                          style: TextStyle(
+                                            color: warna.Putih(),
+                                            fontSize: ukText - 6,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                              GestureDetector(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _addStatus();
+                                  }
+                                },
+
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: warna.Hijau(),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      'assets/paper-plane-right.svg',
+                                      width: 20,
+                                      height: 20,
+                                      color: warna.Putih(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -106,17 +204,16 @@ class _addStatusState extends State<addStatus> {
   }
 
   void _addStatus() async {
-    // var dataChannel = {
-    // };
+    var StatusData = {'Content': contentStatus};
 
-    // var res = await ApiServices().httpPOSTWithToken(
-    //   data: dataChannel,
-    //   apiUrl: 'public/channels',
-    // );
+    var res = await ApiServices().httpPOSTWithToken(
+      data: StatusData,
+      apiUrl: 'private/users/status',
+    );
 
-    // var body = jsonDecode(res.body);
-    // if (body['success']) {
-    //   Navigator.pop(context);
-    // }
+    var body = jsonDecode(res.body);
+    if (body['success']) {
+      Navigator.pop(context);
+    }
   }
 }

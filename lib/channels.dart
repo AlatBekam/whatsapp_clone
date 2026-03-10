@@ -39,6 +39,7 @@ class _channelsState extends State<channels> {
   // }
   // print(channelData);
   Widget build(BuildContext context) {
+    print('channels Load');
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -264,6 +265,7 @@ class _channelsState extends State<channels> {
     }
 
     var data = await ApiServices().httpGET('public/users/$userID');
+    data = jsonDecode(data.body);
 
     if (!mounted) {
       return;

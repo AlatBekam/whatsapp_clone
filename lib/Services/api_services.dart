@@ -52,9 +52,7 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    String? a = await AuthService().getToken();
-
-    return await http.get(fullURL, headers: _setHeadersToken(await a));
+    return await http.get(fullURL, headers: _setHeadersToken(await _token));
   }
 
   Future httpPUT({Map<String, dynamic>? data, required String apiUrl}) async {

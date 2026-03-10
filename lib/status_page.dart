@@ -305,7 +305,7 @@ class _StatusPageState extends State<StatusPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             await Navigator.pushNamed(context, "/addChannel");
-                            _getUser();
+                            await _getUser();
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -412,6 +412,7 @@ class _StatusPageState extends State<StatusPage> {
             .map((index) => index['StatusID'])
             .toSet(),
       );
+      _getChannel();
     });
 
     _splitChannel();
