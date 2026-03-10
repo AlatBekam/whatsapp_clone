@@ -15,8 +15,8 @@ class KomunitasInfoPage extends StatefulWidget {
 class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
 
     // controller untuk edit data
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
+    final TextEditingController nama = TextEditingController();
+    final TextEditingController deskripsi = TextEditingController();
 
     // menyimpan data community yang dikirim dari halaman sebelumnya
     Map community = {};
@@ -35,8 +35,8 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
             print("COMMUNITY DATA:");
             print(community);
             
-            nameController.text = community["community_name"] ?? "";
-            descController.text = community["description"] ?? "";
+            nama.text = community["community_name"] ?? "";
+            deskripsi.text = community["description"] ?? "";
             }
             isLoaded = true;
         }
@@ -125,7 +125,7 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
             const SizedBox(height: 8),
 
             TextField(
-              controller: nameController,
+              controller: nama,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -146,7 +146,7 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
             const SizedBox(height: 8),
 
             TextField(
-              controller: descController,
+              controller: deskripsi,
               maxLines: 3,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -165,16 +165,22 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () async {
-
-                  await ApiServices().httpPUTWithToken(
-                    apiUrl: "private/community/${community["community_id"]}",
-                    data: {
-                      "community_name": nameController.text,
-                      "description": descController.text,
-                    },
-                  );
-
-                  Navigator.pop(context, true);
+                  if(nama.text.isNotEmpty && deskripsi.text.isNotEmpty) {
+                    var response = await ApiServices().httpPUTWithToken(
+                      apiUrl: "private/community/${community["community_id"]}",
+                      data: {
+                        "community_name": nama.text,
+                        "description": deskripsi.text,
+                      },
+                    );
+                    if (response.statusCode == 200) {
+                      Navigator.pop(context, true);
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Nama dan deskripsi harus diisi"))
+                    );
+                  }
                 },
                 child: const Text(
                   "Simpan Perubahan",
