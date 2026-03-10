@@ -42,28 +42,6 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
         }
     }
 
-    // fungsi update community
-    Future updateCommunity() async {
-
-        await ApiServices().updateCommunity(
-        community["community_id"].toString(),
-        nameController.text,
-        descController.text,
-        );
-
-        Navigator.pop(context, true);
-    }
-
-    // fungsi delete community
-    Future deleteCommunity() async {
-
-        await ApiServices().deleteCommunity(
-        community["community_id"].toString(),
-        );
-
-        Navigator.pop(context, true);
-    }
-
   @override
   Widget build(BuildContext context) {
 
@@ -100,13 +78,16 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
               width: 19,
               color: warna.Hitam(),
             ),
-            onSelected: (value) {
-
+            onSelected: (value) async {
               if (value == 'delete') {
-                deleteCommunity();
-              }
+                  await ApiServices().httpDELETEWithToken(
+                    "private/community/${community["community_id"]}"
+                  );
 
+                  Navigator.pop(context, true);
+              }
             },
+            
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'delete',
@@ -183,8 +164,17 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
                   backgroundColor: warna.Hijau(),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  updateCommunity();
+                onPressed: () async {
+
+                  await ApiServices().httpPUTWithToken(
+                    apiUrl: "private/community/${community["community_id"]}",
+                    data: {
+                      "community_name": nameController.text,
+                      "description": descController.text,
+                    },
+                  );
+
+                  Navigator.pop(context, true);
                 },
                 child: const Text(
                   "Simpan Perubahan",
