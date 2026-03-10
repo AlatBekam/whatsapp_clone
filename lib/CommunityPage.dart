@@ -18,7 +18,7 @@ class _KomunitasPageState extends State<KomunitasPage> {
     late Future communityFuture;
 
     Future getCommunity() async {
-      return await ApiServices().getCommunity();
+      return await ApiServices().httpGETWithToken("private/community");
     }
 
     @override
@@ -165,7 +165,8 @@ class _KomunitasPageState extends State<KomunitasPage> {
                                 if (!snapshot.hasData) {
                                   return Center(child: CircularProgressIndicator());
                                 }
-                                List data = snapshot.data;
+                                var response = snapshot.data;
+                                List data = jsonDecode(response.body);
 
                                 List<Map<String, dynamic>> communities =
                                     data.map((e) => Map<String, dynamic>.from(e)).toList();
@@ -203,13 +204,6 @@ Widget CommunityCard(BuildContext context, Map<String, dynamic> community,  Void
           color: warna.Putih(),
           child: InkWell(
             onTap: () async {
-              //print("COMMUNITY SENT:");
-              //print(community);
-              // await Navigator.pushNamed(
-              //   context,
-              //   '/CommunityInfo',
-              //   arguments: community,
-              // );
               final result = await Navigator.pushNamed(
                 context,
                 '/CommunityInfo',

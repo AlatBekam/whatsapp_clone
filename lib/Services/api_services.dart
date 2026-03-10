@@ -41,14 +41,14 @@ class ApiServices {
     );
   }
 
-  Future httpGET(String apiUrl) async {
+  httpGET(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
     return await http.get(fullURL, headers: _setHeadersToken(null));
   }
 
-  Future httpGETWithToken(String apiUrl) async {
+  httpGETWithToken(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
@@ -57,7 +57,7 @@ class ApiServices {
     return await http.get(fullURL, headers: _setHeadersToken(await a));
   }
 
-  Future httpPUT({Map<String, dynamic>? data, required String apiUrl}) async {
+  httpPUT({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
@@ -68,76 +68,27 @@ class ApiServices {
     );
   }
 
-  Future httpPUTWithToken({
-    Map<String, dynamic>? data,
-    required String apiUrl,
-  }) async {
-    var fullUrl = _baseUrl + apiUrl;
-    Uri fullURL = Uri.parse(fullUrl);
+    Future httpPUTWithToken({
+      Map<String, dynamic>? data,
+      required String apiUrl,
+    }) async {
+      var fullUrl = _baseUrl + apiUrl;
+      Uri fullURL = Uri.parse(fullUrl);
 
-    return await http.post(
-      fullURL,
-      headers: _setHeadersToken(await _token),
-      body: jsonEncode(data),
-    );
-  }
+      return await http.put(
+        fullURL,
+        headers: _setHeadersToken(await _token),
+        body: jsonEncode(data),
+      );
+    }
 
   Future httpDELETEWithToken(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    String? token = await AuthService().getToken();
-
     return await http.delete(
       fullURL,
-      headers: _setHeadersToken(token),
-    );
-  }
-
-  Future createCommunity(String name, String desc) async {
-    var url = "private/community";
-
-    Map<String, dynamic> datas = {
-      "community_name": name,
-      "description": desc,
-      "announcement_group_id": null,
-    };
-
-    return await httpPOSTWithToken(data: datas, apiUrl: url);
-  }
-
-  Future<List<dynamic>> getCommunity() async {
-    var url = _baseUrl + "private/community";
-    final token = await AuthService().getToken();
-    var response = await http.get(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
-    );
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception("Failed to load community");
-    }
-  }
-
-  Future deleteCommunity(String id) async {
-    var url = _baseUrl + "private/community/$id";
-    final token = await AuthService().getToken();
-
-    return await http.delete(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
-    );
-  }
-
-  Future updateCommunity(String id, String name, String desc) async {
-    var url = _baseUrl + "private/community/$id";
-    final token = await AuthService().getToken();
-    Map data = {"community_name": name, "description": desc};
-    return await http.put(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
-      body: jsonEncode(data),
+      headers: _setHeadersToken(await _token),
     );
   }
 }
