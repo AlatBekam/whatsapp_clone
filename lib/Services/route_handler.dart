@@ -21,8 +21,19 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final args = settings.arguments as Map<String, dynamic>?;
       final title = args?['title'] as String? ?? "Chat";
       final userId = args?['user_id'] as String? ?? "0";
+      final chatId = args?['chat_id'] as String?;
       return MaterialPageRoute(
-        builder: (context) => Chatpage(title: title, userId: userId),
+        builder: (context) => Chatpage(
+          title: title, 
+          userId: userId,
+        ),
+        settings: RouteSettings(
+          arguments: {
+            'title': title,
+            'user_id': userId,
+            'chat_id': chatId,
+          },
+        ),
       );
 
     case '/splashScreen':
