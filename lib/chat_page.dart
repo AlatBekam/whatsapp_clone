@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -56,9 +58,9 @@ class _ChatpageState extends State<Chatpage> {
 
       if (args is Map) {
         user_id = args['user_id']?.toString();
-        currentChatId = args['currentChatId']?.toString();
+        currentChatId = args['chat_id']?.toString();
         print("Loaded user_id: $user_id");
-        print("Loaded currentChatId: $currentChatId");
+        print("Loaded chat_id: $currentChatId");
       }
 
       _argsLoaded = true;
@@ -83,7 +85,9 @@ class _ChatpageState extends State<Chatpage> {
     });
 
     try {
-      final data = await ApiServices().httpGETWithToken("private/chats");
+      final datauser = await ApiServices().httpGETWithToken("private/chats");
+      final data = jsonDecode(datauser.body);
+
 
       // Debug: Print received data
       print("GET Response: $data");
@@ -392,11 +396,12 @@ class _MessageBubble extends StatelessWidget {
   String _formatTime(String timeString) {
     if (timeString.isEmpty) return '';
     try {
-      final DateTime dateTime = DateTime.parse(timeString);
+      final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(timeString) * 1000).toLocal();
       final hour = dateTime.hour.toString().padLeft(2, '0');
       final minute = dateTime.minute.toString().padLeft(2, '0');
       return '$hour:$minute';
     } catch (e) {
+      print("Error parsing time: $e");
       return '';
     }
   }

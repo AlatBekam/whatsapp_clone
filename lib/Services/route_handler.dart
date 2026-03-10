@@ -30,7 +30,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           arguments: {
             'title': title,
             'user_id': userId,
-            'currentChatId': chatId,
+            'chat_id': chatId,
           },
         ),
       );
