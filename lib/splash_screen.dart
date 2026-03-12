@@ -30,7 +30,7 @@ class _splashScreen extends State<SplashScreen> {
       return;
     }
 
-    Map<String, dynamic> decodeToken = JwtDecoder.decode(token!);
+    Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
     int userEXP = decodeToken['exp'];
     int timeNow = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
