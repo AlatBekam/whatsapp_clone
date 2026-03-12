@@ -1,68 +1,34 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
-import 'CreateCommunityPage.dart';
+import 'package:get/get.dart';
+import '../Models/CommunityModel.dart';
+import '../Controllers/CommunityController.dart';
 
-class KomunitasInfoPage extends StatefulWidget {
-    const KomunitasInfoPage({super.key});
+class KomunitasInfoPage extends StatelessWidget {
+  KomunitasInfoPage({super.key});
 
-    @override
-    State<KomunitasInfoPage> createState() => _KomunitasInfoPageState();
-}
-
-class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
-
-    // controller untuk edit data
-    final TextEditingController nama = TextEditingController();
-    final TextEditingController deskripsi = TextEditingController();
-
-    // menyimpan data community yang dikirim dari halaman sebelumnya
-    Map community = {};
-
-    bool isLoaded = false;
-
-    @override
-    void didChangeDependencies() {
-        super.didChangeDependencies();
-        if (!isLoaded) {
-            final args = ModalRoute.of(context)!.settings.arguments;
-            print(args);
-            if (args != null && args is Map<String, dynamic>) {
-            community = args;  
-
-            print("COMMUNITY DATA:");
-            print(community);
-            
-            nama.text = community["community_name"] ?? "";
-            deskripsi.text = community["description"] ?? "";
-            }
-            isLoaded = true;
-        }
-    }
+  final CommunityController controller = Get.find();
+  final CommunityModel community = Get.arguments;
+  final TextEditingController nama = TextEditingController();
+  final TextEditingController deskripsi = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-    if (!isLoaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
+    nama.text = community.communityName;
+    deskripsi.text = community.description;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: warna.Putih(),
         title: Text(
-          community["community_name"]?.toString() ?? "",
+          community.communityName,
           style: TextStyle(
             color: warna.Hitam(),
             fontSize: 19,
           ),
         ),
         actions: [
-          PopupMenuButton<String>(
+          PopupMenuButton(
             color: warna.Putih(),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -79,39 +45,31 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
               color: warna.Hitam(),
             ),
             onSelected: (value) async {
-              if (value == 'delete') {
-                  await ApiServices().httpDELETEWithToken(
-                    "private/community/${community["community_id"]}"
-                  );
-
-                  Navigator.pop(context, true);
+              if(value == "delete"){
+                await controller.deleteCommunity(
+                  community.communityId
+                );
+                Get.back(result:true);
               }
             },
-            
-            itemBuilder: (context) => [
+            itemBuilder: (context)=>[
               PopupMenuItem(
-                value: 'delete',
+                value: "delete",
                 child: Text(
-                  'Nonaktifkan Community',
-                  style: TextStyle(
-                    color: warna.Merah(),
-                    fontWeight: FontWeight.w400,
-                  ),
+                  "Nonaktifkan Community",
+                  style: TextStyle(color: warna.Merah(), fontWeight: FontWeight.w400),
                 ),
-              ),
+              )
             ],
           )
         ],
       ),
-
       body: Container(
         color: warna.Putih(),
         padding: const EdgeInsets.all(16),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(height: 10),
 
             Text(
@@ -133,7 +91,7 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height:20),
 
             Text(
               "Deskripsi",
@@ -143,11 +101,11 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height:20),
 
             TextField(
               controller: deskripsi,
-              maxLines: 3,
+              maxLines:3,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -155,7 +113,7 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height:30),
 
             SizedBox(
               width: double.infinity,
@@ -166,19 +124,18 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
                 ),
                 onPressed: () async {
                   if(nama.text.isNotEmpty && deskripsi.text.isNotEmpty) {
-                    var response = await ApiServices().httpPUTWithToken(
-                      apiUrl: "private/community/${community["community_id"]}",
-                      data: {
-                        "community_name": nama.text,
-                        "description": deskripsi.text,
-                      },
+                    var result = await controller.updateCommunity(
+                      community.communityId,
+                      nama.text,
+                      deskripsi.text,
                     );
-                    if (response.statusCode == 200) {
-                      Navigator.pop(context, true);
+                    if (result) {
+                      Get.back(result: true);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Nama dan deskripsi harus diisi"))
+                    Get.snackbar(
+                      "Error",
+                      "Nama dan deskripsi harus diisi",
                     );
                   }
                 },
@@ -190,8 +147,7 @@ class _KomunitasInfoPageState extends State<KomunitasInfoPage> {
                   ),
                 ),
               ),
-            )
-
+            ),
           ],
         ),
       ),

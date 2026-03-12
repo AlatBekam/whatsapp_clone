@@ -1,7 +1,7 @@
 /*
 MODEL
 1. menggantikan penggunaan Map<String,dynamic>
-2. Sebagai blueprint yang mengubah data mentah (misalnya dari JSON API) menjadi objek Dart
+2. Sebagai blueprint yang mengubah data mentah dari JSON API menjadi objek Dart
 */
 class CommunityModel {
 

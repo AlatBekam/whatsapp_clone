@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:get/get.dart';
+import 'Controllers/CommunityController.dart';
 
 class CreateCommunity extends StatelessWidget {
   CreateCommunity({super.key});
 
+  final CommunityController controller = Get.find();
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
 
@@ -82,23 +85,17 @@ class CreateCommunity extends StatelessWidget {
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
           if (nama.text.isNotEmpty && deskripsi.text.isNotEmpty) {
-
-            var response = await ApiServices().httpPOSTWithToken(
-              apiUrl: "private/community",
-              data: {
-                "community_name": nama.text,
-                "description": deskripsi.text,
-                "announcement_group_id": null,
-              }
+            var result = await controller.createCommunity(
+              nama.text,
+              deskripsi.text
             );
-
-            if (response.statusCode == 200) {
-              Navigator.pop(context, true);
+            if(result){
+              Get.back(result: true);
             }
-
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Nama dan deskripsi harus diisi"))
+            Get.snackbar(
+              "Error",
+              "Nama dan deskripsi harus diisi",
             );
           }
         },

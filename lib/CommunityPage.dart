@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'Controllers/CommunityController.dart';
 import 'Services/Theme.dart';
 
@@ -34,10 +35,7 @@ class KomunitasPage extends StatelessWidget {
             ),
             onSelected: (value) {
               if(value == "Pengaturan"){
-                Navigator.pushNamed(
-                    context,
-                    '/Pengaturan'
-                );
+                Get.toNamed(Routes.pengaturan);
               }
             },
 
@@ -70,11 +68,7 @@ class KomunitasPage extends StatelessWidget {
               color: warna.Putih(),
               child: InkWell(
                 onTap: () async {
-                  var result =
-                      await Navigator.pushNamed(
-                          context,
-                          '/CreateCommunity'
-                      );
+                  var result = await Get.toNamed(Routes.createCommunity);
                   if(result == true){
                     controller.fetchCommunities();
                   }
@@ -165,59 +159,221 @@ class KomunitasPage extends StatelessWidget {
   }
 }
 
-
-// COMMUNITY CARD
 Widget CommunityCard(
-    BuildContext context,
-    dynamic community
-    ){
-  return Material(
-    color: warna.Putih(),
-    child: InkWell(
-      onTap: (){
-        Navigator.pushNamed(
-            context,
-            '/CommunityInfo',
-            arguments: community
-        );
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12
+  BuildContext context,
+  dynamic community
+) {
+  return Column(
+    children: [
+      Material(
+        color: warna.Putih(),
+        child: InkWell(
+          onTap: () {
+            Get.toNamed(Routes.communityInfo, arguments: community);
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: warna.AbuAbu(),
+                  width: 1
+                )
+              )
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: warna.AbuAbu(),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/logokomunitas.svg',
+                      color: warna.Putih(),
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15),
+                Text(
+                  community.communityName,
+                  style: TextStyle(
+                    color: warna.Hitam(),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 38,
-              decoration: BoxDecoration(
-                color: warna.AbuAbu(),
-                borderRadius:
-                BorderRadius.circular(9),
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/logokomunitas.svg',
-                  color: warna.Putih(),
-                  width: 20,
-                  height: 20,
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Material(
+            color: warna.Putih(),
+            child: InkWell(
+              onTap: () {
+                Get.toNamed(Routes.createCommunity);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 35,
+                      height: 33,
+                      decoration: BoxDecoration(
+                        color: warna.Hijau(),
+                        borderRadius: BorderRadius.circular(9)
+                      ),
+                      margin: EdgeInsets.only(left: 2),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/speaker.svg',
+                          color: warna.HijauTua(),
+                          width: 20,
+                          height: 20,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pengumuman',
+                          style: TextStyle(
+                            color: warna.Hitam(),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          'Name: Text',
+                          style: TextStyle(
+                            color: warna.AbuAbuTua(),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
-            SizedBox(width: 15),
-            Text(
-              community.communityName ??
-                  community["community_name"],
-              style: TextStyle(
-                color: warna.Hitam(),
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
+          ),
+          Material(
+            color: warna.Putih(),
+            child: InkWell(
+              onTap: () {
+                Get.toNamed(Routes.createCommunity);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 35,
+                      height: 33,
+                      decoration: BoxDecoration(
+                        color: warna.AbuAbu(),
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      margin: EdgeInsets.only(left: 2),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/logokomunitas.svg',
+                          color: warna.Putih(),
+                          width: 20,
+                          height: 20,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 15),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'GRUP KE-1',
+                          style: TextStyle(
+                            color: warna.Hitam(),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          'Name: Text',
+                          style: TextStyle(
+                            color: warna.AbuAbuTua(),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
-    ),
+            ),
+          ),
+          Material(
+            color: warna.Putih(),
+            child: InkWell(
+              onTap: () {
+                Get.toNamed(Routes.createCommunity);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 9
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 35,
+                      height: 33,
+                      child: Center(
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: warna.AbuAbuTua(),
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Lihat Semua',
+                      style: TextStyle(
+                        color: warna.AbuAbuTua(),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      )
+    ],
   );
 }
