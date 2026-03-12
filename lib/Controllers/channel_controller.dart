@@ -48,7 +48,7 @@ class ControllerChannel extends GetxController {
       channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
       // print('ISI channelsData : ${channelsDatas}');
     } catch (e) {
-      print('Error getChannel status_chat_controller.dart : ${e}');
+      print('Error getChannel channel_controller.dart : ${e}');
     }
   }
 

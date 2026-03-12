@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Controllers/status_chat_controller.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
@@ -22,12 +23,14 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> {
   final controllerChannel = Get.put(ControllerChannel());
+  final controllerStatus = Get.put(ControllerStatus());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controllerChannel.initData();
+    controllerStatus.initData();
   }
 
   @override
@@ -90,21 +93,25 @@ class _StatusPageState extends State<StatusPage> {
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
-                                        // ...TemplateStatusBox(
-                                        //   listData: _nonViewedStatus,
-                                        //   onStatusTap: (item) {
-                                        //     _viewStatus(item['StatusID']);
-                                        //   },
-                                        // ),
+                                        ...TemplateStatusBox(
+                                          listData:
+                                              controllerStatus.nonViewedStatus,
+                                          onStatusTap: (item) {
+                                            controllerStatus.viewStatus(
+                                              item['StatusID'],
+                                            );
+                                          },
+                                        ),
 
-                                        // Text('pisah'),
+                                        Text('pisah'),
 
-                                        // ...TemplateStatusBox(
-                                        //   listData: _viewedStatus,
-                                        //   onStatusTap: (item) {
-                                        //     setState(() {});
-                                        //   },
-                                        // ),
+                                        ...TemplateStatusBox(
+                                          listData:
+                                              controllerStatus.viewedStatus,
+                                          onStatusTap: (item) {
+                                            ;
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
