@@ -175,7 +175,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       var data = await api.httpGET('public/users');
       data = jsonDecode(data.body);
-      print("DATA: $data");
+      // print("DATA: $data");
       setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
       });
@@ -190,13 +190,13 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _getCurrentId() async {
     try {
       String? token = await AuthService().getToken();
-      print("token: $token");
+      // print("token: $token");
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
         setState(() {
           currentUserId = decodeToken['id'];
         });
-        print("user id: $currentUserId");
+        // print("user id: $currentUserId");
       }
     } catch (e) {
       print("error: $e");

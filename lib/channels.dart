@@ -8,6 +8,7 @@ import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/widgets/template_chat.dart';
 
 List<Map<String, dynamic>> channelData = [];
 
