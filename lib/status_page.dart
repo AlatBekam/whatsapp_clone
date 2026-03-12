@@ -4,6 +4,7 @@ import 'package:whatsapp_clone/Controllers/channel_controller.dart';
 import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
 
 double ukText = 21;
@@ -294,8 +295,8 @@ class _StatusPageState extends State<StatusPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            await Navigator.pushNamed(context, "/channels");
+                          onPressed: () {
+                            Get.toNamed(Routes.channels);
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -318,7 +319,13 @@ class _StatusPageState extends State<StatusPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await Navigator.pushNamed(context, "/addChannel");
+                            var result = await Get.toNamed(Routes.addChannel);
+
+                            print('result muncul $result');
+
+                            if (result == true) {
+                              controllerChannel.initData();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,

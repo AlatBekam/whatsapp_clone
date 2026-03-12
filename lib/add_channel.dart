@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
@@ -14,6 +16,7 @@ class addChannel extends StatefulWidget {
 
 class _addChannelState extends State<addChannel> {
   final _formKey = GlobalKey<FormState>();
+  final controllerChannel = Get.put(ControllerChannel());
   var nameChannel, descriptionChannel, typeChannel;
 
   @override
@@ -113,9 +116,17 @@ class _addChannelState extends State<addChannel> {
                 width: double.infinity,
                 height: 40,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      _addChannel();
+                      bool success = await controllerChannel.addChannel(
+                        nameChannel,
+                        typeChannel,
+                        descriptionChannel,
+                      );
+
+                      if (success) {
+                        Get.back(result: true);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -132,23 +143,5 @@ class _addChannelState extends State<addChannel> {
         ),
       ),
     );
-  }
-
-  void _addChannel() async {
-    var dataChannel = {
-      'channel_name': nameChannel,
-      'channel_type': typeChannel,
-      'description': descriptionChannel,
-    };
-
-    var res = await ApiServices().httpPOSTWithToken(
-      data: dataChannel,
-      apiUrl: 'public/channels',
-    );
-
-    var body = jsonDecode(res.body);
-    if (body['success']) {
-      Navigator.pop(context, true);
-    }
   }
 }
