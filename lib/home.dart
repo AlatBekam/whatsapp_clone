@@ -10,6 +10,7 @@ import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/chat_page.dart';
+import 'package:get/get.dart';
 
 
 List<Map<String, dynamic>> datauser = [];
@@ -122,8 +123,7 @@ class _homeState extends State<home> {
             }
             
             if (!context.mounted) return;
-            Navigator.pushNamed(
-              context,
+            Get.toNamed(
               '/chat',
               arguments: {
                 'title': item['name']?.toString() ?? "Chat",

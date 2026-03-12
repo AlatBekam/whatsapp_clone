@@ -12,78 +12,98 @@ import 'package:whatsapp_clone/splash_screen.dart';
 import 'package:whatsapp_clone/PengaturanPage.dart';
 import 'package:whatsapp_clone/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/status_page.dart';
+import 'package:get/get.dart';
 
-Route<dynamic> generateRoute(RouteSettings settings) {
-  switch (settings.name) {
-    case '/home':
-      return MaterialPageRoute(builder: (context) => home());
-    case '/chat':
-      final args = settings.arguments as Map<String, dynamic>?;
-      final title = args?['title'] as String? ?? "Chat";
-      final userId = args?['user_id'] as String? ?? "0";
-      final chatId = args?['chat_id'] as String?;
-      return MaterialPageRoute(
-        builder: (context) => Chatpage(
-          title: title, 
-          userId: userId,
-        ),
-        settings: RouteSettings(
-          arguments: {
-            'title': title,
-            'user_id': userId,
-            'chat_id': chatId,
-          },
-        ),
-      );
 
-    case '/splashScreen':
-      return MaterialPageRoute(builder: (context) => SplashScreen());
+// Route<dynamic> generateRoute(RouteSettings settings) {
+//   switch (settings.name) {
+//     case '/home':
+//       return MaterialPageRoute(builder: (context) => home());
+//     // case '/chat':
+//     //   final args = settings.arguments as Map<String, dynamic>?;
+//     //   final title = args?['title'] as String? ?? "Chat";
+//     //   final userId = args?['user_id'] as String? ?? "0";
+//     //   final chatId = args?['chat_id'] as String?;
+//     //   return MaterialPageRoute(
+//     //     builder: (context) => Chatpage(
+//     //       title: title, 
+//     //       userId: userId,
+//     //     ),
+//     //     settings: RouteSettings(
+//     //       arguments: {
+//     //         'title': title,
+//     //         'user_id': userId,
+//     //         'chat_id': chatId,
+//     //       },
+//     //     ),
+//     //   );
 
-    case '/login':
-      return MaterialPageRoute(builder: (context) => Login());
+//     case '/splashScreen':
+//       return MaterialPageRoute(builder: (context) => SplashScreen());
 
-    case '/register':
-      return MaterialPageRoute(builder: (context) => register());
+//     case '/login':
+//       return MaterialPageRoute(builder: (context) => Login());
 
-    case '/statusPage':
-      return MaterialPageRoute(builder: (context) => StatusPage());
+//     case '/register':
+//       return MaterialPageRoute(builder: (context) => register());
 
-    // case '/getToken':
-    //   return MaterialPageRoute(builder: (context) => ApiServices.getToken());
+//     case '/statusPage':
+//       return MaterialPageRoute(builder: (context) => StatusPage());
 
-    case '/channels':
-      return MaterialPageRoute(builder: (context) => channels());
+//     // case '/getToken':
+//     //   return MaterialPageRoute(builder: (context) => ApiServices.getToken());
 
-    case '/addChannel':
-      return MaterialPageRoute(builder: (context) => addChannel());
+//     case '/channels':
+//       return MaterialPageRoute(builder: (context) => channels());
 
-    case '/addStatus':
-      return MaterialPageRoute(builder: (context) => addStatus());
+//     case '/addChannel':
+//       return MaterialPageRoute(builder: (context) => addChannel());
 
-    case '/kontak':
-      return MaterialPageRoute(builder: (context) => SplashScreen());
+//     case '/addStatus':
+//       return MaterialPageRoute(builder: (context) => addStatus());
 
-    case '/Community':
-      return MaterialPageRoute(builder: (context) => KomunitasPage());
+//     case '/kontak':
+//       return MaterialPageRoute(builder: (context) => SplashScreen());
 
-    case '/Pengaturan':
-      return MaterialPageRoute(builder: (context) => PengaturanPage());
+//     case '/Community':
+//       return MaterialPageRoute(builder: (context) => KomunitasPage());
 
-    case '/CreateCommunity':
-      return MaterialPageRoute(builder: (context) => CreateCommunity());
+//     case '/Pengaturan':
+//       return MaterialPageRoute(builder: (context) => PengaturanPage());
 
-    case '/CommunityInfo':
-      final args = settings.arguments as Map<String, dynamic>;
+//     case '/CreateCommunity':
+//       return MaterialPageRoute(builder: (context) => CreateCommunity());
 
-      return MaterialPageRoute(
-        builder: (context) => KomunitasInfoPage(),
-        settings: RouteSettings(arguments: args),
-      );
+//     case '/CommunityInfo':
+//       final args = settings.arguments as Map<String, dynamic>;
 
-    default:
-      return MaterialPageRoute(
-        builder: (context) =>
-            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
-      );
-  }
+//       return MaterialPageRoute(
+//         builder: (context) => KomunitasInfoPage(),
+//         settings: RouteSettings(arguments: args),
+//       );
+
+//     default:
+//       return MaterialPageRoute(
+//         builder: (context) =>
+//             Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
+//       );
+//   }
+// }
+
+class AppRoutes {
+  static final routes = [
+    GetPage(name: '/home', page: () => home()),
+    GetPage(name: '/', page: () => SplashScreen()),
+    GetPage(
+      name: '/chat',
+      page: () {
+        final args = Get.arguments;
+
+        return Chatpage(
+          title: args['title'],
+          userId: args['user_id'],
+        );
+      },
+    ),
+  ];
 }

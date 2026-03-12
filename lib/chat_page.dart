@@ -1,210 +1,30 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 
-List<Map<String, dynamic>> datachat = [];
 
-class Chatpage extends StatefulWidget {
+
+
+
+class Chatpage extends StatelessWidget {
   final String title;
   final String userId;
 
-  const Chatpage({super.key, required this.title, required this.userId});
+   Chatpage({super.key, required this.title, required this.userId});
 
-  @override
-  State<Chatpage> createState() => _ChatpageState();
-}
+   late final ChatController controller =
+      Get.put(ChatController(userId: userId, title: title));
+   
+   final ChatController controller2 = Get.find();
 
-class _ChatpageState extends State<Chatpage> {
-  final TextEditingController _messageController = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _isLoading = false;
-  bool _isSending = false;
-  String? _currentUserId;
-  String? user_id;
-  String? currentChatId;
-  bool _argsLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUserId();
-  }
-
-  Future<void> _getCurrentUserId() async {
-    try {
-      final token = await AuthService().getToken();
-      if (token != null) {
-        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        setState(() {
-          _currentUserId = decodeToken['id']?.toString();
-        });
-        print("Current user ID: $_currentUserId");
-      }
-    } catch (e) {
-      print("Error getting current user ID: $e");
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!_argsLoaded) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-
-      if (args is Map) {
-        user_id = args['user_id']?.toString();
-        currentChatId = args['chat_id']?.toString();
-        print("Loaded user_id: $user_id");
-        print("Loaded chat_id: $currentChatId");
-      }
-
-      _argsLoaded = true;
-      _getChatData();
-    }
-  }
-
-  Future<void> _getChatData() async {
-    // Use widget.userId as fallback if user_id is null
-    final String? targetUserId = user_id ?? widget.userId;
-    final String? targetChatId = currentChatId;
     
-    print("Getting chat data for userId: $targetUserId, chatId: $targetChatId");
-    
-    if (targetUserId == null) {
-      print("Waiting for user ID to load...");
-      return;
-    }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final datauser = await ApiServices().httpGETWithToken("private/chats");
-      final data = jsonDecode(datauser.body);
-
-
-      // Debug: Print received data
-      print("GET Response: $data");
-      print("Data Type: ${data.runtimeType}");
-      print("Filtering for user_id: $targetUserId and currentChatId: $targetChatId");
-      
-      // Handle null or non-list responses
-      List<Map<String, dynamic>> parsedData = [];
-      if (data != null && data is Map && data['chats'] != null) {
-        final chats = data['chats'] as List<dynamic>;
-        for (var chat in chats) {
-          print("Checking chat: chat_id=${chat['chat_id']}, user_id=${chat['user_id']}");
-          
-          // Try matching with chat_id if available, otherwise just match user_id
-          bool matches = false;
-          if (targetChatId != null) {
-            matches = chat['chat_id'].toString() == targetChatId;
-          } else {
-            // user_id is an array [1, 2], check if targetUserId is in the array
-            final chatUserIds = chat['user_id'];
-            if (chatUserIds is List) {
-              matches = chatUserIds.any((id) => id.toString() == targetUserId);
-            } else {
-              // If single value
-              matches = chatUserIds.toString() == targetUserId;
-            }
-          }
-          
-          if (matches) {
-            if (chat['messages'] != null) {
-              final messages = List<Map<String, dynamic>>.from(chat['messages']);
-              parsedData.addAll(messages);
-            }
-            break;
-          }
-        }
-      }
-
-      print("Parsed messages: $parsedData");
-
-      setState(() {
-        _messages = parsedData;
-        datachat = parsedData;
-      });
-    } catch (e) {
-      print("GET Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading messages: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final messageText = _messageController.text.trim();
-    if (messageText.isEmpty) return;
-
-    setState(() {
-      _isSending = true;
-    });
-
-    try {
-      // Debug: Print data yang akan dikirim
-      final requestData = {
-        'message': messageText,
-        'receiver_id': widget.userId,
-      };
-      print("Sending message data: $requestData");
-
-      // Kirim pesan ke server menggunakan endpoint /api/private/chats
-      final response = await ApiServices().httpPOSTWithToken(
-        data: requestData,
-        apiUrl: "private/chats",
-      );
-
-      // Debug: Print response dari server
-      print("POST Response Status: ${response.statusCode}");
-      print("POST Response Body: ${response.body}");
-
-      // Refresh chat data setelah mengirim pesan
-      await _getChatData();
-
-      _messageController.clear();
-    } catch (e) {
-      print("POST Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error sending message: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSending = false;
-        });
-      }
-    }
-  }
-
-  bool _checkIsMe(Map<String, dynamic> message) {
-    if (_currentUserId == null) return false;
-
-    // Check sender_id - can be string or int
-    final senderId = message['sender_id'];
-    if (senderId == null) return false;
-
-    // Compare as strings to handle both types
-    return senderId.toString() == _currentUserId ||
-        senderId.toString() == _currentUserId.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,10 +37,10 @@ class _ChatpageState extends State<Chatpage> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.green,
-                  child: Text('C${widget.userId}'),
+                  child: Text('C${userId}'),
                 ),
                 SizedBox(width: 10),
-                Text(widget.title),
+                Text(title),
               ],
             ),
             Row(
@@ -241,13 +61,16 @@ class _ChatpageState extends State<Chatpage> {
           ],
         ),
       ),
-      body: Column(
+      body: GetBuilder <ChatController> (
+        init: ChatController(userId: userId, title: title),
+        builder: (controller) { 
+          return Column(
         children: [
           // Chat messages list
           Expanded(
-            child: _isLoading
+            child: controller2.isLoading
                 ? Center(child: CircularProgressIndicator())
-                : _messages.isEmpty
+                : controller2.messages.isEmpty
                 ? Center(
                     child: Text(
                       'No messages yet.\nStart the conversation!',
@@ -256,17 +79,17 @@ class _ChatpageState extends State<Chatpage> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: _messages.length,
+                    itemCount: controller2.messages.length,
                     padding: EdgeInsets.all(10),
                     itemBuilder: (context, index) {
-                      final message = _messages[index];
+                      final message = controller2.messages[index];
                       // Support multiple field names for message content
                       final messageContent =
                           message['content']?.toString() ??
                           message['message']?.toString() ??
                           message['text']?.toString() ??
                           '';
-                      final isMe = _checkIsMe(message);
+                      final isMe = controller2.checkIsMe(message);
                       final timestamp =
                           message['timestamp']?.toString() ??
                           message['created_at']?.toString() ??
@@ -290,7 +113,7 @@ class _ChatpageState extends State<Chatpage> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _messageController,
+                    controller: controller2.messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
                       prefixIcon: Icon(Icons.emoji_emotions),
@@ -302,7 +125,7 @@ class _ChatpageState extends State<Chatpage> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
+                    onSubmitted: (_) => controller2.sendMessage(),
                   ),
                 ),
                 SizedBox(width: 15),
@@ -311,7 +134,7 @@ class _ChatpageState extends State<Chatpage> {
                     color: warna.Hijau(),
                     shape: BoxShape.circle,
                   ),
-                  child: _isSending
+                  child: controller2.isSending
                       ? Padding(
                           padding: EdgeInsets.all(12),
                           child: SizedBox(
@@ -324,7 +147,7 @@ class _ChatpageState extends State<Chatpage> {
                           ),
                         )
                       : IconButton(
-                          onPressed: _sendMessage,
+                          onPressed: controller2.sendMessage,
                           icon: Icon(Icons.send),
                           color: Colors.white,
                         ),
@@ -333,10 +156,15 @@ class _ChatpageState extends State<Chatpage> {
             ),
           ),
         ],
+      );
+
+      }
       ),
     );
   }
 }
+
+
 
 // Message bubble widget
 class _MessageBubble extends StatelessWidget {

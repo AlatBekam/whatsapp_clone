@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart' as router;
+import 'package:whatsapp_clone/Services/route_handler.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(weatherApp());
@@ -12,11 +13,12 @@ class weatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       // Inisialisasi router
-      onGenerateRoute: router.generateRoute,
+      // onGenerateRoute: router.generateRoute,
       // inisialisasi halaman router awal disaat app terbuka
-      initialRoute: "/splashScreen",
+      initialRoute: "/home",
+      getPages:AppRoutes.routes,
     );
   }
 }
