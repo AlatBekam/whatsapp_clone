@@ -15,8 +15,6 @@ class channels extends StatefulWidget {
 
 // print(ChannelData),
 class _channelsState extends State<channels> {
-  final controllerChannel = Get.put(ControllerChannel());
-
   @override
   void initState() {
     // TODO: implement initState

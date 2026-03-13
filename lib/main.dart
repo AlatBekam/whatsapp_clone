@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
 
 void main() {
   runApp(whatsAppClone());
+
+  Get.put(controllerStatus);
+  Get.put(controllerChannel);
 }
 
 // ignore: camel_case_types

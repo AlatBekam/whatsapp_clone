@@ -17,9 +17,6 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  final controllerChannel = Get.put(ControllerChannel());
-  final controllerStatus = Get.put(ControllerStatus());
-
   @override
   void initState() {
     // TODO: implement initState
@@ -170,10 +167,13 @@ class _StatusPageState extends State<StatusPage> {
                                 children: [
                                   GestureDetector(
                                     onTap: () async {
-                                      await Navigator.pushNamed(
-                                        context,
-                                        "/addStatus",
+                                      var result = await Get.toNamed(
+                                        Routes.addStatus,
                                       );
+
+                                      if (result == true) {
+                                        controllerChannel.initData();
+                                      }
                                     },
                                     child: ListTile(
                                       title: Text(
@@ -234,7 +234,7 @@ class _StatusPageState extends State<StatusPage> {
                                   ...TemplateStatus(
                                     listData: controllerStatus.nonViewedStatus,
                                     onStatusTap: (item) {
-                                      controllerStatus.viewedStatus(
+                                      controllerStatus.viewStatus(
                                         item['StatusID'],
                                       );
                                     },
