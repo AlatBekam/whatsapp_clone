@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
@@ -48,7 +49,7 @@ class ControllerChannel extends GetxController {
       channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
       // print('ISI channelsData : ${channelsDatas}');
     } catch (e) {
-      print('Error getChannel status_chat_controller.dart : ${e}');
+      print('Error getChannel channel_controller.dart : ${e}');
     }
   }
 
@@ -88,6 +89,36 @@ class ControllerChannel extends GetxController {
       } else {
         discoverChannel.add(a);
       }
+    }
+  }
+
+  Future<bool> addChannel(
+    String nameChannel,
+    String typeChannel,
+    String descriptionChannel,
+  ) async {
+    try {
+      var dataChannel = {
+        'channel_name': nameChannel,
+        'channel_type': typeChannel,
+        'description': descriptionChannel,
+      };
+
+      var res = await ApiServices().httpPOSTWithToken(
+        data: dataChannel,
+        apiUrl: 'public/channels',
+      );
+
+      res = jsonDecode(res.body);
+      return res['success'];
+      // if (res['success']) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
+    } catch (e) {
+      print('Error addChannel channel_controller.dart : ${e}');
+      return false;
     }
   }
 

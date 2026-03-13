@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Controllers/status_chat_controller.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
 
 double ukText = 21;
-List<Map<String, dynamic>> channelData = [];
-List<Map<String, dynamic>> statusData = [];
-List<Map<String, dynamic>> viewedStatusData = [];
-List<Map<String, dynamic>> globalFollowedChannel = [];
-List<Map<String, dynamic>> globalDiscoverChannel = [];
-Map<String, dynamic>? userData = {};
 
 class StatusPage extends StatefulWidget {
   const StatusPage({Key? key}) : super(key: key);
@@ -22,12 +18,14 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> {
   final controllerChannel = Get.put(ControllerChannel());
+  final controllerStatus = Get.put(ControllerStatus());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controllerChannel.initData();
+    controllerStatus.initData();
   }
 
   @override
@@ -90,21 +88,25 @@ class _StatusPageState extends State<StatusPage> {
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
-                                        // ...TemplateStatusBox(
-                                        //   listData: _nonViewedStatus,
-                                        //   onStatusTap: (item) {
-                                        //     _viewStatus(item['StatusID']);
-                                        //   },
-                                        // ),
+                                        ...TemplateStatusBox(
+                                          listData:
+                                              controllerStatus.nonViewedStatus,
+                                          onStatusTap: (item) {
+                                            controllerStatus.viewStatus(
+                                              item['StatusID'],
+                                            );
+                                          },
+                                        ),
 
-                                        // Text('pisah'),
+                                        Text('pisah'),
 
-                                        // ...TemplateStatusBox(
-                                        //   listData: _viewedStatus,
-                                        //   onStatusTap: (item) {
-                                        //     setState(() {});
-                                        //   },
-                                        // ),
+                                        ...TemplateStatusBox(
+                                          listData:
+                                              controllerStatus.viewedStatus,
+                                          onStatusTap: (item) {
+                                            ;
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -222,28 +224,32 @@ class _StatusPageState extends State<StatusPage> {
                                     ),
                                   ),
 
-                                  // if (_nonViewedStatus.isNotEmpty)
-                                  //   Text(
-                                  //     'New Update',
-                                  //     style: TextStyle(fontSize: ukText - 7),
-                                  //   ),
-                                  // ...TemplateStatus(
-                                  //   listData: _nonViewedStatus,
-                                  //   onStatusTap: (item) {
-                                  //     _viewStatus(item['StatusID']);
-                                  //   },
-                                  // ),
+                                  if (controllerStatus
+                                      .nonViewedStatus
+                                      .isNotEmpty)
+                                    Text(
+                                      'New Update',
+                                      style: TextStyle(fontSize: ukText - 7),
+                                    ),
+                                  ...TemplateStatus(
+                                    listData: controllerStatus.nonViewedStatus,
+                                    onStatusTap: (item) {
+                                      controllerStatus.viewedStatus(
+                                        item['StatusID'],
+                                      );
+                                    },
+                                  ),
 
-                                  // if (_viewedStatus.isNotEmpty)
-                                  //   Text(
-                                  //     'Viewed Update',
-                                  //     style: TextStyle(fontSize: ukText - 7),
-                                  //   ),
+                                  if (controllerStatus.viewedStatus.isNotEmpty)
+                                    Text(
+                                      'Viewed Update',
+                                      style: TextStyle(fontSize: ukText - 7),
+                                    ),
 
-                                  // ...TemplateStatus(
-                                  //   listData: _viewedStatus,
-                                  //   onStatusTap: (item) {},
-                                  // ),
+                                  ...TemplateStatus(
+                                    listData: controllerStatus.viewedStatus,
+                                    onStatusTap: (item) {},
+                                  ),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -289,8 +295,8 @@ class _StatusPageState extends State<StatusPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            await Navigator.pushNamed(context, "/channels");
+                          onPressed: () {
+                            Get.toNamed(Routes.channels);
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -313,7 +319,13 @@ class _StatusPageState extends State<StatusPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await Navigator.pushNamed(context, "/addChannel");
+                            var result = await Get.toNamed(Routes.addChannel);
+
+                            print('result muncul $result');
+
+                            if (result == true) {
+                              controllerChannel.initData();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,

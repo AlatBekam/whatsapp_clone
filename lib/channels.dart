@@ -1,16 +1,10 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/login.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
-
-List<Map<String, dynamic>> channelData = [];
 
 class channels extends StatefulWidget {
   const channels({super.key});
@@ -21,24 +15,16 @@ class channels extends StatefulWidget {
 
 // print(ChannelData),
 class _channelsState extends State<channels> {
-  Set<String> followedIds = {};
-  List<Map<String, dynamic>> _followedChannel = globalFollowedChannel;
-  List<Map<String, dynamic>> _discoverChannel = globalDiscoverChannel;
+  final controllerChannel = Get.put(ControllerChannel());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getChannel();
-    _getUser();
+    controllerChannel.initData();
   }
 
   @override
-  // Widget build(BuildContext context) {
-  //   // TODO: implement build
-  //   return Center(child: Text('asd'));
-  // }
-  // print(channelData);
   Widget build(BuildContext context) {
     print('channels Load');
     return Scaffold(
@@ -108,108 +94,120 @@ class _channelsState extends State<channels> {
                         ],
                       ),
 
-                      ...TemplateAddChannel(
-                        listData: globalDiscoverChannel.take(4).toList(),
-                        onStatusTap: (item) {
-                          setState(() {
-                            _followChannel(item['channel_id']);
-                          });
-                        },
-                      ),
-
-                      if (globalDiscoverChannel.any(
-                        (item) => item['channel_type'] == 'Sport',
-                      ))
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Obx(() {
+                        return Column(
                           children: [
-                            Text(
-                              'Sport',
-                              style: TextStyle(fontSize: ukText - 5),
+                            ...TemplateAddChannel(
+                              listData: controllerChannel.discoverChannel
+                                  .take(4)
+                                  .toList(),
+                              onStatusTap: (item) {
+                                controllerChannel.funcFollowedChannel(
+                                  item['channel_id'],
+                                );
+                              },
                             ),
-                            SizedBox(
-                              width: 100,
-                              height: 30,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  return print('Test');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent,
-                                  backgroundColor: warna.buttonPutih(),
-                                  foregroundColor: warna.Hitam(),
-                                ),
-                                child: Text(
-                                  'See All',
-                                  style: TextStyle(fontSize: ukText - 6),
-                                ),
+
+                            if (controllerChannel.discoverChannel.any(
+                              (item) => item['channel_type'] == 'Sport',
+                            ))
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Sport',
+                                    style: TextStyle(fontSize: ukText - 5),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                    height: 30,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        return print('Test');
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        shadowColor: Colors.transparent,
+                                        backgroundColor: warna.buttonPutih(),
+                                        foregroundColor: warna.Hitam(),
+                                      ),
+                                      child: Text(
+                                        'See All',
+                                        style: TextStyle(fontSize: ukText - 6),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
+
+                            ...TemplateAddChannel(
+                              listData: controllerChannel.discoverChannel
+                                  .where(
+                                    (tipeChannel) =>
+                                        tipeChannel['channel_type'] == 'Sport',
+                                  )
+                                  .take(3)
+                                  .toList(),
+                              onStatusTap: (item) {
+                                controllerChannel.funcFollowedChannel(
+                                  item['channel_id'],
+                                );
+                              },
+                            ),
+
+                            if (controllerChannel.discoverChannel.any(
+                              (item) => item['channel_type'] == 'Gaming',
+                            ))
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Gaming',
+                                    style: TextStyle(fontSize: ukText - 5),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                    height: 30,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        return print('Test');
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        shadowColor: Colors.transparent,
+                                        backgroundColor: warna.buttonPutih(),
+                                        foregroundColor: warna.Hitam(),
+                                      ),
+                                      child: Text(
+                                        'See All',
+                                        style: TextStyle(fontSize: ukText - 6),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            ...TemplateAddChannel(
+                              listData: controllerChannel.discoverChannel
+                                  .where(
+                                    (tipeChannel) =>
+                                        tipeChannel['channel_type'] == 'Gaming',
+                                  )
+                                  .take(3)
+                                  .toList(),
+                              onStatusTap: (item) {
+                                setState(() {
+                                  controllerChannel.funcFollowedChannel(
+                                    item['channel_id'],
+                                  );
+                                });
+                              },
                             ),
                           ],
-                        ),
-
-                      ...TemplateAddChannel(
-                        listData: globalDiscoverChannel
-                            .where(
-                              (tipeChannel) =>
-                                  tipeChannel['channel_type'] == 'Sport',
-                            )
-                            .take(3)
-                            .toList(),
-                        onStatusTap: (item) {
-                          setState(() {
-                            _followChannel(item['channel_id']);
-                          });
-                        },
-                      ),
-
-                      if (globalDiscoverChannel.any(
-                        (item) => item['channel_type'] == 'Gaming',
-                      ))
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Gaming',
-                              style: TextStyle(fontSize: ukText - 5),
-                            ),
-                            SizedBox(
-                              width: 100,
-                              height: 30,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  return print('Test');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent,
-                                  backgroundColor: warna.buttonPutih(),
-                                  foregroundColor: warna.Hitam(),
-                                ),
-                                child: Text(
-                                  'See All',
-                                  style: TextStyle(fontSize: ukText - 6),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                      ...TemplateAddChannel(
-                        listData: globalDiscoverChannel
-                            .where(
-                              (tipeChannel) =>
-                                  tipeChannel['channel_type'] == 'Gaming',
-                            )
-                            .take(3)
-                            .toList(),
-                        onStatusTap: (item) {
-                          setState(() {
-                            _followChannel(item['channel_id']);
-                          });
-                        },
-                      ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -219,82 +217,5 @@ class _channelsState extends State<channels> {
         ],
       ),
     );
-  }
-
-  Future<void> _followChannel(String channelID) async {
-    followedIds.add(channelID);
-    var dataFollow = {'followed_channels_by_id': followedIds.toList()};
-    await ApiServices().httpPUTWithToken(
-      data: dataFollow,
-      apiUrl: 'private/users',
-    );
-
-    if (!mounted) {
-      return;
-    }
-
-    print('userdata $userData');
-    print('followedIDS CHANNELS.DART $followedIds');
-
-    _splitChannel();
-    _getChannel();
-    _getUser();
-  }
-
-  Future<void> _getChannel() async {
-    var data = await ApiServices().httpGETWithToken('private/channels');
-    data = jsonDecode(data.body);
-
-    // print('data : ${data}');
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      channelData = List<Map<String, dynamic>>.from(data);
-    });
-  }
-
-  Future<void> _getUser() async {
-    String? token = await AuthService().getToken();
-    var userID;
-    if (token != null) {
-      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-
-      userID = decodeToken['id'];
-    }
-
-    var data = await ApiServices().httpGET('public/users/$userID');
-    data = jsonDecode(data.body);
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      userData = data;
-      followedIds = Set<String>.from(
-        userData?['followed_channels_by_id'] ?? [],
-      );
-    });
-    _splitChannel();
-  }
-
-  void _splitChannel() {
-    _followedChannel.clear();
-    _discoverChannel.clear();
-
-    for (var a in channelData) {
-      if (followedIds.contains(a['channel_id'])) {
-        _followedChannel.add(a);
-      } else {
-        _discoverChannel.add(a);
-      }
-    }
-
-    // globalDiscoverChannel.add(_discoverChannel);
-    globalFollowedChannel = _followedChannel;
-    setState(() {});
   }
 }
