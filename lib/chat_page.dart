@@ -1,211 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:get/get.dart';
 
-List<Map<String, dynamic>> datachat = [];
-
-class Chatpage extends StatefulWidget {
-  final String title;
-  final String userId;
-
-  const Chatpage({super.key, required this.title, required this.userId});
-
+class ChatPage extends StatefulWidget {
   @override
-  State<Chatpage> createState() => _ChatpageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatpageState extends State<Chatpage> {
-  final TextEditingController _messageController = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _isLoading = false;
-  bool _isSending = false;
-  String? _currentUserId;
-  String? user_id;
-  String? currentChatId;
-  bool _argsLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUserId();
-  }
-
-  Future<void> _getCurrentUserId() async {
-    try {
-      final token = await AuthService().getToken();
-      if (token != null) {
-        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        setState(() {
-          _currentUserId = decodeToken['id']?.toString();
-        });
-        print("Current user ID: $_currentUserId");
-      }
-    } catch (e) {
-      print("Error getting current user ID: $e");
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!_argsLoaded) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-
-      if (args is Map) {
-        user_id = args['user_id']?.toString();
-        currentChatId = args['chat_id']?.toString();
-        print("Loaded user_id: $user_id");
-        print("Loaded chat_id: $currentChatId");
-      }
-
-      _argsLoaded = true;
-      _getChatData();
-    }
-  }
-
-  Future<void> _getChatData() async {
-    // Use widget.userId as fallback if user_id is null
-    final String? targetUserId = user_id ?? widget.userId;
-    final String? targetChatId = currentChatId;
-    
-    print("Getting chat data for userId: $targetUserId, chatId: $targetChatId");
-    
-    if (targetUserId == null) {
-      print("Waiting for user ID to load...");
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final datauser = await ApiServices().httpGETWithToken("private/chats");
-      final data = jsonDecode(datauser.body);
-
-
-      // Debug: Print received data
-      print("GET Response: $data");
-      print("Data Type: ${data.runtimeType}");
-      print("Filtering for user_id: $targetUserId and currentChatId: $targetChatId");
-      
-      // Handle null or non-list responses
-      List<Map<String, dynamic>> parsedData = [];
-      if (data != null && data is Map && data['chats'] != null) {
-        final chats = data['chats'] as List<dynamic>;
-        for (var chat in chats) {
-          print("Checking chat: chat_id=${chat['chat_id']}, user_id=${chat['user_id']}");
-          
-          // Try matching with chat_id if available, otherwise just match user_id
-          bool matches = false;
-          if (targetChatId != null) {
-            matches = chat['chat_id'].toString() == targetChatId;
-          } else {
-            // user_id is an array [1, 2], check if targetUserId is in the array
-            final chatUserIds = chat['user_id'];
-            if (chatUserIds is List) {
-              matches = chatUserIds.any((id) => id.toString() == targetUserId);
-            } else {
-              // If single value
-              matches = chatUserIds.toString() == targetUserId;
-            }
-          }
-          
-          if (matches) {
-            if (chat['messages'] != null) {
-              final messages = List<Map<String, dynamic>>.from(chat['messages']);
-              parsedData.addAll(messages);
-            }
-            break;
-          }
-        }
-      }
-
-      print("Parsed messages: $parsedData");
-
-      setState(() {
-        _messages = parsedData;
-        datachat = parsedData;
-      });
-    } catch (e) {
-      print("GET Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading messages: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final messageText = _messageController.text.trim();
-    if (messageText.isEmpty) return;
-
-    setState(() {
-      _isSending = true;
-    });
-
-    try {
-      // Debug: Print data yang akan dikirim
-      final requestData = {
-        'message': messageText,
-        'receiver_id': widget.userId,
-      };
-      print("Sending message data: $requestData");
-
-      // Kirim pesan ke server menggunakan endpoint /api/private/chats
-      final response = await ApiServices().httpPOSTWithToken(
-        data: requestData,
-        apiUrl: "private/chats",
-      );
-
-      // Debug: Print response dari server
-      print("POST Response Status: ${response.statusCode}");
-      print("POST Response Body: ${response.body}");
-
-      // Refresh chat data setelah mengirim pesan
-      await _getChatData();
-
-      _messageController.clear();
-    } catch (e) {
-      print("POST Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error sending message: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSending = false;
-        });
-      }
-    }
-  }
-
-  bool _checkIsMe(Map<String, dynamic> message) {
-    if (_currentUserId == null) return false;
-
-    // Check sender_id - can be string or int
-    final senderId = message['sender_id'];
-    if (senderId == null) return false;
-
-    // Compare as strings to handle both types
-    return senderId.toString() == _currentUserId ||
-        senderId.toString() == _currentUserId.toString();
-  }
-
+class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,16 +17,18 @@ class _ChatpageState extends State<Chatpage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Text('C${widget.userId}'),
-                ),
-                SizedBox(width: 10),
-                Text(widget.title),
-              ],
-            ),
+            Obx(() {
+              return Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text('${chatController.currentUserId1.value}'),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(chatController.title.value ?? ""),
+                ],
+              );
+            }),
             Row(
               children: [
                 SvgPicture.asset(
@@ -230,7 +36,7 @@ class _ChatpageState extends State<Chatpage> {
                   width: 25,
                   color: warna.Hitam(),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 SvgPicture.asset(
                   'assets/three-dots-vertical.svg',
                   width: 25,
@@ -241,32 +47,35 @@ class _ChatpageState extends State<Chatpage> {
           ],
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Chat messages list
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : _messages.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet.\nStart the conversation!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _messages.length,
-                    padding: EdgeInsets.all(10),
+          Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  if (chatController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (chatController.messages.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No messages yet.\nStart the conversation!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: chatController.messages.length,
+                    padding: const EdgeInsets.all(10),
                     itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      // Support multiple field names for message content
+                      final message = chatController.messages[index];
                       final messageContent =
                           message['content']?.toString() ??
                           message['message']?.toString() ??
                           message['text']?.toString() ??
                           '';
-                      final isMe = _checkIsMe(message);
+                      final isMe = chatController.checkIsMe(message);
                       final timestamp =
                           message['timestamp']?.toString() ??
                           message['created_at']?.toString() ??
@@ -279,66 +88,83 @@ class _ChatpageState extends State<Chatpage> {
                         time: timestamp,
                       );
                     },
-                  ),
-          ),
-
-          // Message input
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message',
-                      prefixIcon: Icon(Icons.emoji_emotions),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
+                  );
+                }),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: chatController.messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message',
+                          prefixIcon: const Icon(Icons.emoji_emotions),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onSubmitted: (_) => chatController.sendMessage(),
                       ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
+                    const SizedBox(width: 15),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: warna.Hijau(),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Obx(
+                        () => chatController.isSending.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: chatController.sendMessage,
+                                icon: Icon(Icons.send),
+                                color: Colors.white,
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 15),
-                Container(
-                  decoration: BoxDecoration(
-                    color: warna.Hijau(),
-                    shape: BoxShape.circle,
-                  ),
-                  child: _isSending
-                      ? Padding(
-                          padding: EdgeInsets.all(12),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : IconButton(
-                          onPressed: _sendMessage,
-                          icon: Icon(Icons.send),
-                          color: Colors.white,
-                        ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+
+          // Obx(() {
+          //   if (chatController.isLoading.value) {
+          //     return Container(
+          //       decoration: BoxDecoration(
+          //         color: Colors.black.withValues(alpha: 0.3),
+          //       ),
+          //       alignment: Alignment.center,
+          //       child: CircularProgressIndicator(
+          //         color: Theme.of(context).primaryColor,
+          //       ),
+          //     );
+          //   }
+          //   return SizedBox.shrink();
+          // }),
         ],
       ),
     );
   }
 }
 
-// Message bubble widget
 class _MessageBubble extends StatelessWidget {
   final String message;
   final bool isMe;
@@ -355,18 +181,22 @@ class _MessageBubble extends StatelessWidget {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
           color: isMe ? warna.Hijau() : Colors.grey[300],
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: isMe ? Radius.circular(16) : Radius.circular(4),
-            bottomRight: isMe ? Radius.circular(4) : Radius.circular(16),
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: isMe
+                ? const Radius.circular(16)
+                : const Radius.circular(4),
+            bottomRight: isMe
+                ? const Radius.circular(4)
+                : const Radius.circular(16),
           ),
         ),
         child: Column(
@@ -379,7 +209,7 @@ class _MessageBubble extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               _formatTime(time),
               style: TextStyle(
@@ -396,7 +226,9 @@ class _MessageBubble extends StatelessWidget {
   String _formatTime(String timeString) {
     if (timeString.isEmpty) return '';
     try {
-      final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(timeString) * 1000).toLocal();
+      final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        int.parse(timeString) * 1000,
+      ).toLocal();
       final hour = dateTime.hour.toString().padLeft(2, '0');
       final minute = dateTime.minute.toString().padLeft(2, '0');
       return '$hour:$minute';

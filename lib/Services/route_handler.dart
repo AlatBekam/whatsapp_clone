@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 
 import 'package:whatsapp_clone/CommunityInfo.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/add_status.dart';
 import 'package:whatsapp_clone/channels.dart';
-import 'package:whatsapp_clone/chat_page.dart';
+import 'package:whatsapp_clone/chat_page.dart' as Chat;
 import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/login.dart';

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Calling.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/chat_page.dart';
 import 'package:get/get.dart';
 
 List<Map<String, dynamic>> datauser = [];
@@ -26,6 +28,7 @@ class _homeState extends State<home> {
   int _currentIndex = 0;
   String? currentUserId;
 
+  @override
   void _changeTab(int index) {
     setState(() {
       _currentIndex = index;
@@ -124,15 +127,19 @@ Widget widgetitemlist({
           }
 
           if (!context.mounted) return;
-          Navigator.pushNamed(
-            context,
-            '/chat',
-            arguments: {
-              'title': item['name']?.toString() ?? "Chat",
-              'user_id': userId,
-              'chat_id': chatId,
-            },
+          chatController.goDetail(
+            title: item['name']?.toString() ?? "Chat",
+            userId: userId,
+            chatId: chatId,
           );
+          //  Get.toNamed(
+          //   '/chat',
+          //   arguments: {
+          //     'title': item['name']?.toString() ?? "Chat",
+          //     'user_id': userId,
+          //     'chat_id': chatId,
+          //   },
+          // );
         },
       );
     },
@@ -192,13 +199,13 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _getCurrentId() async {
     try {
       String? token = await AuthService().getToken();
-      // print("token: $token");
+      print("token: $token");
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
         setState(() {
           currentUserId = decodeToken['id'];
         });
-        // print("user id: $currentUserId");
+        print("user id: $currentUserId");
       }
     } catch (e) {
       print("error: $e");
