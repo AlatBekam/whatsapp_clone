@@ -41,7 +41,6 @@ dependencies:
   get: ^4.7.3
 
 dev_dependencies:
-  get: ^4.7.3
   flutter_test:
     sdk: flutter
 
