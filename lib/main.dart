@@ -18,6 +18,7 @@ class whatsAppClone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+
       /// menghilangkan debug banner yg di kanan atas
       debugShowCheckedModeBanner: false,
 
@@ -30,23 +31,37 @@ class whatsAppClone extends StatelessWidget {
       /// pengganti default route lama yg ada di file routes_handler.dart
       unknownRoute: GetPage(
         name: "/notfound",
-        page: () =>
-            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
+        page: () => Scaffold(
+          body: Center(
+            child: Text("Route tidak ditemukan"),
+          ),
+        ),
       ),
+
     );
   }
 }
 
-// ignore: camel_case_types
+// import 'package:flutter/material.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:whatsapp_clone/Services/route_handler.dart' as router;
+// import 'package:get/get.dart';
+
+// void main() {
+//   runApp(weatherApp());
+// }
+
+// // ignore: camel_case_types
 // class weatherApp extends StatelessWidget {
 //   const weatherApp({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return MaterialApp(
+//     return GetMaterialApp(
+//       // Inisialisasi router
 //       onGenerateRoute: router.generateRoute,
 //       // inisialisasi halaman router awal disaat app terbuka
-//       initialRoute: "/channels",
+//       initialRoute: "/splashScreen",
 //     );
 //   }
 // }
