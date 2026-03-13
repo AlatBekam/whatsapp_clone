@@ -183,7 +183,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       var data = await api.httpGET('public/users');
       data = jsonDecode(data.body);
-      print("DATA: $data");
+      // print("DATA: $data");
       setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
       });

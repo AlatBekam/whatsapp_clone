@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:whatsapp_clone/Controllers/chat_controller.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
 
 void main() {
-  initialGetx();
+  runApp(whatsAppClone());
 
-  runApp(WeatherApp());
-}
-
-initialGetx() {
-  Get.put(ChatController());
+  Get.put(controllerStatus);
+  Get.put(controllerChannel);
 }
 
 // ignore: camel_case_types
-class WeatherApp extends StatelessWidget {
-  const WeatherApp({super.key});
+class whatsAppClone extends StatelessWidget {
+  const whatsAppClone({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'WhatsApp Clone',
+      /// menghilangkan debug banner yg di kanan atas
       debugShowCheckedModeBanner: false,
-      initialRoute: "/login",
+
+      /// route pertama saat aplikasi dibuka
+      initialRoute: Routes.splashScreen,
+
+      /// daftar routing aplikasi
       getPages: AppRoutes.routes,
+
+      /// pengganti default route lama yg ada di file routes_handler.dart
+      unknownRoute: GetPage(
+        name: "/notfound",
+        page: () =>
+            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
+      ),
     );
   }
 }

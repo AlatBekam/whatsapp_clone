@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/status_page.dart';
@@ -165,9 +167,14 @@ class _addStatusState extends State<addStatus> {
                                 ],
                               ),
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   if (_formKey.currentState!.validate()) {
-                                    _addStatus();
+                                    bool success = await controllerStatus
+                                        .addStatus(contentStatus);
+
+                                    if (success) {
+                                      Get.back(result: true);
+                                    }
                                   }
                                 },
 
@@ -201,19 +208,5 @@ class _addStatusState extends State<addStatus> {
         ),
       ),
     );
-  }
-
-  void _addStatus() async {
-    var StatusData = {'Content': contentStatus};
-
-    var res = await ApiServices().httpPOSTWithToken(
-      data: StatusData,
-      apiUrl: 'private/users/status',
-    );
-
-    var body = jsonDecode(res.body);
-    if (body['success']) {
-      Navigator.pop(context);
-    }
   }
 }

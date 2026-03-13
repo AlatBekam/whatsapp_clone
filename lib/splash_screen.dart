@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/Services/checl_if_login.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -19,31 +20,11 @@ class _splashScreen extends State<SplashScreen> {
   }
 
   Future<void> _checkIfLogin() async {
-    String? token = await AuthService().getToken();
-
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (!mounted) return;
 
-    if (token == null) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-      return;
-    }
-
-    Map<String, dynamic> decodeToken = JwtDecoder.decode(token!);
-    int userEXP = decodeToken['exp'];
-    int timeNow = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-    if (userEXP <= timeNow) {
-      await AuthService().removeToken();
-
-      if (!mounted) return;
-
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-      return;
-    }
-
-    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+    ChecklIfLogin().checkIfLogin(context);
   }
 
   @override
