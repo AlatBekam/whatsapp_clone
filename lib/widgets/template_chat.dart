@@ -101,6 +101,7 @@ List<dynamic> TemplateStatus({
 }) => List.generate(listData.length, (index) {
   var item = listData[index];
   return ListTile(
+    onTap: () => onStatusTap(item),
     leading: Container(
       width: 50,
       height: 50,
@@ -113,7 +114,6 @@ List<dynamic> TemplateStatus({
     ),
     subtitle: Text(item['CreatedAt'].toString().substring(11, 19)),
     contentPadding: EdgeInsets.only(left: 5, right: 5),
-    onTap: () => onStatusTap(item),
   );
 });
 

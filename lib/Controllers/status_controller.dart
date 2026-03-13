@@ -20,16 +20,6 @@ class ControllerStatus extends GetxController {
     return nonViewedStatus.toList();
   }
 
-  // Future getData() async {
-  //   String? token = await AuthService().getToken();
-  //   var userID;
-
-  //   if (token != null) {
-  //     Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-  //     userID = decodeToken['id'];
-  //   }
-  // }
-
   Future getStatus() async {
     String? token = await AuthService().getToken();
     var userID;
@@ -74,7 +64,7 @@ class ControllerStatus extends GetxController {
       viewedIDS.add(StatusID);
       var data = {'StatusID': StatusID};
 
-      await ApiServices().httpPOSTWithToken(
+      var resp = await ApiServices().httpPOSTWithToken(
         data: data,
         apiUrl: 'private/users/status/view',
       );
@@ -95,6 +85,24 @@ class ControllerStatus extends GetxController {
       } else {
         nonViewedStatus.add(a);
       }
+    }
+  }
+
+  Future<bool> addStatus(String contentStatus) async {
+    try {
+      var statusData = {'Content': contentStatus};
+
+      var res = await ApiServices().httpPOSTWithToken(
+        data: statusData,
+        apiUrl: 'private/users/status',
+      );
+
+      res = jsonDecode(res.body);
+
+      return res['success'];
+    } catch (e) {
+      print('Error addStatus status_controller.dart: ${e}');
+      return false;
     }
   }
 
