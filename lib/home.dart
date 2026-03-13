@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/Controllers/chat_controller.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
@@ -305,11 +306,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
             onSelected: (value) {
               if (value == 'Logout') {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/login',
-                  (route) => false,
-                );
+                Get.offAllNamed(Routes.login);
               }
             },
             itemBuilder: (context) => [
