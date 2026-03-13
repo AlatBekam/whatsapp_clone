@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/Controllers/channel_controller.dart';
+import 'package:whatsapp_clone/Controllers/status_controller.dart';
+import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
-import 'Services/route_handler.dart';
 
 void main() {
-  runApp(const WeatherApp());
+  runApp(whatsAppClone());
+
+  Get.put(controllerStatus);
+  Get.put(controllerChannel);
 }
 
-class WeatherApp extends StatelessWidget {
-  const WeatherApp({super.key});
+// ignore: camel_case_types
+class whatsAppClone extends StatelessWidget {
+  const whatsAppClone({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/add_channel.dart';
+import 'package:whatsapp_clone/add_status.dart';
 import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart';
 import 'package:whatsapp_clone/home.dart';
@@ -22,6 +23,7 @@ class Routes {
   static const statusPage = "/statusPage";
   static const channels = "/channels";
   static const addChannel = "/addChannel";
+  static const addStatus = "/addStatus";
   static const community = "/Community";
   static const pengaturan = "/Pengaturan";
   static const createCommunity = "/CreateCommunity";
@@ -30,15 +32,11 @@ class Routes {
 
 class AppRoutes {
   static final routes = [
-    GetPage(
-      name: Routes.home,
-      page: () => home(),
-    ),
+    GetPage(name: Routes.home, page: () => home()),
 
     GetPage(
       name: Routes.chat,
       page: () {
-
         final args = Get.arguments as Map<String, dynamic>?;
         final title = args?['title'] ?? "Chat";
         final userId = args?['user_id'] ?? "0";

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -22,11 +24,19 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   int _currentIndex = 0;
+  String? currentUserId;
 
   void _changeTab(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // loadUserId();
   }
 
   final List<Widget> _pages = [
@@ -47,33 +57,113 @@ class _homeState extends State<home> {
       ),
     );
   }
+
+  //  Future<String?> getUserId() async {
+  //   return await ApiServices().dptToken();
+  // }
+
+  // Future<void> loadUserId() async {
+  //   currentUserId = await getUserId();
+  //   setState(() {
+
+  //   });
+  // }
 }
 
-Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) =>
-    ListView.builder(
-      itemCount: datauser.length,
-      itemBuilder: (context, index) {
-        var item = datauser[index];
-        return ListTile(
-          title: Text(item['name']?.toString() ?? "Chat $index"),
-          subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
-          leading: CircleAvatar(
-            backgroundColor: Colors.green,
-            child: Text("C$index"),
-          ),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/chat',
-              arguments: {
-                'title': item['name']?.toString() ?? "Chat",
-                'user_id': item['id']?.toString() ?? "0",
-              },
+Widget widgetitemlist({
+  required List<Map<String, dynamic>> datauser,
+  required String currentUserId,
+}) {
+  var filteredUsers = datauser
+      .where((userID) => userID['id'].toString() != currentUserId)
+      .toList();
+
+  return ListView.builder(
+    itemCount: filteredUsers.length,
+    itemBuilder: (context, index) {
+      var item = filteredUsers[index];
+
+      return ListTile(
+        title: Text(item['name']?.toString() ?? 'id'),
+        subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
+        leading: CircleAvatar(
+          backgroundColor: Colors.green,
+          child: Text("C$index"),
+        ),
+        onTap: () async {
+          // Get or create chat first to get chat_id
+          final userId = item['id']?.toString() ?? "0";
+
+          // Try to find existing chat with this user
+          String? chatId;
+          try {
+            final response = await ApiServices().httpGETWithToken(
+              "private/chats",
             );
-          },
-        );
-      },
-    );
+            final chatData = jsonDecode(response.body);
+            if (chatData != null &&
+                chatData is Map &&
+                chatData['chats'] != null) {
+              final chats = chatData['chats'] as List;
+              for (var chat in chats) {
+                final chatUserIds = chat['user_id'];
+                if (chatUserIds is List) {
+                  final hasUser = chatUserIds.any(
+                    (id) => id.toString() == userId,
+                  );
+                  if (hasUser) {
+                    chatId = chat['chat_id']?.toString();
+                    print("chat_id: $chatId");
+                    break;
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            print("Error getting chat: $e");
+          }
+
+          if (!context.mounted) return;
+          Navigator.pushNamed(
+            context,
+            '/chat',
+            arguments: {
+              'title': item['name']?.toString() ?? "Chat",
+              'user_id': userId,
+              'chat_id': chatId,
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
+// Widget widgetitemlist({required List<Map<String, dynamic>> datauser}) =>
+//     ListView.builder(
+//       itemCount: datauser.length,
+//       itemBuilder: (context, index) {
+//         var item = datauser[index];
+//         return ListTile(
+//           title: Text(item['name']?.toString() ?? 'id'),
+//           subtitle: Text(item['subtitle']?.toString() ?? "Message $index"),
+//           leading: CircleAvatar(
+//             backgroundColor: Colors.green,
+//             child: Text("C$index"),
+//           ),
+//           onTap: () {
+//             Navigator.pushNamed(
+//               context,
+//               '/chat',
+//               arguments: {
+//                 'title': item['name']?.toString() ?? "Chat",
+//                 'user_id': item['id']?.toString() ?? "0",
+//               },
+//             );
+//           },
+//         );
+//       },
+//     );
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -85,8 +175,9 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Future<void> _getUser() async {
     try {
-      final data = await api.httpGET('public/users');
-      print("DATA: $data");
+      var data = await api.httpGET('public/users');
+      data = jsonDecode(data.body);
+      // print("DATA: $data");
       setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
       });
@@ -94,6 +185,26 @@ class _ChatPageState extends State<ChatPage> {
       print("ERROR: $e");
     }
   }
+
+  Future<String?> tokenId = AuthService().getToken();
+  String? currentUserId;
+
+  Future<void> _getCurrentId() async {
+    try {
+      String? token = await AuthService().getToken();
+      // print("token: $token");
+      if (token != null) {
+        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+        setState(() {
+          currentUserId = decodeToken['id'];
+        });
+        // print("user id: $currentUserId");
+      }
+    } catch (e) {
+      print("error: $e");
+    }
+  }
+
   // with SingleTickerProviderStateMixin {
   // TabController? _tabController;
   // List<TabModel> children = [
@@ -143,6 +254,8 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _getUser();
+    _getCurrentId();
+    // _getCurrentUserId();
     // _tabController = TabController(length: children.length, vsync: this);
   }
 
@@ -222,7 +335,11 @@ class _ChatPageState extends State<ChatPage> {
         //     return child.widget;
         //   }).toList(),
       ),
-      body: widgetitemlist(datauser: datauser),
+      body: widgetitemlist(
+        datauser: datauser,
+        currentUserId: currentUserId ?? "",
+      ),
+      // floatingActionButton: FloatingActionButton(onPressed: () => print("user id: $currentUserId"),),
     );
   }
 }
