@@ -35,70 +35,38 @@ class AppRoutes {
   static final routes = [
     GetPage(name: Routes.home, page: () => home()),
 
-    GetPage(
-      name: Routes.chat,
-      page: () {
-        final args = Get.arguments as Map<String, dynamic>?;
-        final title = args?['title'] ?? "Chat";
-        final userId = args?['user_id'] ?? "0";
+    // GetPage(
+    //   name: Routes.chat,
+    //   page: () {
+    //     final args = Get.arguments as Map<String, dynamic>?;
+    //     final title = args?['title'] ?? "Chat";
+    //     final userId = args?['user_id'] ?? "0";
 
-        return Chatpage(
-          title: title,
-          userId: userId,
-        );
-      },
-    ),
+    //     return Chatpage(
+    //       title: title,
+    //       userId: userId,
+    //     );
+    //   },
+    // ),
+    GetPage(name: Routes.splashScreen, page: () => SplashScreen()),
 
-    GetPage(
-      name: Routes.splashScreen,
-      page: () => SplashScreen(),
-    ),
+    GetPage(name: Routes.login, page: () => Login()),
 
-    GetPage(
-      name: Routes.login,
-      page: () => Login(),
-    ),
+    GetPage(name: Routes.register, page: () => register()),
 
-    GetPage(
-      name: Routes.register,
-      page: () => register(),
-    ),
+    GetPage(name: Routes.statusPage, page: () => StatusPage()),
 
-    GetPage(
-      name: Routes.statusPage,
-      page: () => StatusPage(),
-    ),
+    GetPage(name: Routes.channels, page: () => channels()),
 
-    GetPage(
-      name: Routes.channels,
-      page: () => channels(),
-    ),
+    GetPage(name: Routes.addChannel, page: () => addChannel()),
 
-    GetPage(
-      name: Routes.addChannel,
-      page: () => addChannel(),
-    ),
+    GetPage(name: Routes.community, page: () => KomunitasPage()),
 
-    GetPage(
-      name: Routes.community,
-      page: () => KomunitasPage(),
-    ),
+    GetPage(name: Routes.pengaturan, page: () => PengaturanPage()),
 
-    GetPage(
-      name: Routes.pengaturan,
-      page: () => PengaturanPage(),
-    ),
+    GetPage(name: Routes.createCommunity, page: () => CreateCommunity()),
 
-    GetPage(
-      name: Routes.createCommunity,
-      page: () => CreateCommunity(),
-    ),
-
-    GetPage(
-      name: Routes.communityInfo,
-      page: () => KomunitasInfoPage(),
-    ),
-
+    GetPage(name: Routes.communityInfo, page: () => KomunitasInfoPage()),
   ];
 }
 
