@@ -5,7 +5,6 @@ import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/register.dart';
 import 'package:whatsapp_clone/status_page.dart';
-import 'package:get/get.dart';
 
 // Map<String, dynamic>? userData = {};
 
@@ -160,8 +159,7 @@ class _LoginState extends State<Login> {
       String token = body['token'];
 
       await AuthService().addToken(token);
-      // Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
-      Get.offAllNamed("/home");
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
     }
   }
 }
