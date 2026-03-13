@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:get/get.dart';
 import 'Controllers/CommunityController.dart';
 
@@ -9,11 +8,10 @@ class CreateCommunity extends StatelessWidget {
   CreateCommunity({super.key});
 
   final CommunityController controller = Get.find();
-  final TextEditingController nama = TextEditingController();
-  final TextEditingController deskripsi = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    controller.clearForm();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: warna.Putih(),
@@ -49,7 +47,7 @@ class CreateCommunity extends StatelessWidget {
                 ),
               ),
               TextField(
-                controller: nama,
+                controller: controller.nama,
                 decoration: InputDecoration(
                   hintText: 'Nama Komunitas',
                   contentPadding: EdgeInsets.symmetric(
@@ -65,7 +63,7 @@ class CreateCommunity extends StatelessWidget {
               SizedBox(height: 20),
 
               TextField(
-                controller: deskripsi,
+                controller: controller.deskripsi,
                 decoration: InputDecoration(
                   hintText: 'Deskripsi Komunitas',
                   contentPadding: EdgeInsets.symmetric(
@@ -84,10 +82,10 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          if (nama.text.isNotEmpty && deskripsi.text.isNotEmpty) {
+          if (communityController.nama.text.isNotEmpty && communityController.deskripsi.text.isNotEmpty) {
             var result = await controller.createCommunity(
-              nama.text,
-              deskripsi.text
+              communityController.nama.text,
+              communityController.deskripsi.text
             );
             if(result){
               Get.back(result: true);

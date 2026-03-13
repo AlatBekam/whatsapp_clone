@@ -4,22 +4,22 @@ import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
+import 'Controllers/CommunityController.dart';
 
 void main() {
-  initalGetX();
-
-  runApp(whatsAppClone());
+  runApp(const WhatsApp());
+  initialGetx();
 }
 
-initalGetX() {
+initialGetx() {
+  Get.put(CommunityController());
   Get.put(ControllerStatus());
   Get.put(ControllerChannel());
   Get.put(ChatController());
 }
 
-// ignore: camel_case_types
-class whatsAppClone extends StatelessWidget {
-  const whatsAppClone({super.key});
+class WhatsApp extends StatelessWidget {
+  const WhatsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +49,12 @@ class whatsAppClone extends StatelessWidget {
 // import 'package:get/get.dart';
 
 // void main() {
-//   runApp(weatherApp());
+//   runApp(WhatsApp());
 // }
 
 // // ignore: camel_case_types
-// class weatherApp extends StatelessWidget {
-//   const weatherApp({super.key});
+// class WhatsApp extends StatelessWidget {
+//   const WhatsApp({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {

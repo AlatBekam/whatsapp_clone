@@ -7,9 +7,10 @@ import 'Services/Theme.dart';
 
 class KomunitasPage extends StatelessWidget {
 
+  final CommunityController controller = Get.find();
   // GETX CONTROLLER
-  final CommunityController controller =
-      Get.put(CommunityController());
+  // final CommunityController controller =
+  //     Get.put(CommunityController());
 
   KomunitasPage({super.key});
 
@@ -54,7 +55,7 @@ class KomunitasPage extends StatelessWidget {
         ],
       ),
       body: Obx((){
-        if(controller.isLoading.value){
+        if(communityController.isLoading.value){
           return Center(
             child: CircularProgressIndicator(),
           );
@@ -70,7 +71,7 @@ class KomunitasPage extends StatelessWidget {
                 onTap: () async {
                   var result = await Get.toNamed(Routes.createCommunity);
                   if(result == true){
-                    controller.fetchCommunities();
+                    communityController.fetchCommunities();
                   }
                 },
                 child: Container(
@@ -141,10 +142,10 @@ class KomunitasPage extends StatelessWidget {
             // COMMUNITY LIST
             Column(
               children: List.generate(
-                controller.communities.length,
+                communityController.communities.length,
                     (index){
                   var community =
-                  controller.communities[index];
+                  communityController.communities[index];
                   return CommunityCard(
                       context,
                       community
@@ -161,7 +162,8 @@ class KomunitasPage extends StatelessWidget {
 
 Widget CommunityCard(
   BuildContext context,
-  dynamic community
+  // dynamic community
+  community
 ) {
   return Column(
     children: [
@@ -169,7 +171,8 @@ Widget CommunityCard(
         color: warna.Putih(),
         child: InkWell(
           onTap: () {
-            Get.toNamed(Routes.communityInfo, arguments: community);
+            communityController.goDetail(community);
+            // Get.toNamed(Routes.communityInfo, arguments: community);
           },
           child: Container(
             padding: EdgeInsets.symmetric(
