@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/channel_controller.dart';
 import 'package:whatsapp_clone/Controllers/status_controller.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
 
 void main() {
-  runApp(whatsAppClone());
+  initalGetX();
 
-  Get.put(controllerStatus);
-  Get.put(controllerChannel);
+  runApp(whatsAppClone());
+}
+
+initalGetX() {
+  Get.put(ControllerStatus());
+  Get.put(ControllerChannel());
+  Get.put(ChatController());
 }
 
 // ignore: camel_case_types
@@ -18,7 +24,6 @@ class whatsAppClone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-
       /// menghilangkan debug banner yg di kanan atas
       debugShowCheckedModeBanner: false,
 
@@ -31,13 +36,9 @@ class whatsAppClone extends StatelessWidget {
       /// pengganti default route lama yg ada di file routes_handler.dart
       unknownRoute: GetPage(
         name: "/notfound",
-        page: () => Scaffold(
-          body: Center(
-            child: Text("Route tidak ditemukan"),
-          ),
-        ),
+        page: () =>
+            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
       ),
-
     );
   }
 }

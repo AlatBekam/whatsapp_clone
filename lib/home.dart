@@ -132,14 +132,6 @@ Widget widgetitemlist({
             userId: userId,
             chatId: chatId,
           );
-          //  Get.toNamed(
-          //   '/chat',
-          //   arguments: {
-          //     'title': item['name']?.toString() ?? "Chat",
-          //     'user_id': userId,
-          //     'chat_id': chatId,
-          //   },
-          // );
         },
       );
     },

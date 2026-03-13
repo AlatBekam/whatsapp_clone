@@ -35,19 +35,8 @@ class AppRoutes {
   static final routes = [
     GetPage(name: Routes.home, page: () => home()),
 
-    // GetPage(
-    //   name: Routes.chat,
-    //   page: () {
-    //     final args = Get.arguments as Map<String, dynamic>?;
-    //     final title = args?['title'] ?? "Chat";
-    //     final userId = args?['user_id'] ?? "0";
+    GetPage(name: Routes.chat, page: () => Chat.ChatPage()),
 
-    //     return Chatpage(
-    //       title: title,
-    //       userId: userId,
-    //     );
-    //   },
-    // ),
     GetPage(name: Routes.splashScreen, page: () => SplashScreen()),
 
     GetPage(name: Routes.login, page: () => Login()),
