@@ -1,30 +1,30 @@
 import 'dart:convert';
-import 'package:get/get.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 
-
-
-
-
-class Chatpage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   final String title;
   final String userId;
 
-   Chatpage({super.key, required this.title, required this.userId});
+  const ChatPage({super.key, required this.title, required this.userId});
 
-   late final ChatController controller =
-      Get.put(ChatController(userId: userId, title: title));
-   
-   final ChatController controller2 = Get.find();
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
 
-    
+class _ChatPageState extends State<ChatPage> {
+  late ChatController controller;
 
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ChatController(userId: widget.userId, title: widget.title));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +37,10 @@ class Chatpage extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.green,
-                  child: Text('C${userId}'),
+                  child: Text('C${widget.userId}'),
                 ),
-                SizedBox(width: 10),
-                Text(title),
+                const SizedBox(width: 10),
+                Text(widget.title),
               ],
             ),
             Row(
@@ -50,7 +50,7 @@ class Chatpage extends StatelessWidget {
                   width: 25,
                   color: warna.Hitam(),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 SvgPicture.asset(
                   'assets/three-dots-vertical.svg',
                   width: 25,
@@ -61,63 +61,56 @@ class Chatpage extends StatelessWidget {
           ],
         ),
       ),
-      body: GetBuilder <ChatController> (
-        init: ChatController(userId: userId, title: title),
-        builder: (controller) { 
-          return Column(
+      body: Column(
         children: [
-          // Chat messages list
           Expanded(
-            child: controller2.isLoading
-                ? Center(child: CircularProgressIndicator())
-                : controller2.messages.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet.\nStart the conversation!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: controller2.messages.length,
-                    padding: EdgeInsets.all(10),
-                    itemBuilder: (context, index) {
-                      final message = controller2.messages[index];
-                      // Support multiple field names for message content
-                      final messageContent =
-                          message['content']?.toString() ??
-                          message['message']?.toString() ??
-                          message['text']?.toString() ??
-                          '';
-                      final isMe = controller2.checkIsMe(message);
-                      final timestamp =
-                          message['timestamp']?.toString() ??
-                          message['created_at']?.toString() ??
-                          message['time']?.toString() ??
-                          '';
-
-                      return _MessageBubble(
-                        message: messageContent,
-                        isMe: isMe,
-                        time: timestamp,
-                      );
-                    },
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (controller.messages.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No messages yet.\nStart the conversation!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
                   ),
-          ),
+                );
+              }
+              return ListView.builder(
+                itemCount: controller.messages.length,
+                padding: const EdgeInsets.all(10),
+                itemBuilder: (context, index) {
+                  final message = controller.messages[index];
+                  final messageContent = message['content']?.toString() ??
+                      message['message']?.toString() ??
+                      message['text']?.toString() ?? '';
+                  final isMe = controller.checkIsMe(message);
+                  final timestamp = message['timestamp']?.toString() ??
+                      message['created_at']?.toString() ??
+                      message['time']?.toString() ?? '';
 
-          // Message input
+                  return _MessageBubble(
+                    message: messageContent,
+                    isMe: isMe,
+                    time: timestamp,
+                  );
+                },
+              );
+            }),
+          ),
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: TextField(
-                    controller: controller2.messageController,
+                    controller: controller.messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
-                      prefixIcon: Icon(Icons.emoji_emotions),
-                      contentPadding: EdgeInsets.symmetric(
+                      prefixIcon: const Icon(Icons.emoji_emotions),
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
@@ -125,17 +118,17 @@ class Chatpage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    onSubmitted: (_) => controller2.sendMessage(),
+                    onSubmitted: (_) => controller.sendMessage(),
                   ),
                 ),
-                SizedBox(width: 15),
+                const SizedBox(width: 15),
                 Container(
                   decoration: BoxDecoration(
                     color: warna.Hijau(),
                     shape: BoxShape.circle,
                   ),
-                  child: controller2.isSending
-                      ? Padding(
+                  child: Obx(() => controller.isSending.value
+                      ? const Padding(
                           padding: EdgeInsets.all(12),
                           child: SizedBox(
                             width: 20,
@@ -147,26 +140,20 @@ class Chatpage extends StatelessWidget {
                           ),
                         )
                       : IconButton(
-                          onPressed: controller2.sendMessage,
+                          onPressed: controller.sendMessage,
                           icon: Icon(Icons.send),
                           color: Colors.white,
-                        ),
+                        )),
                 ),
               ],
             ),
           ),
         ],
-      );
-
-      }
       ),
     );
   }
 }
 
-
-
-// Message bubble widget
 class _MessageBubble extends StatelessWidget {
   final String message;
   final bool isMe;
@@ -183,18 +170,18 @@ class _MessageBubble extends StatelessWidget {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
           color: isMe ? warna.Hijau() : Colors.grey[300],
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: isMe ? Radius.circular(16) : Radius.circular(4),
-            bottomRight: isMe ? Radius.circular(4) : Radius.circular(16),
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: isMe ? const Radius.circular(16) : const Radius.circular(4),
+            bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(16),
           ),
         ),
         child: Column(
@@ -207,7 +194,7 @@ class _MessageBubble extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               _formatTime(time),
               style: TextStyle(

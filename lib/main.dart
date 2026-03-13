@@ -13,12 +13,11 @@ class weatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      // Inisialisasi router
-      // onGenerateRoute: router.generateRoute,
-      // inisialisasi halaman router awal disaat app terbuka
-      initialRoute: "/home",
-      getPages:AppRoutes.routes,
+  return GetMaterialApp(
+      title: 'WhatsApp Clone',
+      debugShowCheckedModeBanner: false,
+      initialRoute: "/login",
+      getPages: AppRoutes.routes,
     );
   }
 }

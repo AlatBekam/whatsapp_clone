@@ -3,7 +3,7 @@ import 'package:whatsapp_clone/CommunityInfo.dart';
 import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/add_status.dart';
 import 'package:whatsapp_clone/channels.dart';
-import 'package:whatsapp_clone/chat_page.dart';
+import 'package:whatsapp_clone/chat_page.dart' as Chat;
 import 'package:whatsapp_clone/home.dart';
 import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/login.dart';
@@ -93,13 +93,15 @@ import 'package:get/get.dart';
 class AppRoutes {
   static final routes = [
     GetPage(name: '/home', page: () => home()),
-    GetPage(name: '/', page: () => SplashScreen()),
+    GetPage(name: '/SplashScreen', page: () => SplashScreen()),
+    GetPage(name: '/login', page: () => Login()),
+
     GetPage(
       name: '/chat',
       page: () {
         final args = Get.arguments;
 
-        return Chatpage(
+        return Chat.ChatPage(
           title: args['title'],
           userId: args['user_id'],
         );
