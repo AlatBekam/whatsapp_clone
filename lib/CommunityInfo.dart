@@ -2,26 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:get/get.dart';
-import '../Models/CommunityModel.dart';
 import '../Controllers/CommunityController.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
 
   final CommunityController controller = Get.find();
-  final CommunityModel community = Get.arguments;
-  final TextEditingController nama = TextEditingController();
-  final TextEditingController deskripsi = TextEditingController();
+  // final CommunityModel community = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
-    nama.text = community.communityName;
-    deskripsi.text = community.description;
+    communityController.nama.text = controller.community.communityName;
+    communityController.deskripsi.text = controller.community.description;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: warna.Putih(),
         title: Text(
-          community.communityName,
+          controller.community.communityName,
           style: TextStyle(
             color: warna.Hitam(),
             fontSize: 19,
@@ -47,7 +44,7 @@ class KomunitasInfoPage extends StatelessWidget {
             onSelected: (value) async {
               if(value == "delete"){
                 await controller.deleteCommunity(
-                  community.communityId
+                  controller.community.communityId
                 );
                 Get.back(result:true);
               }
@@ -83,7 +80,7 @@ class KomunitasInfoPage extends StatelessWidget {
             const SizedBox(height: 8),
 
             TextField(
-              controller: nama,
+              controller: communityController.nama,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -104,7 +101,7 @@ class KomunitasInfoPage extends StatelessWidget {
             const SizedBox(height:20),
 
             TextField(
-              controller: deskripsi,
+              controller: communityController.deskripsi,
               maxLines:3,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -123,11 +120,11 @@ class KomunitasInfoPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () async {
-                  if(nama.text.isNotEmpty && deskripsi.text.isNotEmpty) {
+                  if(communityController.nama.text.isNotEmpty && communityController.deskripsi.text.isNotEmpty) {
                     var result = await controller.updateCommunity(
-                      community.communityId,
-                      nama.text,
-                      deskripsi.text,
+                      controller.community.communityId,
+                      communityController.nama.text,
+                      communityController.deskripsi.text,
                     );
                     if (result) {
                       Get.back(result: true);
