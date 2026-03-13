@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'Services/route_handler.dart';
 
 void main() {
-  runApp(const WeatherApp());
+  runApp(const WhatsApp());
 }
 
-class WeatherApp extends StatelessWidget {
-  const WeatherApp({super.key});
+class WhatsApp extends StatelessWidget {
+  const WhatsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +42,12 @@ class WeatherApp extends StatelessWidget {
 // import 'package:get/get.dart';
 
 // void main() {
-//   runApp(weatherApp());
+//   runApp(WhatsApp());
 // }
 
 // // ignore: camel_case_types
-// class weatherApp extends StatelessWidget {
-//   const weatherApp({super.key});
+// class WhatsApp extends StatelessWidget {
+//   const WhatsApp({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {

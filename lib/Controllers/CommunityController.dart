@@ -3,17 +3,21 @@ import 'package:get/get.dart';
 import '../Services/api_services.dart';
 import '../Models/CommunityModel.dart';
 
+
+// extends GetxController berfungsi untuk menggunakan sistem lifecycle dari GetX
 class CommunityController extends GetxController {
 
-  var communities = <CommunityModel>[].obs;
+  var communities = <CommunityModel>[].obs; //observable (reactive) dari GetX dipake supaya ketika data berubah UI otomatis diupdate
   var isLoading = true.obs;
 
   @override
+  // fungsi yg dijalankan ketika controller pertama kali dibuat
   void onInit() {
     fetchCommunities();
     super.onInit();
   }
 
+  //ambil data komunitas dari server
   Future fetchCommunities() async {
     try {
       isLoading(true);
@@ -23,8 +27,8 @@ class CommunityController extends GetxController {
       // print("STATUS: ${response.statusCode}");
       // print("BODY: ${response.body}");
       if(response.statusCode == 200){
-        List data = jsonDecode(response.body);
-        communities.value = data.map((e) => CommunityModel.fromJson(e)).toList();
+        List data = jsonDecode(response.body); //mengubah JSON jadi list
+        communities.value = data.map((e) => CommunityModel.fromJson(e)).toList(); // mengubah JSON menjadi model
       }
     } finally {
       isLoading(false);
