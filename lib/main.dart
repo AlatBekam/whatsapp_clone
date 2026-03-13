@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 import 'package:get/get.dart';
 
 void main() {
-  runApp(weatherApp());
+  initialGetx();
+
+  runApp(WeatherApp());
+}
+
+initialGetx() {
+  Get.put(ChatController());
 }
 
 // ignore: camel_case_types
-class weatherApp extends StatelessWidget {
-  const weatherApp({super.key});
+class WeatherApp extends StatelessWidget {
+  const WeatherApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-  return GetMaterialApp(
+    return GetMaterialApp(
       title: 'WhatsApp Clone',
       debugShowCheckedModeBanner: false,
       initialRoute: "/login",
@@ -23,8 +30,8 @@ class weatherApp extends StatelessWidget {
 }
 
 // ignore: camel_case_types
-// class weatherApp extends StatelessWidget {
-//   const weatherApp({super.key});
+// class WeatherApp extends StatelessWidget {
+//   const WeatherApp({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {

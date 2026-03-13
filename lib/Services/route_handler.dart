@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/CommunityInfo.dart';
+import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/add_channel.dart';
 import 'package:whatsapp_clone/add_status.dart';
 import 'package:whatsapp_clone/channels.dart';
@@ -14,7 +15,6 @@ import 'package:whatsapp_clone/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/status_page.dart';
 import 'package:get/get.dart';
 
-
 // Route<dynamic> generateRoute(RouteSettings settings) {
 //   switch (settings.name) {
 //     case '/home':
@@ -26,7 +26,7 @@ import 'package:get/get.dart';
 //     //   final chatId = args?['chat_id'] as String?;
 //     //   return MaterialPageRoute(
 //     //     builder: (context) => Chatpage(
-//     //       title: title, 
+//     //       title: title,
 //     //       userId: userId,
 //     //     ),
 //     //     settings: RouteSettings(
@@ -99,12 +99,7 @@ class AppRoutes {
     GetPage(
       name: '/chat',
       page: () {
-        final args = Get.arguments;
-
-        return Chat.ChatPage(
-          title: args['title'],
-          userId: args['user_id'],
-        );
+        return Chat.ChatPage();
       },
     ),
   ];

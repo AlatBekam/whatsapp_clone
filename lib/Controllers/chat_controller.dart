@@ -4,28 +4,20 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
 
-
 class ChatController extends GetxController {
-    String title;
-    String userId;
-
-  ChatController({required this.title, required this.userId});
-
-  
-  List<Map<String, dynamic>> datachat = [];
-  List<Map<String, dynamic>> messages = [];
+  RxList<Map<String, dynamic>> messages = RxList();
   final TextEditingController messageController = TextEditingController();
   var isSending = false.obs;
   String? _currentUserId;
-  String? user_id;
+  RxnString currentUserId1 = RxnString();
+  RxnString title = RxnString();
   String? currentChatId;
   bool _argsLoaded = false;
   var isLoading = false.obs;
 
-@override
+  @override
   void onInit() {
     super.onInit();
-    print("ChatController init - userId: $userId, title: $title");
     _initializeUser();
   }
 
@@ -35,26 +27,27 @@ class ChatController extends GetxController {
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
   }
 
-  void _loadArguments() {
-    final args = Get.arguments;
-    if (args is Map) {
-      user_id = args['user_id']?.toString();
-      currentChatId = args['chat_id']?.toString();
-      print("Args loaded: user_id=$user_id, chat_id=$currentChatId");
-    }
-    _argsLoaded = true;
-    // Data will load after user init
-    if (_currentUserId != null)
-    _getChatData();
-  }
+  // void _loadArguments() {
+  //   final args = Get.arguments;
+  //   if (args is Map) {
+  //     currentUserId1.value = args['user_id']?.toString();
+  //     currentChatId = args['chat_id']?.toString();
+  //     print(
+  //       "Args loaded: user_id=${currentUserId1.value}, chat_id=$currentChatId",
+  //     );
+  //   }
+  //   _argsLoaded = true;
+  //   // Data will load after user init
+  //   if (_currentUserId != null) _getChatData();
+  // }
 
   Future<void> _getCurrentUserId() async {
     try {
       final token = await AuthService().getToken();
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        
-          _currentUserId = decodeToken['id']?.toString();
+
+        _currentUserId = decodeToken['id']?.toString();
         update();
         print("Current user ID: $_currentUserId");
       }
@@ -63,20 +56,21 @@ class ChatController extends GetxController {
     }
   }
 
-
   Future<void> _getChatData() async {
     if (_currentUserId == null) {
       print("Current user ID not loaded yet");
       return;
     }
-    
-    final String targetUserId = user_id ?? userId;
-    final String? targetChatId = currentChatId;
-    
-    print("Loading chat for user: $targetUserId, chatId: $targetChatId");
-    
-    isLoading.value = true;
 
+    // final String targetUserId = user_id ?? userId;
+    final String? targetChatId = currentChatId;
+
+    print(
+      "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
+    );
+
+    isLoading.value = true;
+    await Future.delayed(Durations.medium4);
     try {
       final response = await ApiServices().httpGETWithToken("private/chats");
       if (response.statusCode != 200) {
@@ -84,66 +78,65 @@ class ChatController extends GetxController {
       }
       final data = jsonDecode(response.body);
 
-
-
       print("Chats response: $data");
-      
+
       List<Map<String, dynamic>> parsedData = [];
       if (data is Map && data['chats'] != null) {
         final chats = List<dynamic>.from(data['chats']);
         for (var chat in chats) {
           final chatUsers = chat['user_id'];
           bool matches = false;
-          
-          if (targetChatId != null && chat['chat_id']?.toString() == targetChatId) {
+
+          if (targetChatId != null &&
+              chat['chat_id']?.toString() == targetChatId) {
             matches = true;
           } else if (chatUsers is List) {
-            matches = chatUsers.any((id) => id.toString() == targetUserId);
-          } else if (chatUsers?.toString() == targetUserId) {
+            matches = chatUsers.any(
+              (id) => id.toString() == currentUserId1.value,
+            );
+          } else if (chatUsers?.toString() == currentUserId1.value) {
             matches = true;
           }
-          
+
           if (matches && chat['messages'] != null) {
             parsedData = List<Map<String, dynamic>>.from(chat['messages']);
-            // Sort messages by timestamp ascending
             parsedData.sort((a, b) {
               final timeA = a['timestamp'] ?? a['created_at'] ?? '0';
               final timeB = b['timestamp'] ?? b['created_at'] ?? '0';
-              return int.tryParse(timeA.toString())?.compareTo(int.tryParse(timeB.toString()) ?? 0) ?? 0;
+              return int.tryParse(
+                    timeA.toString(),
+                  )?.compareTo(int.tryParse(timeB.toString()) ?? 0) ??
+                  0;
             });
             break;
           }
         }
       }
 
-      messages = parsedData;
-      datachat = List.from(parsedData);
+      messages.value = parsedData;
       print("Loaded ${messages.length} messages");
+      print('$data');
       update();
     } catch (e) {
       print("GET Error: $e");
-      
-        Get.snackbar(
-        "Error",
-        "Error loading messages: $e",);
-      
-    } finally {    
-          isLoading.value = false;
+
+      Get.snackbar("Error", "Error loading messages: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 
-
-@override
+  @override
   void onReady() {
     super.onReady();
-    _loadArguments();
+    // _loadArguments();
   }
-
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
-    final String receiverId = user_id ?? userId;
-    if (messageText.isEmpty || receiverId.isEmpty || _currentUserId == null) {
+    if (messageText.isEmpty ||
+        (currentUserId1.value?.isEmpty ?? true) ||
+        _currentUserId == null) {
       Get.snackbar("Error", "Cannot send message: missing receiver ID");
       return;
     }
@@ -154,11 +147,11 @@ class ChatController extends GetxController {
     try {
       final requestData = {
         'message': messageText,
-        'receiver_id': receiverId,
+        'receiver_id': currentUserId1.value,
         'sender_id': _currentUserId,
         'chat_id': currentChatId ?? '',
       };
-      print("Sending to receiver $receiverId: $requestData");
+      print("Sending to receiver ${currentUserId1.value}: $requestData");
 
       final response = await ApiServices().httpPOSTWithToken(
         data: requestData,
@@ -167,17 +160,19 @@ class ChatController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         messageController.clear();
-        await _getChatData();  // Refresh
+        await _getChatData(); // Refresh
         print("Message sent successfully");
       } else {
-        throw Exception("Server error: ${response.statusCode} - ${response.body}");
+        throw Exception(
+          "Server error: ${response.statusCode} - ${response.body}",
+        );
       }
     } catch (e) {
       print("Send error: $e");
       Get.snackbar("Error", "Failed to send: $e");
     } finally {
       isSending.value = false;
-    update();
+      update();
     }
   }
 
@@ -192,9 +187,23 @@ class ChatController extends GetxController {
     return senderId.toString() == _currentUserId;
   }
 
+  Future<dynamic>? goDetail({
+    required String title,
+    required String userId,
+    String? chatId,
+  }) {
+    currentUserId1.value = userId;
+    currentChatId = chatId;
+    chatController.title.value = title;
+    _getChatData();
+    return Get.toNamed('/chat');
+  }
+
   @override
   void onClose() {
     messageController.dispose();
     super.onClose();
   }
 }
+
+ChatController chatController = Get.find<ChatController>();
