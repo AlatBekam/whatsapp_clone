@@ -31,7 +31,36 @@ class ChatController extends GetxController {
 
   Future<void> _initializeUser() async {
     await _getCurrentUserId();
+    await _getChatData();
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
+  }
+
+  void _loadArguments() {
+    final args = Get.arguments;
+    if (args is Map) {
+      user_id = args['user_id']?.toString();
+      currentChatId = args['chat_id']?.toString();
+      print("Args loaded: user_id=$user_id, chat_id=$currentChatId");
+    }
+    _argsLoaded = true;
+    // Data will load after user init
+    if (_currentUserId != null)
+    _getChatData();
+  }
+
+  Future<void> _getCurrentUserId() async {
+    try {
+      final token = await AuthService().getToken();
+      if (token != null) {
+        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+        
+          _currentUserId = decodeToken['id']?.toString();
+        update();
+        print("Current user ID: $_currentUserId");
+      }
+    } catch (e) {
+      print("Error getting current user ID: $e");
+    }
   }
 
 
@@ -103,20 +132,6 @@ class ChatController extends GetxController {
     }
   }
 
-  Future<void> _getCurrentUserId() async {
-    try {
-      final token = await AuthService().getToken();
-      if (token != null) {
-        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        
-          _currentUserId = decodeToken['id']?.toString();
-        update();
-        print("Current user ID: $_currentUserId");
-      }
-    } catch (e) {
-      print("Error getting current user ID: $e");
-    }
-  }
 
 @override
   void onReady() {
@@ -124,17 +139,6 @@ class ChatController extends GetxController {
     _loadArguments();
   }
 
-  void _loadArguments() {
-    final args = Get.arguments;
-    if (args is Map) {
-      user_id = args['user_id']?.toString();
-      currentChatId = args['chat_id']?.toString();
-      print("Args loaded: user_id=$user_id, chat_id=$currentChatId");
-    }
-    _argsLoaded = true;
-    // Data will load after user init
-    _getChatData();
-  }
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
