@@ -111,3 +111,5 @@ class ControllerStatus extends GetxController {
     getViewedStatus();
   }
 }
+
+ControllerStatus controllerStatus = Get.find<ControllerStatus>();

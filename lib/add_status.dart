@@ -17,7 +17,6 @@ class addStatus extends StatefulWidget {
 
 class _addStatusState extends State<addStatus> {
   final _formKey = GlobalKey<FormState>();
-  final controllerStatus = Get.put(ControllerStatus());
   var contentStatus;
 
   @override

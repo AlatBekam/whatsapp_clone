@@ -13,7 +13,6 @@ class addChannel extends StatefulWidget {
 
 class _addChannelState extends State<addChannel> {
   final _formKey = GlobalKey<FormState>();
-  final controllerChannel = Get.put(ControllerChannel());
   var nameChannel, descriptionChannel, typeChannel;
 
   @override

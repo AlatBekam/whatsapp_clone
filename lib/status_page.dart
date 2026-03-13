@@ -17,9 +17,6 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  final controllerChannel = Get.put(ControllerChannel());
-  final controllerStatus = Get.put(ControllerStatus());
-
   @override
   void initState() {
     // TODO: implement initState
