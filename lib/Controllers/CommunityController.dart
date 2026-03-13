@@ -2,10 +2,17 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import '../Services/api_services.dart';
 import '../Models/CommunityModel.dart';
+import 'package:flutter/material.dart';
+import '../Services/route_handler.dart';
 
+CommunityController communityController = Get.find<CommunityController>();
 
 // extends GetxController berfungsi untuk menggunakan sistem lifecycle dari GetX
 class CommunityController extends GetxController {
+  final TextEditingController nama = TextEditingController();
+  final TextEditingController deskripsi = TextEditingController();
+  Rxn<CommunityModel> selectedCommunity = Rxn<CommunityModel>();
+  CommunityModel get community => selectedCommunity.value!;
 
   var communities = <CommunityModel>[].obs; //observable (reactive) dari GetX dipake supaya ketika data berubah UI otomatis diupdate
   var isLoading = true.obs;
@@ -82,4 +89,18 @@ class CommunityController extends GetxController {
     }
     return false;
   }
+
+  // Future<dynamic>? goDetail(dynamic community) {
+  //   return Get.toNamed(Routes.communityInfo, arguments: community);
+  // }
+
+  Future<dynamic>? goDetail(dynamic community) {
+    selectedCommunity.value = community;
+    return Get.toNamed(Routes.communityInfo);
+  }
+  
+  void clearForm(){
+  nama.clear();
+  deskripsi.clear();
+}
 }

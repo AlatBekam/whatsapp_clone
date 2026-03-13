@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'Services/route_handler.dart';
+import 'Controllers/CommunityController.dart';
 
 void main() {
   runApp(const WhatsApp());
+  initialGetx();
 }
+
+initialGetx() {
+  Get.put(CommunityController());
+}
+
 
 class WhatsApp extends StatelessWidget {
   const WhatsApp({super.key});
