@@ -49,6 +49,8 @@ class AppRoutes {
 
     GetPage(name: Routes.addChannel, page: () => addChannel()),
 
+    GetPage(name: Routes.addStatus, page: () => addStatus()),
+
     GetPage(name: Routes.community, page: () => KomunitasPage()),
 
     GetPage(name: Routes.pengaturan, page: () => PengaturanPage()),

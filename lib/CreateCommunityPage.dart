@@ -4,14 +4,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'Controllers/CommunityController.dart';
 
-class CreateCommunity extends StatelessWidget {
+class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
 
+  @override
+  State<CreateCommunity> createState() => _CreateCommunityState();
+}
+
+class _CreateCommunityState extends State<CreateCommunity> {
   final CommunityController controller = Get.find();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.clearForm();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    controller.clearForm();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: warna.Putih(),
@@ -82,19 +92,17 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          if (communityController.nama.text.isNotEmpty && communityController.deskripsi.text.isNotEmpty) {
+          if (communityController.nama.text.trim().isNotEmpty &&
+              communityController.deskripsi.text.trim().isNotEmpty) {
             var result = await controller.createCommunity(
               communityController.nama.text,
-              communityController.deskripsi.text
+              communityController.deskripsi.text,
             );
-            if(result){
+            if (result) {
               Get.back(result: true);
             }
           } else {
-            Get.snackbar(
-              "Error",
-              "Nama dan deskripsi harus diisi",
-            );
+            Get.snackbar("Error", "Nama dan deskripsi harus diisi");
           }
         },
         child: Icon(Icons.arrow_forward),
