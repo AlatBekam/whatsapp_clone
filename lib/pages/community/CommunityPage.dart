@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart';
-import 'Controllers/CommunityController.dart';
-import 'Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/CommunityController.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
 
 class KomunitasPage extends StatelessWidget {
-
   final CommunityController controller = Get.find();
   // GETX CONTROLLER
   // final CommunityController controller =
@@ -21,45 +20,37 @@ class KomunitasPage extends StatelessWidget {
         backgroundColor: warna.Putih(),
         title: Text(
           'Community',
-          style: TextStyle(
-            color: warna.Hitam(),
-            fontSize: 19,
-          ),
+          style: TextStyle(color: warna.Hitam(), fontSize: 19),
         ),
         actions: [
           PopupMenuButton<String>(
             color: warna.Putih(),
             icon: SvgPicture.asset(
-              'assets/three-dots-vertical.svg',
+              'assets/svg/three-dots-vertical.svg',
               width: 19,
               color: warna.Hitam(),
             ),
             onSelected: (value) {
-              if(value == "Pengaturan"){
+              if (value == "Pengaturan") {
                 Get.toNamed(Routes.pengaturan);
               }
             },
 
-            itemBuilder: (context)=>[
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: "Pengaturan",
                 child: Text(
                   "Pengaturan",
-                  style: TextStyle(
-                      color: warna.Hitam()
-                  ),
+                  style: TextStyle(color: warna.Hitam()),
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
-      body: Obx((){
-        if(communityController.isLoading.value){
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        
+      body: Obx(() {
+        if (communityController.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
         }
 
         return ListView(
@@ -70,15 +61,12 @@ class KomunitasPage extends StatelessWidget {
               child: InkWell(
                 onTap: () async {
                   var result = await Get.toNamed(Routes.createCommunity);
-                  if(result == true){
+                  if (result == true) {
                     communityController.fetchCommunities();
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
                       Stack(
@@ -88,12 +76,11 @@ class KomunitasPage extends StatelessWidget {
                             height: 38,
                             decoration: BoxDecoration(
                               color: warna.AbuAbu(),
-                              borderRadius:
-                              BorderRadius.circular(9),
+                              borderRadius: BorderRadius.circular(9),
                             ),
                             child: Center(
                               child: SvgPicture.asset(
-                                'assets/logokomunitas.svg',
+                                'assets/svg/logokomunitas.svg',
                                 color: warna.Putih(),
                                 width: 25,
                                 height: 25,
@@ -108,8 +95,7 @@ class KomunitasPage extends StatelessWidget {
                               height: 20,
                               decoration: BoxDecoration(
                                 color: warna.Hijau(),
-                                borderRadius:
-                                BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: warna.Putih(),
                                   width: 1.5,
@@ -121,7 +107,7 @@ class KomunitasPage extends StatelessWidget {
                                 color: warna.Putih(),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       SizedBox(width: 15),
@@ -132,7 +118,7 @@ class KomunitasPage extends StatelessWidget {
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -141,18 +127,13 @@ class KomunitasPage extends StatelessWidget {
 
             // COMMUNITY LIST
             Column(
-              children: List.generate(
-                communityController.communities.length,
-                    (index){
-                  var community =
-                  communityController.communities[index];
-                  return CommunityCard(
-                      context,
-                      community
-                  );
-                },
-              ),
-            )
+              children: List.generate(communityController.communities.length, (
+                index,
+              ) {
+                var community = communityController.communities[index];
+                return CommunityCard(context, community);
+              }),
+            ),
           ],
         );
       }),
@@ -163,7 +144,7 @@ class KomunitasPage extends StatelessWidget {
 Widget CommunityCard(
   BuildContext context,
   // dynamic community
-  community
+  community,
 ) {
   return Column(
     children: [
@@ -175,17 +156,11 @@ Widget CommunityCard(
             // Get.toNamed(Routes.communityInfo, arguments: community);
           },
           child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  color: warna.AbuAbu(),
-                  width: 1
-                )
-              )
+                bottom: BorderSide(color: warna.AbuAbu(), width: 1),
+              ),
             ),
             child: Row(
               children: [
@@ -198,7 +173,7 @@ Widget CommunityCard(
                   ),
                   child: Center(
                     child: SvgPicture.asset(
-                      'assets/logokomunitas.svg',
+                      'assets/svg/logokomunitas.svg',
                       color: warna.Putih(),
                       width: 20,
                       height: 20,
@@ -213,7 +188,7 @@ Widget CommunityCard(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -229,10 +204,7 @@ Widget CommunityCard(
                 Get.toNamed(Routes.createCommunity);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     Container(
@@ -240,12 +212,12 @@ Widget CommunityCard(
                       height: 33,
                       decoration: BoxDecoration(
                         color: warna.Hijau(),
-                        borderRadius: BorderRadius.circular(9)
+                        borderRadius: BorderRadius.circular(9),
                       ),
                       margin: EdgeInsets.only(left: 2),
                       child: Center(
                         child: SvgPicture.asset(
-                          'assets/speaker.svg',
+                          'assets/svg/speaker.svg',
                           color: warna.HijauTua(),
                           width: 20,
                           height: 20,
@@ -273,7 +245,7 @@ Widget CommunityCard(
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -286,10 +258,7 @@ Widget CommunityCard(
                 Get.toNamed(Routes.createCommunity);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     Container(
@@ -297,12 +266,12 @@ Widget CommunityCard(
                       height: 33,
                       decoration: BoxDecoration(
                         color: warna.AbuAbu(),
-                        borderRadius: BorderRadius.circular(20)
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       margin: EdgeInsets.only(left: 2),
                       child: Center(
                         child: SvgPicture.asset(
-                          'assets/logokomunitas.svg',
+                          'assets/svg/logokomunitas.svg',
                           color: warna.Putih(),
                           width: 20,
                           height: 20,
@@ -332,7 +301,7 @@ Widget CommunityCard(
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -345,10 +314,7 @@ Widget CommunityCard(
                 Get.toNamed(Routes.createCommunity);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 9
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                 child: Row(
                   children: [
                     Container(
@@ -367,7 +333,7 @@ Widget CommunityCard(
                       style: TextStyle(
                         color: warna.AbuAbuTua(),
                         fontSize: 15,
-                        fontWeight: FontWeight.w400
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -376,7 +342,7 @@ Widget CommunityCard(
             ),
           ),
         ],
-      )
+      ),
     ],
   );
 }

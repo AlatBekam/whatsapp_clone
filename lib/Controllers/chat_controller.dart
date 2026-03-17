@@ -57,10 +57,10 @@ class ChatController extends GetxController {
   }
 
   Future<void> _getChatData() async {
-    if (_currentUserId == null) {
-      print("Current user ID not loaded yet");
-      return;
-    }
+    // if (_currentUserId == null) {
+    //   print("Current user ID not loaded yet");
+    //   return;
+    // }
 
     // final String targetUserId = user_id ?? userId;
     final String? targetChatId = currentChatId;
@@ -73,9 +73,9 @@ class ChatController extends GetxController {
     await Future.delayed(Durations.medium4);
     try {
       final response = await ApiServices().httpGETWithToken("private/chats");
-      if (response.statusCode != 200) {
-        throw Exception("Failed to load chats: ${response.statusCode}");
-      }
+      // if (response.statusCode != 200) {
+      //   throw Exception("Failed to load chats: ${response.statusCode}");
+      // }
       final data = jsonDecode(response.body);
 
       print("Chats response: $data");

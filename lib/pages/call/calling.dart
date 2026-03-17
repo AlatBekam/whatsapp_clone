@@ -31,10 +31,10 @@ IconData getCallIcon(CallType type) {
 }
 
 List<IconAssets> iconAssets = [
-  IconAssets(lambang: 'assets/logotelepon.svg'),
-  IconAssets(lambang: 'assets/Dialpad.svg'),
-  IconAssets(lambang: 'assets/calendar.svg'),
-  IconAssets(lambang: 'assets/love.svg'),
+  IconAssets(lambang: 'assets/svg/logotelepon.svg'),
+  IconAssets(lambang: 'assets/svg/Dialpad.svg'),
+  IconAssets(lambang: 'assets/svg/calendar.svg'),
+  IconAssets(lambang: 'assets/svg/love.svg'),
 ];
 
 class IconAssets {
@@ -56,8 +56,6 @@ class CallHistory {
 class Calling extends StatelessWidget {
   const Calling({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,23 +68,19 @@ class Calling extends StatelessWidget {
         child: Icon(Icons.add_call),
       ),
       appBar: AppBar(
-        title: 
-        Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
           children: [
             Text('Panggilan'),
             Row(
               children: [
-                SvgPicture.asset(
-                  'assets/search.svg',
-                  width: 25,
-                        ),
+                SvgPicture.asset('assets/svg/search.svg', width: 25),
                 SizedBox(width: 20),
                 SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
+                  'assets/svg/three-dots-vertical.svg',
                   width: 25,
-                        ),
+                ),
               ],
             ),
           ],
@@ -101,41 +95,45 @@ class Calling extends StatelessWidget {
               Expanded(
                 child: SizedBox(
                   height: 60,
-                  child: ListView.builder(scrollDirection: Axis.horizontal,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
                     itemCount: iconAssets.length,
                     itemBuilder: (context, index) {
-                    var icon = iconAssets[index];  
-                    return Material(
-                      color: Colors.grey[200],
-                      shape: CircleBorder(),
-                      child: InkWell(
-                        customBorder: CircleBorder(),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/Kontak');
-                        },
-                        child: Container(
+                      var icon = iconAssets[index];
+                      return Material(
+                        color: Colors.grey[200],
+                        shape: CircleBorder(),
+                        child: InkWell(
+                          customBorder: CircleBorder(),
+                          onTap: () {
+                            Navigator.pushNamed(context, '/Kontak');
+                          },
+                          child: Container(
                             width: 90,
                             margin: EdgeInsets.symmetric(horizontal: 5),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: Colors.black,
-                            child: SvgPicture.asset(icon.lambang!, height: 20, width: 20, ),
-                            radius: 30,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.black,
+                              child: SvgPicture.asset(
+                                icon.lambang!,
+                                height: 20,
+                                width: 20,
+                              ),
+                              radius: 30,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                    }
+                      );
+                    },
                   ),
                 ),
-                
-              )
+              ),
               // Container(
               //   margin: EdgeInsets.symmetric(horizontal: 5),
               //   child: CircleAvatar(
               //     radius: 30,
               //     backgroundColor: Colors.grey[200],
-              //     child: SvgPicture.asset('assets/logotelepon.svg', height: 20, width: 20,),
+              //     child: SvgPicture.asset('assets/svg/logotelepon.svg', height: 20, width: 20,),
               //   ),
               // ),
               // Container(
@@ -143,7 +141,7 @@ class Calling extends StatelessWidget {
               //   child: CircleAvatar(
               //     radius: 30,
               //     backgroundColor: Colors.grey[200],
-              //     child: SvgPicture.asset('assets/Dialpad.svg'),
+              //     child: SvgPicture.asset('assets/svg/Dialpad.svg'),
               //   ),
               // ),
               // Container(
@@ -151,7 +149,7 @@ class Calling extends StatelessWidget {
               //   child: CircleAvatar(
               //     radius: 30,
               //     backgroundColor: Colors.grey[200],
-              //     child: SvgPicture.asset('assets/calendar.svg'),
+              //     child: SvgPicture.asset('assets/svg/calendar.svg'),
               //   ),
               // ),
               // Container(
@@ -159,30 +157,30 @@ class Calling extends StatelessWidget {
               //   child: CircleAvatar(
               //     radius: 30,
               //     backgroundColor: Colors.grey[200],
-              //     child: SvgPicture.asset('assets/love.svg', height: 25, width: 25),
+              //     child: SvgPicture.asset('assets/svg/love.svg', height: 25, width: 25),
               //   ),
               // ),
             ],
           ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: callHistories.length,
-            itemBuilder: (context, index) {
-              var call = callHistories[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Text(call.name[0]),
-                ),
-                title: Text(call.name),
-                subtitle: Text(call.time.toString()),
-                trailing: Icon(getCallIcon(call.type)),
-              );
-            }
+          Expanded(
+            child: ListView.builder(
+              itemCount: callHistories.length,
+              itemBuilder: (context, index) {
+                var call = callHistories[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text(call.name[0]),
+                  ),
+                  title: Text(call.name),
+                  subtitle: Text(call.time.toString()),
+                  trailing: Icon(getCallIcon(call.type)),
+                );
+              },
             ),
-        )
+          ),
         ],
-      )
+      ),
     );
   }
 }

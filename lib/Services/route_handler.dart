@@ -1,19 +1,18 @@
 import 'package:get/get.dart';
 
-import 'package:whatsapp_clone/CommunityInfo.dart';
-import 'package:whatsapp_clone/Controllers/chat_controller.dart';
-import 'package:whatsapp_clone/add_channel.dart';
-import 'package:whatsapp_clone/add_status.dart';
-import 'package:whatsapp_clone/channels.dart';
 import 'package:whatsapp_clone/chat_page.dart' as Chat;
-import 'package:whatsapp_clone/home.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
-import 'package:whatsapp_clone/login.dart';
-import 'package:whatsapp_clone/register.dart';
-import 'package:whatsapp_clone/splash_screen.dart';
-import 'package:whatsapp_clone/PengaturanPage.dart';
-import 'package:whatsapp_clone/CreateCommunityPage.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/pages/channel/add_channel.dart';
+import 'package:whatsapp_clone/pages/channel/channels.dart';
+import 'package:whatsapp_clone/pages/community/CommunityInfo.dart';
+import 'package:whatsapp_clone/pages/community/CommunityPage.dart';
+import 'package:whatsapp_clone/pages/community/CreateCommunityPage.dart';
+import 'package:whatsapp_clone/pages/settings/PengaturanPage.dart';
+import 'package:whatsapp_clone/pages/status/add_status.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/screens/home.dart';
+import 'package:whatsapp_clone/screens/login.dart';
+import 'package:whatsapp_clone/screens/register.dart';
+import 'package:whatsapp_clone/screens/splash_screen.dart';
 
 class Routes {
   static const home = "/home";
@@ -60,98 +59,3 @@ class AppRoutes {
     GetPage(name: Routes.communityInfo, page: () => KomunitasInfoPage()),
   ];
 }
-
-/*
-CARA NAVIGASI JIKA MENGGUNAKAN ROUTE YG MENERAPKAN GetX
-1. Perpindahan halaman
-Awalnya
-Navigator.pushNamed(context, "/Community");
-Menjadi
-Get.toNamed(Routes.community);
-
-2. Kembali ke halaman sebelumnya
-Awalnya
-Navigator.pop(context);
-Menjadi
-Get.back();
-
-3. Mengirim Data
-Awalnya
-Navigator.pushNamed(
-  context,
-  "/CommunityInfo",
-  arguments: community,
-);
-Menjadi
-Get.toNamed(
-  Routes.communityInfo,
-  arguments: community,
-);
-
-4. Mengambil Data
-Awalnya
-ModalRoute.of(context)!.settings.arguments
-Menjadi
-final community = Get.arguments;
-*/
-
-// Route<dynamic> generateRoute(RouteSettings settings) {
-//   switch (settings.name) {
-//     case '/home':
-//       return MaterialPageRoute(builder: (context) => home());
-//     case '/chat':
-//       final args = settings.arguments as Map<String, dynamic>?;
-//       final title = args?['title'] as String? ?? "Chat";
-//       final userId = args?['user_id'] as String? ?? "0";
-//       return MaterialPageRoute(
-//         builder: (context) => Chatpage(title: title, userId: userId),
-//       );
-
-//     case '/splashScreen':
-//       return MaterialPageRoute(builder: (context) => SplashScreen());
-
-//     case '/login':
-//       return MaterialPageRoute(builder: (context) => Login());
-
-//     case '/register':
-//       return MaterialPageRoute(builder: (context) => register());
-
-//     case '/statusPage':
-//       return MaterialPageRoute(builder: (context) => StatusPage());
-
-//     // case '/getToken':
-//     //   return MaterialPageRoute(builder: (context) => ApiServices.getToken());
-
-//     case '/channels':
-//       return MaterialPageRoute(builder: (context) => channels());
-
-//     case '/addChannel':
-//       return MaterialPageRoute(builder: (context) => addChannel());
-
-//     case '/kontak':
-//       return MaterialPageRoute(builder: (context) => SplashScreen());
-
-//     case '/Community':
-//       return MaterialPageRoute(builder: (context) => KomunitasPage());
-
-//     case '/Pengaturan':
-//       return MaterialPageRoute(builder: (context) => PengaturanPage());
-
-//     case '/CreateCommunity':
-//       return MaterialPageRoute(builder: (context) => CreateCommunity());
-
-//     case '/CommunityInfo':
-//       final args = settings.arguments as Map<String, dynamic>;
-
-//       return MaterialPageRoute(
-//         builder: (context) => KomunitasInfoPage(),
-//         settings: RouteSettings(arguments: args),
-//       );
-
-//     default:
-//       return MaterialPageRoute(
-//         builder: (context) =>
-//             Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
-//       );
-//   }
-// }

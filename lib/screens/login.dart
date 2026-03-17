@@ -1,22 +1,25 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/login.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/screens/register.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:get/get.dart';
 
-class register extends StatefulWidget {
-  const register({super.key});
+// Map<String, dynamic>? userData = {};
+
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  _registerState createState() => _registerState();
+  _LoginState createState() => _LoginState();
 }
 
-class _registerState extends State<register> {
-  final _formKey = GlobalKey<FormState>();
+class _LoginState extends State<Login> {
   bool _obscureText = true;
-  var user, email, password;
+  final _formKey = GlobalKey<FormState>();
+  var user, password;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +33,10 @@ class _registerState extends State<register> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome, Please input your data to register',
+                "Welcome, Please Login first before using this app",
                 style: TextStyle(fontSize: ukText),
               ),
+
               SizedBox(
                 height: 50,
                 width: double.infinity,
@@ -47,43 +51,22 @@ class _registerState extends State<register> {
 
                   validator: (username) {
                     if (username == null) {
-                      return "Please enter your Name";
+                      return 'Please enter Username!';
                     }
-
                     user = username;
                     return null;
                   },
                 ),
               ),
               SizedBox(
-                height: 50,
-                width: double.infinity,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 10.0),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-
-                  validator: (emaill) {
-                    if (emaill == null) {
-                      return "Please enter your Name";
-                    }
-
-                    email = emaill;
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(
+                // height: double.infinity,
                 height: 50,
                 width: double.infinity,
                 child: TextFormField(
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     hintText: "Password",
+                    hintStyle: TextStyle(),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(width: 10.0),
                       borderRadius: BorderRadius.circular(20),
@@ -102,49 +85,52 @@ class _registerState extends State<register> {
 
                   validator: (passwordd) {
                     if (passwordd == null) {
-                      return "Please enter your Name";
+                      return 'Please enter your password';
                     }
-
                     password = passwordd;
                     return null;
                   },
                 ),
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: 120,
+                    width: 100,
                     height: 35,
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _register();
+                          _login();
                         }
+                        ;
                       },
                       style: ElevatedButton.styleFrom(
+                        elevation: 0,
                         backgroundColor: warna.Hijau(),
-                        foregroundColor: Colors.white,
+                        foregroundColor: warna.Putih(),
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('Register'),
+                      child: Text("Login"),
                     ),
                   ),
-
                   GestureDetector(
                     onTap: () {
+                      // Aksi yang ingin dilakukan saat teks "Don't have an account?" ditekan
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) => register()),
                       );
                     },
                     child: Text(
-                      'Already have an account? Login',
-                      style: TextStyle(color: Colors.blue),
+                      "Don't have an account?",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ],
@@ -156,20 +142,26 @@ class _registerState extends State<register> {
     );
   }
 
-  void _register() async {
-    var dataUser = {'name': user, 'email': email, 'password': password};
+  void _login() async {
+    // setState(() {
+
+    // });
+
+    var dataUser = {'name': user, 'password': password};
 
     var res = await ApiServices().httpPOST(
       data: dataUser,
-      apiUrl: 'public/users',
+      apiUrl: 'public/login',
     );
-
+    // print(res.body);
     var body = jsonDecode(res.body);
 
     if (body['success']) {
-      Navigator.pushReplacementNamed(context, '/login');
-    } else if (body['success'] == false) {
-      print(body['message']);
+      String token = body['token'];
+
+      await AuthService().addToken(token);
+      // Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
+      Get.offAllNamed("/home");
     }
   }
 }

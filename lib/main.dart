@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Controllers/channel_controller.dart';
-import 'package:whatsapp_clone/Controllers/status_controller.dart';
-import 'package:whatsapp_clone/Controllers/chat_controller.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart';
+import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/controllers/status_controller.dart';
+import 'package:whatsapp_clone/controllers/chat_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:get/get.dart';
-import 'Controllers/CommunityController.dart';
+import 'controllers/CommunityController.dart';
 
 void main() {
   runApp(const WhatsApp());
@@ -45,7 +45,7 @@ class WhatsApp extends StatelessWidget {
 
 // import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:whatsapp_clone/Services/route_handler.dart' as router;
+// import 'package:whatsapp_clone/services/route_handler.dart' as router;
 // import 'package:get/get.dart';
 
 // void main() {
