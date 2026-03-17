@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Calling.dart';
 import 'package:whatsapp_clone/Controllers/chat_controller.dart';
 import 'package:whatsapp_clone/Services/route_handler.dart';
@@ -172,6 +173,24 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
+  Future<void> _requestPermission() async {
+    final permission = Permission.camera;
+
+    if(await permission.isDenied) {
+      final result =await permission.request();
+      if(result.isGranted){
+        print('access granted');
+      }
+      if(result.isDenied){
+        print('access denied');
+      }
+      if(result.isPermanentlyDenied){
+        print('access permanently denied');
+      }
+      }  
+  }
+
   Future<void> _getUser() async {
     try {
       var data = await api.httpGET('public/users');
@@ -254,6 +273,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _getUser();
     _getCurrentId();
+    _requestPermission();
     // _getCurrentUserId();
     // _tabController = TabController(length: children.length, vsync: this);
   }

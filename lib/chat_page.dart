@@ -31,10 +31,14 @@ class _ChatPageState extends State<ChatPage> {
             }),
             Row(
               children: [
-                SvgPicture.asset(
-                  'assets/camera.svg',
-                  width: 25,
-                  color: warna.Hitam(),
+                GestureDetector(
+                  onTap: () => chatController.getImage(),
+                  child: SvgPicture.asset(
+                    'assets/camera.svg',
+                    width: 25,
+                    color: warna.Hitam(),
+                    
+                  ),
                 ),
                 const SizedBox(width: 20),
                 SvgPicture.asset(

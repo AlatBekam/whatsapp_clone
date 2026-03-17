@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = RxList();
@@ -14,17 +18,50 @@ class ChatController extends GetxController {
   String? currentChatId;
   bool _argsLoaded = false;
   var isLoading = false.obs;
+  final picker = ImagePicker();
+  File? image;
+
+
 
   @override
   void onInit() {
     super.onInit();
     _initializeUser();
+    _getCurrentUserId();
   }
 
   Future<void> _initializeUser() async {
-    await _getCurrentUserId();
+    
     await _getChatData();
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
+  }
+
+  Future<void> _requestPermission() async {
+    final permission = Permission.camera;
+
+    if(await permission.isDenied) {
+      final result =await permission.request();
+      if(result.isGranted){
+        print('access granted');
+      }
+      if(result.isDenied){
+        print('access denied');
+      }
+      if(result.isPermanentlyDenied){
+        print('access permanently denied');
+      }
+      }  
+  }
+
+  Future<void> getImage() async {
+    await _requestPermission();
+    final PickFile = await picker.pickImage(source: ImageSource.camera);
+    if (PickFile != null) {
+      image = PickFile as File;
+      update();
+      // await sendMessage();
+      // update();
+    }
   }
 
   // void _loadArguments() {
