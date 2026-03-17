@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:whatsapp_clone/Controllers/status_controller.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 
 class ControllerChannel extends GetxController {

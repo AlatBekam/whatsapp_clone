@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
-import '../Controllers/CommunityController.dart';
+import '../../../controllers/CommunityController.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
@@ -19,10 +19,7 @@ class KomunitasInfoPage extends StatelessWidget {
         backgroundColor: warna.Putih(),
         title: Text(
           controller.community.communityName,
-          style: TextStyle(
-            color: warna.Hitam(),
-            fontSize: 19,
-          ),
+          style: TextStyle(color: warna.Hitam(), fontSize: 19),
         ),
         actions: [
           PopupMenuButton(
@@ -31,34 +28,34 @@ class KomunitasInfoPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             elevation: 8,
-            constraints: const BoxConstraints(
-              minWidth: 180,
-              maxWidth: 300,
-            ),
+            constraints: const BoxConstraints(minWidth: 180, maxWidth: 300),
             offset: const Offset(0, 40),
             icon: SvgPicture.asset(
-              'assets/three-dots-vertical.svg',
+              'assets/svg/three-dots-vertical.svg',
               width: 19,
               color: warna.Hitam(),
             ),
             onSelected: (value) async {
-              if(value == "delete"){
+              if (value == "delete") {
                 await controller.deleteCommunity(
-                  controller.community.communityId
+                  controller.community.communityId,
                 );
-                Get.back(result:true);
+                Get.back(result: true);
               }
             },
-            itemBuilder: (context)=>[
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: "delete",
                 child: Text(
                   "Nonaktifkan Community",
-                  style: TextStyle(color: warna.Merah(), fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    color: warna.Merah(),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
       body: Container(
@@ -88,7 +85,7 @@ class KomunitasInfoPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height:20),
+            const SizedBox(height: 20),
 
             Text(
               "Deskripsi",
@@ -98,11 +95,11 @@ class KomunitasInfoPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height:20),
+            const SizedBox(height: 20),
 
             TextField(
               controller: communityController.deskripsi,
-              maxLines:3,
+              maxLines: 3,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -110,7 +107,7 @@ class KomunitasInfoPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height:30),
+            const SizedBox(height: 30),
 
             SizedBox(
               width: double.infinity,
@@ -120,7 +117,8 @@ class KomunitasInfoPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () async {
-                  if(communityController.nama.text.isNotEmpty && communityController.deskripsi.text.isNotEmpty) {
+                  if (communityController.nama.text.isNotEmpty &&
+                      communityController.deskripsi.text.isNotEmpty) {
                     var result = await controller.updateCommunity(
                       controller.community.communityId,
                       communityController.nama.text,
@@ -130,18 +128,12 @@ class KomunitasInfoPage extends StatelessWidget {
                       Get.back(result: true);
                     }
                   } else {
-                    Get.snackbar(
-                      "Error",
-                      "Nama dan deskripsi harus diisi",
-                    );
+                    Get.snackbar("Error", "Nama dan deskripsi harus diisi");
                   }
                 },
                 child: const Text(
                   "Simpan Perubahan",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ),
             ),

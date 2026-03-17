@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:whatsapp_clone/Controllers/chat_controller.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/chat_controller.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
 
 class ChatPage extends StatefulWidget {
@@ -32,13 +32,13 @@ class _ChatPageState extends State<ChatPage> {
             Row(
               children: [
                 SvgPicture.asset(
-                  'assets/camera.svg',
+                  'assets/svg/camera.svg',
                   width: 25,
                   color: warna.Hitam(),
                 ),
                 const SizedBox(width: 20),
                 SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
+                  'assets/svg/three-dots-vertical.svg',
                   width: 25,
                   color: warna.Hitam(),
                 ),

@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Calling.dart';
-import 'package:whatsapp_clone/Controllers/chat_controller.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/controllers/chat_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/pages/community/CommunityPage.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
 import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/chat_page.dart';
 import 'package:get/get.dart';
 
 List<Map<String, dynamic>> datauser = [];
@@ -28,7 +27,6 @@ class _homeState extends State<home> {
   int _currentIndex = 0;
   String? currentUserId;
 
-  @override
   void _changeTab(int index) {
     setState(() {
       _currentIndex = index;
@@ -273,7 +271,7 @@ class _ChatPageState extends State<ChatPage> {
               spacing: 20,
               children: [
                 SvgPicture.asset(
-                  'assets/camera.svg',
+                  'assets/svg/camera.svg',
                   width: 25,
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
@@ -292,7 +290,7 @@ class _ChatPageState extends State<ChatPage> {
             constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
             offset: Offset(0, 40),
             icon: SvgPicture.asset(
-              'assets/three-dots-vertical.svg',
+              'assets/svg/three-dots-vertical.svg',
               width: 19,
               color: warna.Hitam(),
             ),

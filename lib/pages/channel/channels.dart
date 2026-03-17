@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Controllers/channel_controller.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
 
 class channels extends StatefulWidget {
@@ -36,13 +36,13 @@ class _channelsState extends State<channels> {
               spacing: 20,
               children: [
                 SvgPicture.asset(
-                  'assets/search.svg',
+                  'assets/svg/search.svg',
                   width: 25,
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
                 ),
                 SvgPicture.asset(
-                  'assets/filter.svg',
+                  'assets/svg/filter.svg',
                   width: 25,
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),

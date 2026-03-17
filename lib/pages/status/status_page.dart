@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Controllers/channel_controller.dart';
-import 'package:whatsapp_clone/Controllers/status_controller.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/controllers/status_controller.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Services/route_handler.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:whatsapp_clone/widgets/template_chat.dart';
 
 double ukText = 21;
@@ -38,13 +38,13 @@ class _StatusPageState extends State<StatusPage> {
               spacing: 20,
               children: [
                 SvgPicture.asset(
-                  'assets/search.svg',
+                  'assets/svg/search.svg',
                   width: 25,
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
                 ),
                 SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
+                  'assets/svg/three-dots-vertical.svg',
                   width: 25,
                   // ignore: deprecated_member_use
                   color: warna.Hitam(),
@@ -194,7 +194,7 @@ class _StatusPageState extends State<StatusPage> {
                                               shape: BoxShape.circle,
                                             ),
                                             child: SvgPicture.asset(
-                                              'assets/person-circle.svg',
+                                              'assets/svg/person-circle.svg',
                                               fit: BoxFit.contain,
                                             ),
                                           ),
@@ -210,7 +210,7 @@ class _StatusPageState extends State<StatusPage> {
                                                 shape: BoxShape.circle,
                                               ),
                                               child: SvgPicture.asset(
-                                                'assets/plus.svg',
+                                                'assets/svg/plus.svg',
                                               ),
                                             ),
                                           ),
@@ -308,7 +308,10 @@ class _StatusPageState extends State<StatusPage> {
                             spacing: 5,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset('assets/grid.svg', width: 20),
+                              SvgPicture.asset(
+                                'assets/svg/grid.svg',
+                                width: 20,
+                              ),
                               Text('Add Channels'),
                             ],
                           ),
@@ -337,7 +340,10 @@ class _StatusPageState extends State<StatusPage> {
                             spacing: 5,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset('assets/plus.svg', width: 25),
+                              SvgPicture.asset(
+                                'assets/svg/plus.svg',
+                                width: 25,
+                              ),
                               Text('Add Channels'),
                             ],
                           ),
