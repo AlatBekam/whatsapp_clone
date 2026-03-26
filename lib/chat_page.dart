@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:whatsapp_clone/Controllers/chat_controller.dart';
@@ -85,11 +87,13 @@ class _ChatPageState extends State<ChatPage> {
                           message['created_at']?.toString() ??
                           message['time']?.toString() ??
                           '';
+                      final messagetype = message['type']?.toString().toLowerCase();
 
                       return _MessageBubble(
                         message: messageContent,
                         isMe: isMe,
                         time: timestamp,
+                        type: messagetype!
                       );
                     },
                   );
@@ -173,15 +177,18 @@ class _MessageBubble extends StatelessWidget {
   final String message;
   final bool isMe;
   final String time;
+  final String type;
 
   const _MessageBubble({
     required this.message,
     required this.isMe,
     required this.time,
+    required this.type
   });
 
   @override
   Widget build(BuildContext context) {
+  
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -203,24 +210,48 @@ class _MessageBubble extends StatelessWidget {
                 : const Radius.circular(16),
           ),
         ),
+            
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              message,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
-                fontSize: 15,
+  children: 
+  // chatController.messages.map((msg) {
+  //    print("FULL MSG: $msg");
+  // print("MESSAGE TYPE: ${msg['type']}");
+  // print("MESSAGE VALUE: ${msg['content']}");
+
+  // final type = msg['type']?.toString().toLowerCase();
+
+  // if (type == "image") {
+  //   return Image.network(msg['content']);
+  // } else {
+  //   return Text(
+  //     msg['content']?.toString() ?? '',
+  //     style: TextStyle(
+  //       color: isMe ? Colors.white : Colors.black,
+  //       fontSize: 15,
+  //     ),
+  //   );
+  // }
+  // }).toList(),
+          [
+            if (type == "image")
+              Image.network(message)
+            else
+              Text(
+                message,
+                style: TextStyle(
+                  color: isMe ? Colors.white : Colors.black,
+                  fontSize: 15,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _formatTime(time),
-              style: TextStyle(
-                color: isMe ? Colors.white70 : Colors.black54,
-                fontSize: 11,
+              const SizedBox(height: 4),
+              Text(
+                _formatTime(time),
+                style: TextStyle(
+                  color: isMe ? Colors.white70 : Colors.black54,
+                  fontSize: 11,
+                ),
               ),
-            ),
           ],
         ),
       ),

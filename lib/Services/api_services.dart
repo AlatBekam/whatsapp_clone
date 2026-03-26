@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'package:whatsapp_clone/Services/route_handler.dart';
 
 class ApiServices {
@@ -25,6 +26,37 @@ class ApiServices {
       Get.offAllNamed(Routes.login);
     }
   }
+
+  Future<String?> uploadImageWithToken({
+  required File file,
+  required String apiUrl,
+}) async {
+  var uri = Uri.parse(_baseUrl + apiUrl);
+
+  var request = http.MultipartRequest("POST", uri);
+
+  final token = await AuthService().getToken();
+  print('token: $token');
+
+  request.headers['Authorization'] = 'Bearer $token';
+
+  request.files.add(
+    await http.MultipartFile.fromPath(
+      "image",
+      file.path,
+    ),
+  );
+
+  var response = await request.send();
+
+  if (response.statusCode == 200) {
+    final res = await response.stream.bytesToString();
+    final data = jsonDecode(res);
+    return data["url"];
+  }
+
+  return null;
+}
 
   httpPOST({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
