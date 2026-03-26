@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/CommunityController.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'Controllers/CommunityController.dart';
 
 class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
@@ -49,7 +49,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 ),
                 child: Center(
                   child: SvgPicture.asset(
-                    'assets/logokomunitas.svg',
+                    'assets/svg/logokomunitas.svg',
                     color: warna.Putih(),
                     width: 80,
                     height: 80,

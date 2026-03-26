@@ -14,29 +14,29 @@ class warna {
   // static Hitam() => Colors.black;
 }
 
-class AppTheme {
-  static light() {
-    return ThemeData(
-      colorScheme: ColorScheme(
-        brightness: Brightness.light,
-        primary: Color(value),
-        onPrimary: onPrimary,
-        secondary: secondary,
-        onSecondary: onSecondary,
-        error: error,
-        onError: onError,
-        surface: surface,
-        onSurface: onSurface,
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(),
+// class AppTheme {
+//   static light() {
+//     return ThemeData(
+//       colorScheme: ColorScheme(
+//         brightness: Brightness.light,
+//         primary: Color(value),
+//         onPrimary: onPrimary,
+//         secondary: secondary,
+//         onSecondary: onSecondary,
+//         error: error,
+//         onError: onError,
+//         surface: surface,
+//         onSurface: onSurface,
+//       ),
+//       bottomNavigationBarTheme: BottomNavigationBarThemeData(),
 
-      textTheme: TextTheme(bodyLarge: TextStyle()),
-      listTileTheme: ListTileThemeData(),
-      inputDecorationTheme: InputDecorationTheme(),
-    );
-  }
+//       textTheme: TextTheme(bodyLarge: TextStyle()),
+//       listTileTheme: ListTileThemeData(),
+//       inputDecorationTheme: InputDecorationTheme(),
+//     );
+//   }
 
-  static dark() {
-    return ThemeData();
-  }
-}
+//   static dark() {
+//     return ThemeData();
+//   }
+// }

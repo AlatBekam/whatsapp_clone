@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
 
 List<dynamic> TemplateAddChannel({
   required List<Map<String, dynamic>> listData,
@@ -13,7 +13,10 @@ List<dynamic> TemplateAddChannel({
       width: 50,
       height: 50,
       decoration: BoxDecoration(shape: BoxShape.circle),
-      child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
+      child: SvgPicture.asset(
+        'assets/svg/person-circle.svg',
+        fit: BoxFit.contain,
+      ),
     ),
     title: Text(
       item['channel_name'] ?? 'Channel $index',
@@ -43,7 +46,7 @@ List<dynamic> TemplateChat({required List<Map<String, dynamic>> listData}) =>
           height: 50,
           decoration: BoxDecoration(shape: BoxShape.circle),
           child: SvgPicture.asset(
-            'assets/person-circle.svg',
+            'assets/svg/person-circle.svg',
             fit: BoxFit.contain,
           ),
         ),
@@ -81,7 +84,7 @@ List<dynamic> TemplateChannel({
         height: 50,
         decoration: BoxDecoration(shape: BoxShape.circle),
         child: SvgPicture.asset(
-          'assets/person-circle.svg',
+          'assets/svg/person-circle.svg',
           fit: BoxFit.contain,
         ),
       ),
@@ -106,7 +109,10 @@ List<dynamic> TemplateStatus({
       width: 50,
       height: 50,
       decoration: BoxDecoration(shape: BoxShape.circle),
-      child: SvgPicture.asset('assets/person-circle.svg', fit: BoxFit.contain),
+      child: SvgPicture.asset(
+        'assets/svg/person-circle.svg',
+        fit: BoxFit.contain,
+      ),
     ),
     title: Text(
       item['StatusID'] ?? 'Channel $index',

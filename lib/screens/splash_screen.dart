@@ -40,7 +40,7 @@ class _splashScreen extends State<SplashScreen> {
             Container(height: 10, width: 10),
             Container(
               child: SvgPicture.asset(
-                'assets/whatsapp.svg',
+                'assets/svg/whatsapp.svg',
                 width: 100,
                 height: 100,
               ),

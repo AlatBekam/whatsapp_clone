@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Controllers/status_controller.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/status_controller.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
 
 class addStatus extends StatefulWidget {
   const addStatus({super.key});
@@ -78,7 +78,7 @@ class _addStatusState extends State<addStatus> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: SvgPicture.asset(
-                                  'assets/close-X.svg',
+                                  'assets/svg/close-X.svg',
                                   color: warna.Putih(),
                                 ),
                               ),
@@ -98,7 +98,7 @@ class _addStatusState extends State<addStatus> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
-                                      'assets/letter-a.svg',
+                                      'assets/svg/letter-a.svg',
                                       color: warna.Putih(),
                                     ),
                                   ),
@@ -111,7 +111,7 @@ class _addStatusState extends State<addStatus> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
-                                      'assets/color-palette.svg',
+                                      'assets/svg/color-palette.svg',
                                       color: warna.Putih(),
                                     ),
                                   ),
@@ -148,7 +148,7 @@ class _addStatusState extends State<addStatus> {
                                       spacing: 5,
                                       children: [
                                         SvgPicture.asset(
-                                          'assets/logopembaruan.svg',
+                                          'assets/svg/logopembaruan.svg',
                                           color: warna.Putih(),
                                           width: 20,
                                           height: 20,
@@ -187,7 +187,7 @@ class _addStatusState extends State<addStatus> {
                                   ),
                                   child: Center(
                                     child: SvgPicture.asset(
-                                      'assets/paper-plane-right.svg',
+                                      'assets/svg/paper-plane-right.svg',
                                       width: 20,
                                       height: 20,
                                       color: warna.Putih(),

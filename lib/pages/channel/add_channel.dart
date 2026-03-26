@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Controllers/channel_controller.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/services/Theme.dart';
 
 class addChannel extends StatefulWidget {
   const addChannel({super.key});
@@ -32,7 +32,7 @@ class _addChannelState extends State<addChannel> {
                 spacing: 15,
                 children: [
                   SvgPicture.asset(
-                    'assets/person-group.svg',
+                    'assets/svg/person-group.svg',
                     width: 200,
                     color: warna.AbuAbu(),
                   ),
