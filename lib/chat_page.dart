@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:whatsapp_clone/controllers/chat_controller.dart';
 import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -53,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Expanded(
                 child: Obx(() {
-                  if (chatController.isLoading.value) {
+                  if (loadingController.isLoading(LoadingKey.getMessage.name)) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (chatController.messages.isEmpty) {
@@ -110,7 +111,14 @@ class _ChatPageState extends State<ChatPage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onSubmitted: (_) => chatController.sendMessage(),
+                        onSubmitted: (_) => () async {
+                          await loadingController.run(
+                            LoadingKey.sendMessage.name, 
+                            () async {
+                              await  chatController.sendMessage();
+                            }
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: 15),
@@ -120,7 +128,7 @@ class _ChatPageState extends State<ChatPage> {
                         shape: BoxShape.circle,
                       ),
                       child: Obx(
-                        () => chatController.isSending.value
+                        () => loadingController.isLoading(LoadingKey.sendMessage.name)
                             ? const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: SizedBox(
@@ -133,7 +141,14 @@ class _ChatPageState extends State<ChatPage> {
                                 ),
                               )
                             : IconButton(
-                                onPressed: chatController.sendMessage,
+                                onPressed: () async {
+                          await loadingController.run(
+                            LoadingKey.sendMessage.name, 
+                            () async {
+                              await  chatController.sendMessage();
+                            }
+                          );
+                        },
                                 icon: Icon(Icons.send),
                                 color: Colors.white,
                               ),
