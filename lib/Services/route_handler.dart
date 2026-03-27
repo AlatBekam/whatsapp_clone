@@ -8,6 +8,7 @@ import 'package:whatsapp_clone/pages/community/CommunityPage.dart';
 import 'package:whatsapp_clone/pages/community/CreateCommunityPage.dart';
 import 'package:whatsapp_clone/pages/settings/PengaturanPage.dart';
 import 'package:whatsapp_clone/pages/status/add_status.dart';
+import 'package:whatsapp_clone/pages/status/no_status_screen.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:whatsapp_clone/screens/home.dart';
 import 'package:whatsapp_clone/screens/login.dart';
@@ -28,6 +29,7 @@ class Routes {
   static const pengaturan = "/Pengaturan";
   static const createCommunity = "/CreateCommunity";
   static const communityInfo = "/CommunityInfo";
+  static const dummyNoState = "/dummyNoState";
 }
 
 class AppRoutes {
@@ -57,5 +59,7 @@ class AppRoutes {
     GetPage(name: Routes.createCommunity, page: () => CreateCommunity()),
 
     GetPage(name: Routes.communityInfo, page: () => KomunitasInfoPage()),
+
+    GetPage(name: Routes.dummyNoState, page: () => NoStatusScreen()),
   ];
 }

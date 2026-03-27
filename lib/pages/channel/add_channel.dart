@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 
 class addChannel extends StatefulWidget {
   const addChannel({super.key});
@@ -121,6 +121,7 @@ class _addChannelState extends State<addChannel> {
                       );
 
                       if (success) {
+                        print('AKAN GET BACK');
                         Get.back(result: true);
                       }
                     }

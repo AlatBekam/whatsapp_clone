@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/status_controller.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 
 class addStatus extends StatefulWidget {
@@ -74,12 +70,16 @@ class _addStatusState extends State<addStatus> {
                                 margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: warna.Hitam(),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                   shape: BoxShape.circle,
                                 ),
                                 child: SvgPicture.asset(
                                   'assets/svg/close-X.svg',
-                                  color: warna.Putih(),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSecondary,
                                 ),
                               ),
                             ),
@@ -94,12 +94,16 @@ class _addStatusState extends State<addStatus> {
                                     width: 45,
                                     padding: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: warna.Hitam(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
                                       'assets/svg/letter-a.svg',
-                                      color: warna.Putih(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSecondary,
                                     ),
                                   ),
                                   Container(
@@ -107,12 +111,16 @@ class _addStatusState extends State<addStatus> {
                                     width: 45,
                                     padding: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: warna.Hitam(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
                                       'assets/svg/color-palette.svg',
-                                      color: warna.Putih(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSecondary,
                                     ),
                                   ),
                                 ],
@@ -125,7 +133,7 @@ class _addStatusState extends State<addStatus> {
                         height: 70,
                         width: MediaQuery.of(context).size.width,
                         child: Container(
-                          color: warna.AbuAbuTua(),
+                          // color: warna.AbuAbuTua(),
                           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +145,9 @@ class _addStatusState extends State<addStatus> {
                                   Container(
                                     height: 35,
                                     decoration: BoxDecoration(
-                                      color: warna.Hitam(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       borderRadius: BorderRadius.circular(35),
                                     ),
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -149,17 +159,18 @@ class _addStatusState extends State<addStatus> {
                                       children: [
                                         SvgPicture.asset(
                                           'assets/svg/logopembaruan.svg',
-                                          color: warna.Putih(),
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSecondary,
                                           width: 20,
                                           height: 20,
                                         ),
 
                                         Text(
                                           'Status (10 Excluded)',
-                                          style: TextStyle(
-                                            color: warna.Putih(),
-                                            fontSize: ukText - 6,
-                                          ),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.displaySmall,
                                         ),
                                       ],
                                     ),
@@ -182,7 +193,9 @@ class _addStatusState extends State<addStatus> {
                                   width: 45,
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: warna.Hijau(),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -190,7 +203,9 @@ class _addStatusState extends State<addStatus> {
                                       'assets/svg/paper-plane-right.svg',
                                       width: 20,
                                       height: 20,
-                                      color: warna.Putih(),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSecondary,
                                     ),
                                   ),
                                 ),

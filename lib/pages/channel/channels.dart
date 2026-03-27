@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
-import 'package:whatsapp_clone/widgets/template_chat.dart';
+import 'package:whatsapp_clone/widgets/template_add_channel.dart';
 
 class channels extends StatefulWidget {
   const channels({super.key});
@@ -24,7 +24,6 @@ class _channelsState extends State<channels> {
 
   @override
   Widget build(BuildContext context) {
-    print('channels Load');
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -39,18 +38,21 @@ class _channelsState extends State<channels> {
                   'assets/svg/search.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 SvgPicture.asset(
                   'assets/svg/filter.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ],
             ),
           ],
         ),
+        elevation: 1,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shadowColor: Colors.black,
       ),
 
       body: Column(
@@ -59,7 +61,7 @@ class _channelsState extends State<channels> {
             child: ListView(
               children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  margin: EdgeInsets.fromLTRB(16, 10, 16, 0),
                   child: Column(
                     spacing: 10,
                     children: [
@@ -68,10 +70,10 @@ class _channelsState extends State<channels> {
                         children: [
                           Text(
                             'Explore Channels',
-                            style: TextStyle(fontSize: ukText - 5),
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           SizedBox(
-                            width: 100,
+                            width: 80,
                             height: 30,
                             child: ElevatedButton(
                               onPressed: () {
@@ -83,10 +85,7 @@ class _channelsState extends State<channels> {
                                 backgroundColor: warna.buttonPutih(),
                                 foregroundColor: warna.Hitam(),
                               ),
-                              child: Text(
-                                'See All',
-                                style: TextStyle(fontSize: ukText - 6),
-                              ),
+                              child: Text('See All'),
                             ),
                           ),
                         ],
@@ -95,7 +94,7 @@ class _channelsState extends State<channels> {
                       Obx(() {
                         return Column(
                           children: [
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .take(4)
                                   .toList(),
@@ -115,10 +114,12 @@ class _channelsState extends State<channels> {
                                 children: [
                                   Text(
                                     'Sport',
-                                    style: TextStyle(fontSize: ukText - 5),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
-                                    width: 100,
+                                    width: 80,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
@@ -130,16 +131,13 @@ class _channelsState extends State<channels> {
                                         backgroundColor: warna.buttonPutih(),
                                         foregroundColor: warna.Hitam(),
                                       ),
-                                      child: Text(
-                                        'See All',
-                                        style: TextStyle(fontSize: ukText - 6),
-                                      ),
+                                      child: Text('See All'),
                                     ),
                                   ),
                                 ],
                               ),
 
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .where(
                                     (tipeChannel) =>
@@ -163,10 +161,12 @@ class _channelsState extends State<channels> {
                                 children: [
                                   Text(
                                     'Gaming',
-                                    style: TextStyle(fontSize: ukText - 5),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
-                                    width: 100,
+                                    width: 80,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
@@ -187,7 +187,7 @@ class _channelsState extends State<channels> {
                                 ],
                               ),
 
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .where(
                                     (tipeChannel) =>

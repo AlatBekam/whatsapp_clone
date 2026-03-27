@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
 import 'package:whatsapp_clone/controllers/status_controller.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
-import 'package:whatsapp_clone/widgets/template_chat.dart';
+import 'package:whatsapp_clone/widgets/template_add_channel.dart';
+import 'package:whatsapp_clone/widgets/template_channel.dart';
+import 'package:whatsapp_clone/widgets/template_status.dart';
+import 'package:whatsapp_clone/widgets/template_status_box.dart';
+import 'package:whatsapp_clone/widgets/widget_pop_menu_button_three_dots_appbar.dart';
 
 double ukText = 21;
 
 class StatusPage extends StatefulWidget {
-  const StatusPage({Key? key}) : super(key: key);
+  const StatusPage({super.key});
 
   @override
   State<StatusPage> createState() => _StatusPageState();
@@ -29,30 +32,18 @@ class _StatusPageState extends State<StatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          spacing: 10,
-          children: [
-            Text('Updates'),
-            Row(
-              spacing: 20,
-              children: [
-                SvgPicture.asset(
-                  'assets/svg/search.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-                SvgPicture.asset(
-                  'assets/svg/three-dots-vertical.svg',
-                  width: 25,
-                  // ignore: deprecated_member_use
-                  color: warna.Hitam(),
-                ),
-              ],
-            ),
-          ],
-        ),
+        title: Text('Updates'),
+
+        actions: [
+          SvgPicture.asset(
+            'assets/svg/search.svg',
+            width: 25,
+            // ignore: deprecated_member_use
+            // color: warna.Hitam(),
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          widgetPopMenuButtonThreeDotsAppBar(context),
+        ],
       ),
 
       body: Column(
@@ -85,7 +76,7 @@ class _StatusPageState extends State<StatusPage> {
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
-                                        ...TemplateStatusBox(
+                                        ...templateStatusBox(
                                           listData:
                                               controllerStatus.nonViewedStatus,
                                           onStatusTap: (item) {
@@ -97,7 +88,7 @@ class _StatusPageState extends State<StatusPage> {
 
                                         Text('pisah'),
 
-                                        ...TemplateStatusBox(
+                                        ...templateStatusBox(
                                           listData:
                                               controllerStatus.viewedStatus,
                                           onStatusTap: (item) {
@@ -126,26 +117,35 @@ class _StatusPageState extends State<StatusPage> {
                                               "/channels",
                                             );
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            shadowColor: Colors.transparent,
-                                            backgroundColor: warna
-                                                .buttonPutih(),
-                                            foregroundColor: warna.Hitam(),
-                                          ),
 
+                                          // style: ElevatedButton.styleFrom()
+                                          //     .copyWith(
+                                          //       backgroundColor:
+                                          //           WidgetStatePropertyAll(
+                                          //             Theme.of(context)
+                                          //                 .colorScheme
+                                          //                 .secondaryContainer,
+                                          //           ),
+                                          //     ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: HSLColor.fromColor(
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                            ).withAlpha(0.3).toColor(),
+                                          ),
                                           child: Text(
                                             'Explore',
-                                            style: TextStyle(
-                                              fontSize: ukText - 6,
-                                            ),
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.labelMedium,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
 
-                                  ...TemplateChannel(
+                                  ...templateChannel(
                                     listData: controllerChannel
                                         .funcShowFollowedChannel(),
                                     onStatusTap: (item) {
@@ -178,11 +178,15 @@ class _StatusPageState extends State<StatusPage> {
                                     child: ListTile(
                                       title: Text(
                                         "Add Status",
-                                        style: TextStyle(fontSize: ukText - 2),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.headlineLarge,
                                       ),
                                       subtitle: Text(
                                         'Disappears after 24 hours',
-                                        style: TextStyle(fontSize: ukText - 5),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.displaySmall,
                                       ),
 
                                       leading: Stack(
@@ -206,11 +210,16 @@ class _StatusPageState extends State<StatusPage> {
                                               width: 20,
                                               height: 20,
                                               decoration: BoxDecoration(
-                                                color: warna.Hijau(),
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
                                                 shape: BoxShape.circle,
                                               ),
                                               child: SvgPicture.asset(
                                                 'assets/svg/plus.svg',
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.surface,
                                               ),
                                             ),
                                           ),
@@ -231,7 +240,7 @@ class _StatusPageState extends State<StatusPage> {
                                       'New Update',
                                       style: TextStyle(fontSize: ukText - 7),
                                     ),
-                                  ...TemplateStatus(
+                                  ...templateStatus(
                                     listData: controllerStatus.nonViewedStatus,
                                     onStatusTap: (item) {
                                       controllerStatus.viewStatus(
@@ -246,7 +255,7 @@ class _StatusPageState extends State<StatusPage> {
                                       style: TextStyle(fontSize: ukText - 7),
                                     ),
 
-                                  ...TemplateStatus(
+                                  ...templateStatus(
                                     listData: controllerStatus.viewedStatus,
                                     onStatusTap: (item) {},
                                   ),
@@ -277,7 +286,7 @@ class _StatusPageState extends State<StatusPage> {
 
                             Column(
                               children: [
-                                ...TemplateAddChannel(
+                                ...templateAddChannel(
                                   listData: controllerChannel
                                       .funcShowDiscoverChannel(),
                                   onStatusTap: (item) {
@@ -300,9 +309,9 @@ class _StatusPageState extends State<StatusPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            shadowColor: Colors.transparent,
-                            backgroundColor: warna.buttonPutih(),
-                            foregroundColor: warna.Hitam(),
+                            // shadowColor: Colors.transparent,
+                            // backgroundColor: warna.buttonPutih(),
+                            // foregroundColor: warna.Hitam(),
                           ),
                           child: Row(
                             spacing: 5,
@@ -311,6 +320,7 @@ class _StatusPageState extends State<StatusPage> {
                               SvgPicture.asset(
                                 'assets/svg/grid.svg',
                                 width: 20,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               Text('Add Channels'),
                             ],
@@ -332,9 +342,9 @@ class _StatusPageState extends State<StatusPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            shadowColor: Colors.transparent,
-                            backgroundColor: warna.buttonPutih(),
-                            foregroundColor: warna.Hitam(),
+                            // shadowColor: Colors.transparent,
+                            // backgroundColor: warna.buttonPutih(),
+                            // foregroundColor: warna.Hitam(),
                           ),
                           child: Row(
                             spacing: 5,
@@ -343,6 +353,7 @@ class _StatusPageState extends State<StatusPage> {
                               SvgPicture.asset(
                                 'assets/svg/plus.svg',
                                 width: 25,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               Text('Add Channels'),
                             ],
