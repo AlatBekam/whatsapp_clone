@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class addChannel extends StatefulWidget {
   const addChannel({super.key});
@@ -108,33 +109,47 @@ class _addChannelState extends State<addChannel> {
                 ],
               ),
 
-              SizedBox(
-                width: double.infinity,
-                height: 40,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      bool success = await controllerChannel.addChannel(
-                        nameChannel,
-                        typeChannel,
-                        descriptionChannel,
-                      );
+              Obx(() {
+                return SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        bool success = await controllerChannel.addChannel(
+                          nameChannel,
+                          typeChannel,
+                          descriptionChannel,
+                        );
 
-                      if (success) {
-                        print('AKAN GET BACK');
-                        Get.back(result: true);
+                        if (success) {
+                          Get.back(result: true);
+                        }
                       }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: warna.Hijau(),
-                    foregroundColor: warna.Putih(),
-                    shadowColor: Colors.transparent,
+                    },
+                    style: controllerChannel.status.value == Status.loading
+                        ? ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: warna.AbuAbu(),
+                            foregroundColor: warna.Putih(),
+                            shadowColor: Colors.transparent,
+                          )
+                        : ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: warna.Hijau(),
+                            foregroundColor: warna.Putih(),
+                            shadowColor: Colors.transparent,
+                          ),
+                    child: controllerChannel.status.value == Status.loading
+                        ? Container(
+                            width: 15,
+                            height: 15,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text('Add Channel'),
                   ),
-                  child: Text('Add Channel'),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),

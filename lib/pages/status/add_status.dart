@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/status_controller.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class addStatus extends StatefulWidget {
   const addStatus({super.key});
@@ -177,39 +178,64 @@ class _addStatusState extends State<addStatus> {
                                   ),
                                 ],
                               ),
-                              GestureDetector(
-                                onTap: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    bool success = await controllerStatus
-                                        .addStatus(contentStatus);
 
-                                    if (success) {
-                                      Get.back(result: true);
-                                    }
-                                  }
-                                },
-
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: SvgPicture.asset(
-                                      'assets/svg/paper-plane-right.svg',
-                                      width: 20,
-                                      height: 20,
+                              Obx(() {
+                                if (controllerStatus.status.value ==
+                                    Status.loading) {
+                                  return Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSecondary,
+                                      ).colorScheme.secondary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSecondary,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return GestureDetector(
+                                  onTap: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      bool success = await controllerStatus
+                                          .addStatus(contentStatus);
+
+                                      if (success) {
+                                        Get.back(result: true);
+                                      }
+                                    }
+                                  },
+
+                                  child: Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        'assets/svg/paper-plane-right.svg',
+                                        width: 20,
+                                        height: 20,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSecondary,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                );
+                              }),
                             ],
                           ),
                         ),

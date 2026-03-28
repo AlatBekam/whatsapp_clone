@@ -41,15 +41,15 @@ class ApiServices {
       showDialog(context: Get.context!, builder: (context) => alert);
     }
 
-    if (StatusCode == 200 || StatusCode == 201) {
-      if (body["response-message"] != null) {
-        Get.snackbar(
-          "Success",
-          body["response-message"],
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    }
+    // if (StatusCode == 200 || StatusCode == 201) {
+    //   if (body["response-message"] != null) {
+    //     Get.snackbar(
+    //       "Success",
+    //       body["response-message"],
+    //       snackPosition: SnackPosition.BOTTOM,
+    //     );
+    //   }
+    // }
 
     if (StatusCode == 409) {
       Get.snackbar(

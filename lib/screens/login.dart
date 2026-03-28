@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
                   children: [
                     Text(
                       "Welcome, Please Login first before using this app",
-                      style: TextStyle(fontSize: ukText),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
 
                     SizedBox(
@@ -120,7 +120,7 @@ class _LoginState extends State<Login> {
                             ),
                             child: Text(
                               "Login",
-                              style: Theme.of(context).textTheme.displayMedium,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
                         ),
@@ -131,10 +131,11 @@ class _LoginState extends State<Login> {
                           },
                           child: Text(
                             "Don't have an account?",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
                           ),
                         ),
                       ],

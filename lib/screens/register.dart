@@ -34,7 +34,7 @@ class _registerState extends State<register> {
             children: [
               Text(
                 'Welcome, Please input your data to register',
-                style: TextStyle(fontSize: ukText),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               SizedBox(
                 height: 50,
@@ -138,7 +138,10 @@ class _registerState extends State<register> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('Register'),
+                      child: Text(
+                        'Register',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ),
                   ),
 
@@ -148,7 +151,10 @@ class _registerState extends State<register> {
                     },
                     child: Text(
                       'Already have an account? Login',
-                      style: TextStyle(color: Colors.blue),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ],
