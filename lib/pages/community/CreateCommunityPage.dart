@@ -98,8 +98,20 @@ class _CreateCommunityState extends State<CreateCommunity> {
               communityController.nama.text,
               communityController.deskripsi.text,
             );
-            if (result) {
+            
+            print("RESULT: $result");
+
+            if (result == true) {
               Get.back(result: true);
+              Get.snackbar(
+                "Success",
+                "Community berhasil dibuat",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            } else {
+              Get.snackbar("Error", result.toString(),snackPosition: SnackPosition.BOTTOM,);
             }
           } else {
             Get.snackbar("Error", "Nama dan deskripsi harus diisi");

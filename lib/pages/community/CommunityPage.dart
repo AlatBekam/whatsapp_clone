@@ -7,11 +7,10 @@ import 'package:whatsapp_clone/services/route_handler.dart';
 
 class KomunitasPage extends StatelessWidget {
   final CommunityController controller = Get.find();
-  // GETX CONTROLLER
-  // final CommunityController controller =
-  //     Get.put(CommunityController());
 
-  KomunitasPage({super.key});
+  KomunitasPage({super.key}){
+    controller.fetchCommunities();
+  }
 
   @override
   Widget build(BuildContext context) {

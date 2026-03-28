@@ -37,10 +37,26 @@ class KomunitasInfoPage extends StatelessWidget {
             ),
             onSelected: (value) async {
               if (value == "delete") {
-                await controller.deleteCommunity(
+                var result = await controller.deleteCommunity(
                   controller.community.communityId,
                 );
-                Get.back(result: true);
+
+                if (result == true) {
+                  Get.back(result: true);
+                  Get.snackbar(
+                    "Success",
+                    "Community berhasil dihapus",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                  );
+                } else {
+                  Get.snackbar(
+                    "Error",
+                    result.toString(),
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                }
               }
             },
             itemBuilder: (context) => [
@@ -124,8 +140,17 @@ class KomunitasInfoPage extends StatelessWidget {
                       communityController.nama.text,
                       communityController.deskripsi.text,
                     );
-                    if (result) {
+                    if (result == true) {
                       Get.back(result: true);
+                      Get.snackbar(
+                        "Success",
+                        "Community berhasil diupdate",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                      );
+                    } else {
+                      Get.snackbar("Error", result.toString(),snackPosition: SnackPosition.BOTTOM);
                     }
                   } else {
                     Get.snackbar("Error", "Nama dan deskripsi harus diisi");
