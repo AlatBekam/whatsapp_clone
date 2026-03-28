@@ -4,15 +4,16 @@ import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/services/api_services.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class AuthController extends GetxController {
   final ApiServices _api = ApiServices();
   final AuthService _authService = AuthService();
-  final isLoading = false.obs;
+  final status = Status.loading.obs;
 
   Future<void> login(String name, String password) async {
+    status.value = Status.loading;
     try {
-      isLoading.value = true;
       var res = await _api.httpPOST(
         data: {'name': name, 'password': password},
         apiUrl: 'public/login',
@@ -25,50 +26,50 @@ class AuthController extends GetxController {
         await _authService.addToken(body['token']);
         Get.offAllNamed(Routes.home);
       }
+      status.value = Status.success;
     } catch (e) {
       Get.snackbar("Error", "Login failed, cause $e");
       print("Error at login controller $e");
-    } finally {
-      isLoading.value = false;
+      status.value = Status.error;
     }
   }
 
   Future<void> register(String name, String email, String password) async {
     try {
-      isLoading.value = true;
+      status.value = Status.loading;
       var _data = {'name': name, 'email': email, 'password': password};
-      var res = await _api.httpPOST(data: _data, apiUrl: 'public/register');
+      var res = await _api.httpPOST(data: _data, apiUrl: 'public/users');
       var body = jsonDecode(res.body);
 
       if (body['success']) {
         Get.offAllNamed(Routes.login);
       }
+      status.value = Status.success;
     } catch (e) {
       Get.snackbar("Error", "Register failed, cause $e");
       print("Error at register controller $e");
-    } finally {
-      isLoading.value = false;
+      status.value = Status.error;
     }
   }
 
   Future<void> logout(bool isLogout) async {
+    status.value = Status.loading;
     try {
-      isLoading.value = true;
       if (isLogout) {
         await _authService.removeToken();
         Get.offAllNamed(Routes.login);
       }
+      status.value = Status.success;
     } catch (e) {
       Get.snackbar("Error", "Logout failed, cause $e");
       print("Error at logout controller $e");
-    } finally {
-      isLoading.value = false;
+      status.value = Status.error;
     }
   }
 
   Future<void> checkIfLogin() async {
+    status.value = Status.loading;
     try {
-      isLoading.value = true;
       String? token = await _authService.getToken();
 
       if (token == null) {
@@ -88,11 +89,11 @@ class AuthController extends GetxController {
       }
 
       Get.offAllNamed(Routes.home);
+      status.value = Status.success;
     } catch (e) {
       Get.snackbar("Error", "Logout failed, cause $e");
       print("Error at checkIfLogin controller $e");
-    } finally {
-      isLoading.value = false;
+      status.value = Status.error;
     }
   }
 }

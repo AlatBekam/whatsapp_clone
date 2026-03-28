@@ -6,6 +6,8 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class ControllerChannel extends GetxController {
+  ApiServices _apiServices = ApiServices();
+  AuthService _authService = AuthService();
   var followedChannel = <Map<String, dynamic>>[].obs;
   var discoverChannel = <Map<String, dynamic>>[].obs;
   Set<String> followdIDS = {};
@@ -33,7 +35,7 @@ class ControllerChannel extends GetxController {
         userID = decodeToken['id'];
       }
 
-      var data = await ApiServices().httpGET('public/users/$userID');
+      var data = await _apiServices.httpGET('public/users/$userID');
       data = jsonDecode(data.body);
       userDatas.assignAll(data);
 
@@ -50,11 +52,11 @@ class ControllerChannel extends GetxController {
   Future getChannel() async {
     status.value = Status.loading;
     try {
-      var dataChannel = await ApiServices().httpGETWithToken(
-        'private/channels',
-      );
+      var dataChannel = await _apiServices.httpGETWithToken('private/channels');
       dataChannel = jsonDecode(dataChannel.body);
+      print("dataChannel $dataChannel");
       channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
+      print("channelsDatas $channelsDatas");
       status.value = Status.success;
     } catch (e) {
       print('Error getChannel channel_controller.dart : ${e}');
@@ -69,12 +71,13 @@ class ControllerChannel extends GetxController {
 
       var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-      await ApiServices().httpPUTWithToken(
+      await _apiServices.httpPUTWithToken(
         data: dataFollow,
         apiUrl: 'private/users',
       );
 
       getUser();
+      // splitchannel();
     } catch (e) {
       print('Error funcFollowedChannel channel_controller.dart : ${e}');
       status.value = Status.error;
@@ -88,7 +91,7 @@ class ControllerChannel extends GetxController {
 
       var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-      await ApiServices().httpPUTWithToken(
+      await _apiServices.httpPUTWithToken(
         data: dataFollow,
         apiUrl: 'private/users',
       );
@@ -133,7 +136,7 @@ class ControllerChannel extends GetxController {
         'description': descriptionChannel,
       };
 
-      var res = await ApiServices().httpPOSTWithToken(
+      var res = await _apiServices.httpPOSTWithToken(
         data: dataChannel,
         apiUrl: 'public/channels',
       );

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/auth_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
+import 'package:whatsapp_clone/widgets/widget_confirm.dart';
 
 Widget widgetPopMenuButtonThreeDotsAppBar(context) {
   return PopupMenuButton<String>(
@@ -17,24 +20,32 @@ Widget widgetPopMenuButtonThreeDotsAppBar(context) {
     ),
     onSelected: (value) {
       if (value == 'Logout') {
-        AlertDialog logoutDialog = AlertDialog(
-          title: Text("Logout"),
-          content: Text("Are you sure you want to logout?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                controllerAuth.logout(true);
-              },
-              child: Text("Logout"),
-            ),
-          ],
+        AlertDialog logoutDialog = widgetConfirm(
+          title: "Logout",
+          message: "Are you sure you want to logout?",
+          textButtonConfirm: "Logout",
+          onConfirm: () {
+            controllerAuth.logout(true);
+          },
         );
+        // AlertDialog logoutDialog = AlertDialog(
+        //   title: Text("Logout"),
+        //   content: Text("Are you sure you want to logout?"),
+        //   actions: [
+        //     TextButton(
+        //       onPressed: () {
+        //         Navigator.pop(context);
+        //       },
+        //       child: Text("Cancel"),
+        //     ),
+        //     TextButton(
+        //       onPressed: () {
+        //         controllerAuth.logout(true);
+        //       },
+        //       child: Text("Logout"),
+        //     ),
+        //   ],
+        // );
 
         showDialog(
           context: context,
@@ -42,6 +53,10 @@ Widget widgetPopMenuButtonThreeDotsAppBar(context) {
             return logoutDialog;
           },
         );
+      }
+
+      if (value == 'Settings') {
+        Get.toNamed(Routes.settings);
       }
     },
     itemBuilder: (context) => [
@@ -51,7 +66,21 @@ Widget widgetPopMenuButtonThreeDotsAppBar(context) {
           child: Text(
             'Logout',
             style: TextStyle(
-              color: warna.Putih(),
+              color: Theme.of(context).colorScheme.onSecondary,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+      PopupMenuItem(
+        value: 'Settings',
+        child: Center(
+          child: Text(
+            'Settings',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondary,
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),

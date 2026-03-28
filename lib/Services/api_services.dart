@@ -41,15 +41,17 @@ class ApiServices {
       showDialog(context: Get.context!, builder: (context) => alert);
     }
 
-    // if (StatusCode == 200 || StatusCode == 201) {
-    //   if (body["response-message"] != null) {
-    //     Get.snackbar(
-    //       "Success",
-    //       body["response-message"],
-    //       snackPosition: SnackPosition.BOTTOM,
-    //     );
-    //   }
-    // }
+    if (StatusCode == 200 || StatusCode == 201) {
+      // print("ini body $body");
+      // if (body["response-message"].isNotEmpty &&
+      //     body["response-message"] != null) {
+      //   Get.snackbar(
+      //     "Success",
+      //     body["response-message"],
+      //     snackPosition: SnackPosition.BOTTOM,
+      //   );
+      // }
+    }
 
     if (StatusCode == 409) {
       Get.snackbar(
@@ -131,6 +133,8 @@ class ApiServices {
   httpGETWithToken(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
+
+    print("_SetHeadersToken: ${_setHeadersToken(await _token)}");
 
     var resp = await http.get(fullURL, headers: _setHeadersToken(await _token));
 

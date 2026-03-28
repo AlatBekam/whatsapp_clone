@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget loadingTransparent(BuildContext context) {
+Widget widgetLoadingTransparent(BuildContext context) {
   return Container(
     color: Theme.of(context).colorScheme.surface.withAlpha(50),
     child: Center(child: CircularProgressIndicator()),

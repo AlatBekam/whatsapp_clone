@@ -10,8 +10,9 @@ import 'package:whatsapp_clone/widgets/template_add_channel.dart';
 import 'package:whatsapp_clone/widgets/template_channel.dart';
 import 'package:whatsapp_clone/widgets/template_status.dart';
 import 'package:whatsapp_clone/widgets/template_status_box.dart';
+import 'package:whatsapp_clone/widgets/widget_confirm.dart';
 import 'package:whatsapp_clone/widgets/widget_pop_menu_button_three_dots_appbar.dart';
-import 'package:whatsapp_clone/widgets/wifget_loading_transparent.dart';
+import 'package:whatsapp_clone/widgets/widget_loading_transparent.dart';
 
 double ukText = 21;
 
@@ -78,6 +79,7 @@ class _StatusPageState extends State<StatusPage> {
                                     ?.isNotEmpty ??
                                 false)
                               Column(
+                                spacing: 5,
                                 children: [
                                   SizedBox(
                                     height: 200,
@@ -117,18 +119,16 @@ class _StatusPageState extends State<StatusPage> {
                                           context,
                                         ).textTheme.headlineSmall,
                                       ),
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(10),
+                                      SizedBox(
+                                        width: 85,
+                                        height: 30,
                                         child: ElevatedButton(
                                           onPressed: () async {
-                                            await Navigator.pushNamed(
-                                              context,
-                                              "/channels",
-                                            );
+                                            await Get.toNamed(Routes.channels);
                                           },
 
                                           style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.all(0),
                                             backgroundColor: HSLColor.fromColor(
                                               Theme.of(
                                                 context,
@@ -139,7 +139,7 @@ class _StatusPageState extends State<StatusPage> {
                                             'Explore',
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.labelMedium,
+                                            ).textTheme.labelLarge,
                                           ),
                                         ),
                                       ),
@@ -150,8 +150,25 @@ class _StatusPageState extends State<StatusPage> {
                                     listData: controllerChannel
                                         .funcShowFollowedChannel(),
                                     onStatusTap: (item) {
-                                      controllerChannel.funcUnfollowChannel(
-                                        item['channel_id'],
+                                      AlertDialog
+                                      unfollowChannel = widgetConfirm(
+                                        title: "Unfollow Channel",
+                                        message:
+                                            "Are you sure want to unfollow?",
+                                        textButtonConfirm: "Unfollow",
+                                        onConfirm: () {
+                                          controllerChannel.funcUnfollowChannel(
+                                            item['channel_id'],
+                                          );
+                                          Get.back();
+                                        },
+                                      );
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return unfollowChannel;
+                                        },
                                       );
                                     },
                                   ),
@@ -186,13 +203,13 @@ class _StatusPageState extends State<StatusPage> {
                                             "Add Status",
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.headlineSmall,
+                                            ).textTheme.titleLarge,
                                           ),
                                           subtitle: Text(
                                             'Disappears after 24 hours',
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.displaySmall,
+                                            ).textTheme.bodyLarge,
                                           ),
 
                                           leading: Stack(
@@ -256,7 +273,7 @@ class _StatusPageState extends State<StatusPage> {
                                             "Your Status",
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.headlineSmall,
+                                            ).textTheme.titleLarge,
                                           ),
                                           subtitle: Text(
                                             '${controllerStatus.myStatus.length} Status',
@@ -438,7 +455,7 @@ class _StatusPageState extends State<StatusPage> {
 
             if (controllerChannel.status.value == Status.loading ||
                 controllerStatus.status.value == Status.loading)
-              loadingTransparent(context),
+              widgetLoadingTransparent(context),
           ],
         );
       }),

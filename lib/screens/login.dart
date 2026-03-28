@@ -4,6 +4,7 @@ import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 // Map<String, dynamic>? userData = {};
 
@@ -25,7 +26,7 @@ class _LoginState extends State<Login> {
       body: Stack(
         children: [
           Obx(() {
-            if (controllerAuth.isLoading.value) {
+            if (controllerAuth.status.value == Status.loading) {
               return const Center(child: CircularProgressIndicator());
             }
             return Container(

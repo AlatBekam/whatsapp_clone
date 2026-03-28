@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
-import 'package:whatsapp_clone/services/theme/theme.dart';
-import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 import 'package:whatsapp_clone/widgets/template_add_channel.dart';
+import 'package:whatsapp_clone/widgets/widget_loading_transparent.dart';
 
 class channels extends StatefulWidget {
   const channels({super.key});
@@ -17,9 +17,10 @@ class channels extends StatefulWidget {
 class _channelsState extends State<channels> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    controllerChannel.initData();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   controllerChannel.initData();
+    // });
   }
 
   @override
@@ -55,10 +56,10 @@ class _channelsState extends State<channels> {
         shadowColor: Colors.black,
       ),
 
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
+      body: Obx(
+        () => Stack(
+          children: [
+            ListView(
               children: [
                 Container(
                   margin: EdgeInsets.fromLTRB(16, 10, 16, 0),
@@ -70,28 +71,34 @@ class _channelsState extends State<channels> {
                         children: [
                           Text(
                             'Explore Channels',
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(
-                            width: 80,
+                            width: 90,
                             height: 30,
                             child: ElevatedButton(
                               onPressed: () {
                                 return print('Test');
                               },
                               style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                shadowColor: Colors.transparent,
-                                backgroundColor: warna.buttonPutih(),
-                                foregroundColor: warna.Hitam(),
+                                padding: EdgeInsets.all(0),
+                                backgroundColor: HSLColor.fromColor(
+                                  Theme.of(context).colorScheme.secondary,
+                                ).withAlpha(0.3).toColor(),
                               ),
-                              child: Text('See All'),
+                              child: Text(
+                                'See All',
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
                             ),
                           ),
                         ],
                       ),
 
                       Obx(() {
+                        // if (controllerChannel.status.value == Status.loading) {
+                        //   return widgetLoadingTransparent(context);
+                        // }
                         return Column(
                           children: [
                             ...templateAddChannel(
@@ -119,19 +126,26 @@ class _channelsState extends State<channels> {
                                     ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
-                                    width: 80,
+                                    width: 90,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
                                         return print('Test');
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        backgroundColor: warna.buttonPutih(),
-                                        foregroundColor: warna.Hitam(),
+                                        padding: EdgeInsets.all(0),
+                                        backgroundColor: HSLColor.fromColor(
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ).withAlpha(0.3).toColor(),
                                       ),
-                                      child: Text('See All'),
+                                      child: Text(
+                                        'See All',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelLarge,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -166,21 +180,25 @@ class _channelsState extends State<channels> {
                                     ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
-                                    width: 80,
+                                    width: 90,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
                                         return print('Test');
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        backgroundColor: warna.buttonPutih(),
-                                        foregroundColor: warna.Hitam(),
+                                        padding: EdgeInsets.all(0),
+                                        backgroundColor: HSLColor.fromColor(
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ).withAlpha(0.3).toColor(),
                                       ),
                                       child: Text(
                                         'See All',
-                                        style: TextStyle(fontSize: ukText - 6),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelLarge,
                                       ),
                                     ),
                                   ),
@@ -211,8 +229,11 @@ class _channelsState extends State<channels> {
                 ),
               ],
             ),
-          ),
-        ],
+
+            if (controllerChannel.status.value == Status.loading)
+              widgetLoadingTransparent(context),
+          ],
+        ),
       ),
     );
   }

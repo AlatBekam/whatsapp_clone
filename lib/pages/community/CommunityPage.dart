@@ -32,7 +32,7 @@ class KomunitasPage extends StatelessWidget {
             ),
             onSelected: (value) {
               if (value == "Pengaturan") {
-                Get.toNamed(Routes.pengaturan);
+                Get.toNamed(Routes.settings);
               }
             },
 
