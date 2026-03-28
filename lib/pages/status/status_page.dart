@@ -404,9 +404,15 @@ class _StatusPageState extends State<StatusPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            // shadowColor: Colors.transparent,
-                            // backgroundColor: warna.buttonPutih(),
-                            // foregroundColor: warna.Hitam(),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                           ),
                           child: Row(
                             spacing: 5,
@@ -415,9 +421,12 @@ class _StatusPageState extends State<StatusPage> {
                               SvgPicture.asset(
                                 'assets/svg/grid.svg',
                                 width: 20,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              Text('Add Channels'),
+                              Text(
+                                'Add Channels',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ],
                           ),
                         ),
@@ -432,7 +441,18 @@ class _StatusPageState extends State<StatusPage> {
                               controllerChannel.initData();
                             }
                           },
-                          style: ElevatedButton.styleFrom(elevation: 0),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
                           child: Row(
                             spacing: 5,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -440,9 +460,12 @@ class _StatusPageState extends State<StatusPage> {
                               SvgPicture.asset(
                                 'assets/svg/plus.svg',
                                 width: 25,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              Text('Add Channels'),
+                              Text(
+                                'Add Channels',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ],
                           ),
                         ),
@@ -456,6 +479,25 @@ class _StatusPageState extends State<StatusPage> {
             if (controllerChannel.status.value == Status.loading ||
                 controllerStatus.status.value == Status.loading)
               widgetLoadingTransparent(context),
+
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.addStatus);
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(Icons.edit, color: Colors.white, size: 30),
+                ),
+              ),
+            ),
           ],
         );
       }),

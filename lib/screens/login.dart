@@ -27,8 +27,10 @@ class _LoginState extends State<Login> {
         children: [
           Obx(() {
             if (controllerAuth.status.value == Status.loading) {
+              print('status: ${controllerAuth.status.value}');
               return const Center(child: CircularProgressIndicator());
             }
+            print('status: ${controllerAuth.status.value}');
             return Container(
               padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
               child: Form(

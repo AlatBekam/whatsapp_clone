@@ -6,7 +6,7 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class ControllerChannel extends GetxController {
-  ApiServices _apiServices = ApiServices();
+  dynamic apiServices = ApiServices();
   AuthService _authService = AuthService();
   var followedChannel = <Map<String, dynamic>>[].obs;
   var discoverChannel = <Map<String, dynamic>>[].obs;
@@ -35,7 +35,7 @@ class ControllerChannel extends GetxController {
         userID = decodeToken['id'];
       }
 
-      var data = await _apiServices.httpGET('public/users/$userID');
+      var data = await apiServices.httpGET('public/users/$userID');
       data = jsonDecode(data.body);
       userDatas.assignAll(data);
 
@@ -52,7 +52,8 @@ class ControllerChannel extends GetxController {
   Future getChannel() async {
     status.value = Status.loading;
     try {
-      var dataChannel = await _apiServices.httpGETWithToken('private/channels');
+      var dataChannel = await apiServices.httpGETWithToken('private/channels');
+
       dataChannel = jsonDecode(dataChannel.body);
       print("dataChannel $dataChannel");
       channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
@@ -71,7 +72,7 @@ class ControllerChannel extends GetxController {
 
       var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-      await _apiServices.httpPUTWithToken(
+      await apiServices.httpPUTWithToken(
         data: dataFollow,
         apiUrl: 'private/users',
       );
@@ -91,7 +92,7 @@ class ControllerChannel extends GetxController {
 
       var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-      await _apiServices.httpPUTWithToken(
+      await apiServices.httpPUTWithToken(
         data: dataFollow,
         apiUrl: 'private/users',
       );
@@ -136,7 +137,7 @@ class ControllerChannel extends GetxController {
         'description': descriptionChannel,
       };
 
-      var res = await _apiServices.httpPOSTWithToken(
+      var res = await apiServices.httpPOSTWithToken(
         data: dataChannel,
         apiUrl: 'public/channels',
       );
