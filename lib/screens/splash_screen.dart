@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/Services/checl_if_login.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _splashScreen extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    ChecklIfLogin().checkIfLogin(context);
+    controllerAuth.checkIfLogin();
   }
 
   @override

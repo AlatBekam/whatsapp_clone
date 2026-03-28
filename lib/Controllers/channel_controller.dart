@@ -1,15 +1,17 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class ControllerChannel extends GetxController {
   var followedChannel = <Map<String, dynamic>>[].obs;
   var discoverChannel = <Map<String, dynamic>>[].obs;
   Set<String> followdIDS = {};
   var userDatas = <String, dynamic>{}.obs;
+  var status = Status.loading.obs;
+
   List<Map<String, dynamic>> channelsDatas = [];
 
   List<Map<String, dynamic>> funcShowFollowedChannel() {
@@ -21,74 +23,100 @@ class ControllerChannel extends GetxController {
   }
 
   Future getUser() async {
-    String? token = await AuthService().getToken();
-    var userID;
+    status.value = Status.loading;
+    try {
+      String? token = await AuthService().getToken();
+      var userID;
 
-    if (token != null) {
-      Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-      userID = decodeToken['id'];
+      if (token != null) {
+        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
+        userID = decodeToken['id'];
+      }
+
+      var data = await ApiServices().httpGET('public/users/$userID');
+      data = jsonDecode(data.body);
+      userDatas.assignAll(data);
+
+      followdIDS = Set<String>.from(data?['followed_channels_by_id'] ?? []);
+
+      splitchannel();
+      status.value = Status.success;
+    } catch (e) {
+      print('Error getUser channel_controller.dart : ${e}');
+      status.value = Status.error;
     }
-
-    var data = await ApiServices().httpGET('public/users/$userID');
-    data = jsonDecode(data.body);
-    userDatas.assignAll(data);
-
-    followdIDS = Set<String>.from(data?['followed_channels_by_id'] ?? []);
-
-    splitchannel();
   }
 
   Future getChannel() async {
+    status.value = Status.loading;
     try {
       var dataChannel = await ApiServices().httpGETWithToken(
         'private/channels',
       );
       dataChannel = jsonDecode(dataChannel.body);
-      // print('data pada dataChannel = ${dataChannel}');
-
       channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
-      // print('ISI channelsData : ${channelsDatas}');
+      status.value = Status.success;
     } catch (e) {
       print('Error getChannel channel_controller.dart : ${e}');
+      status.value = Status.error;
     }
   }
 
   Future funcFollowedChannel(String channelID) async {
-    followdIDS.add(channelID);
+    status.value = Status.loading;
+    try {
+      followdIDS.add(channelID);
 
-    var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
+      var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-    await ApiServices().httpPUTWithToken(
-      data: dataFollow,
-      apiUrl: 'private/users',
-    );
+      await ApiServices().httpPUTWithToken(
+        data: dataFollow,
+        apiUrl: 'private/users',
+      );
 
-    getUser();
+      getUser();
+    } catch (e) {
+      print('Error funcFollowedChannel channel_controller.dart : ${e}');
+      status.value = Status.error;
+    }
   }
 
   Future funcUnfollowChannel(String channelID) async {
-    followdIDS.remove(channelID);
+    status.value = Status.loading;
+    try {
+      followdIDS.remove(channelID);
 
-    var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
+      var dataFollow = {'followed_channels_by_id': followdIDS.toList()};
 
-    await ApiServices().httpPUTWithToken(
-      data: dataFollow,
-      apiUrl: 'private/users',
-    );
+      await ApiServices().httpPUTWithToken(
+        data: dataFollow,
+        apiUrl: 'private/users',
+      );
 
-    getUser();
+      getUser();
+    } catch (e) {
+      print('Error funcUnfollowChannel channel_controller.dart : ${e}');
+      status.value = Status.error;
+    }
   }
 
   void splitchannel() {
-    followedChannel.clear();
-    discoverChannel.clear();
+    status.value = Status.loading;
+    try {
+      followedChannel.clear();
+      discoverChannel.clear();
 
-    for (var a in channelsDatas) {
-      if (followdIDS.contains(a['channel_id'])) {
-        followedChannel.add(a);
-      } else {
-        discoverChannel.add(a);
+      for (var a in channelsDatas) {
+        if (followdIDS.contains(a['channel_id'])) {
+          followedChannel.add(a);
+        } else {
+          discoverChannel.add(a);
+        }
       }
+      status.value = Status.success;
+    } catch (e) {
+      print('Error splitchannel channel_controller.dart : ${e}');
+      status.value = Status.error;
     }
   }
 
@@ -97,6 +125,7 @@ class ControllerChannel extends GetxController {
     String typeChannel,
     String descriptionChannel,
   ) async {
+    status.value = Status.loading;
     try {
       var dataChannel = {
         'channel_name': nameChannel,
@@ -118,6 +147,7 @@ class ControllerChannel extends GetxController {
       // }
     } catch (e) {
       print('Error addChannel channel_controller.dart : ${e}');
+      status.value = Status.error;
       return false;
     }
   }
