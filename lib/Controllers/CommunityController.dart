@@ -17,6 +17,8 @@ class CommunityController extends GetxController {
   var communities = <CommunityModel>[].obs;
   var isLoading = true.obs;
 
+  var errorMessage = ''.obs;
+
   @override
   void onInit() {
     fetchCommunities();
@@ -38,7 +40,7 @@ class CommunityController extends GetxController {
           .map((e) => CommunityModel.fromJson(e))
           .toList();
     } catch (e) {
-      HttpHandler.showSuccess(e.toString());
+      errorMessage.value = e.toString();
     } finally {
       isLoading(false);
     }

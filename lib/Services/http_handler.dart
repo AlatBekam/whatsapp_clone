@@ -35,24 +35,24 @@ class HttpHandler {
     throw Exception(message);
   }
 
-  /// GLOBAL SNACKBAR
-  static void showError(String message) {
-    Get.snackbar(
-      "Error",
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  }
+  // /// GLOBAL SNACKBAR
+  // static void showError(String message) {
+  //   Get.snackbar(
+  //     "Error",
+  //     message,
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     backgroundColor: Colors.red,
+  //     colorText: Colors.white,
+  //   );
+  // }
 
-  static void showSuccess(String message) {
-    Get.snackbar(
-      "Success",
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
+  // static void showSuccess(String message) {
+  //   Get.snackbar(
+  //     "Success",
+  //     message,
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     backgroundColor: Colors.green,
+  //     colorText: Colors.white,
+  //   );
+  // }
 }

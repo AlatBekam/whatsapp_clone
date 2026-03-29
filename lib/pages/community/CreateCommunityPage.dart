@@ -3,6 +3,7 @@ import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../widgets/SnackbarHelper.dart';
 
 class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
@@ -103,18 +104,14 @@ class _CreateCommunityState extends State<CreateCommunity> {
 
             if (result == true) {
               Get.back(result: true);
-              Get.snackbar(
-                "Success",
-                "Community berhasil dibuat",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
+              Future.delayed(Duration(milliseconds: 100), () {
+                SnackbarHelper.success("Community berhasil dibuat");
+              });
             } else {
-              Get.snackbar("Error", result.toString(),snackPosition: SnackPosition.BOTTOM,);
+              SnackbarHelper.error(result.toString());
             }
           } else {
-            Get.snackbar("Error", "Nama dan deskripsi harus diisi");
+            SnackbarHelper.error("Nama dan deskripsi harus diisi");
           }
         },
         child: Icon(Icons.arrow_forward),

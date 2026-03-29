@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/services/Theme.dart';
 import 'package:get/get.dart';
 import '../../../controllers/CommunityController.dart';
+import '../../widgets/SnackbarHelper.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
@@ -43,19 +44,9 @@ class KomunitasInfoPage extends StatelessWidget {
 
                 if (result == true) {
                   Get.back(result: true);
-                  Get.snackbar(
-                    "Success",
-                    "Community berhasil dihapus",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
+                  SnackbarHelper.success("Community berhasil dinonaktifkan");
                 } else {
-                  Get.snackbar(
-                    "Error",
-                    result.toString(),
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
+                  SnackbarHelper.error(result.toString());
                 }
               }
             },
@@ -142,18 +133,12 @@ class KomunitasInfoPage extends StatelessWidget {
                     );
                     if (result == true) {
                       Get.back(result: true);
-                      Get.snackbar(
-                        "Success",
-                        "Community berhasil diupdate",
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.green,
-                        colorText: Colors.white,
-                      );
+                      SnackbarHelper.success("Community berhasil diperbarui");
                     } else {
-                      Get.snackbar("Error", result.toString(),snackPosition: SnackPosition.BOTTOM);
+                      SnackbarHelper.error(result.toString());
                     }
                   } else {
-                    Get.snackbar("Error", "Nama dan deskripsi harus diisi");
+                    SnackbarHelper.error("Nama dan deskripsi harus diisi");
                   }
                 },
                 child: const Text(
