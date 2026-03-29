@@ -6,6 +6,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 
 class ChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = RxList();
@@ -104,14 +105,14 @@ class ChatController extends GetxController {
       return;
     }
 
-    // final String targetUserId = user_id ?? userId;
-    final String? targetChatId = currentChatId;
+    await loadingController.run(LoadingKey.getMessage.name, () async {
+final String? targetChatId = currentChatId;
 
     print(
       "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
     );
 
-    isLoading.value = true;
+    // isLoading.value = true;
     await Future.delayed(Durations.medium4);
     try {
       final response = await ApiServices().httpGETWithToken("private/chats");
@@ -164,8 +165,16 @@ class ChatController extends GetxController {
 
       Get.snackbar("Error", "Error loading messages: $e");
     } finally {
-      isLoading.value = false;
+      // isLoading.value = false;
     }
+    });
+    // if (_currentUserId == null) {
+    //   print("Current user ID not loaded yet");
+    //   return;
+    // }
+
+    // final String targetUserId = user_id ?? userId;
+    
   }
 
   @override
