@@ -87,35 +87,30 @@ class ApiServices {
   }
 
   Future<String?> uploadImageWithToken({
-  required File file,
-  required String apiUrl,
-}) async {
-  var uri = Uri.parse(_baseUrl + apiUrl);
+    required File file,
+    required String apiUrl,
+  }) async {
+    var uri = Uri.parse(_baseUrl + apiUrl);
 
-  var request = http.MultipartRequest("POST", uri);
+    var request = http.MultipartRequest("POST", uri);
 
-  final token = await AuthService().getToken();
-  print('token: $token');
+    final token = await AuthService().getToken();
+    print('token: $token');
 
-  request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Authorization'] = 'Bearer $token';
 
-  request.files.add(
-    await http.MultipartFile.fromPath(
-      "image",
-      file.path,
-    ),
-  );
+    request.files.add(await http.MultipartFile.fromPath("image", file.path));
 
-  var response = await request.send();
+    var response = await request.send();
 
-  if (response.statusCode == 200) {
-    final res = await response.stream.bytesToString();
-    final data = jsonDecode(res);
-    return data["url"];
+    if (response.statusCode == 200) {
+      final res = await response.stream.bytesToString();
+      final data = jsonDecode(res);
+      return data["url"];
+    }
+
+    return null;
   }
-
-  return null;
-}
 
   httpPOST({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
@@ -138,12 +133,17 @@ class ApiServices {
   }) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
+    print(
+      "_setHeaderToken: ${_setHeadersToken(await AuthService().getToken())}",
+    );
 
     var resp = await http.post(
       fullURL,
       headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
+
+    print("resp: ${resp.body}");
 
     _checkResponse(resp.statusCode, jsonDecode(resp.body));
 

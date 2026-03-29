@@ -40,7 +40,6 @@ class _ChatPageState extends State<ChatPage> {
                     'assets/svg/camera.svg',
                     width: 25,
                     color: warna.Hitam(),
-                    
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -88,13 +87,15 @@ class _ChatPageState extends State<ChatPage> {
                           message['created_at']?.toString() ??
                           message['time']?.toString() ??
                           '';
-                      final messagetype = message['type']?.toString().toLowerCase();
+                      final messagetype = message['type']
+                          ?.toString()
+                          .toLowerCase();
 
                       return _MessageBubble(
                         message: messageContent,
                         isMe: isMe,
                         time: timestamp,
-                        type: messagetype!
+                        type: messagetype!,
                       );
                     },
                   );
@@ -121,10 +122,10 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                         onSubmitted: (_) => () async {
                           await loadingController.run(
-                            LoadingKey.sendMessage.name, 
+                            LoadingKey.sendMessage.name,
                             () async {
-                              await  chatController.sendMessage();
-                            }
+                              await chatController.sendMessage();
+                            },
                           );
                         },
                       ),
@@ -136,7 +137,10 @@ class _ChatPageState extends State<ChatPage> {
                         shape: BoxShape.circle,
                       ),
                       child: Obx(
-                        () => loadingController.isLoading(LoadingKey.sendMessage.name)
+                        () =>
+                            loadingController.isLoading(
+                              LoadingKey.sendMessage.name,
+                            )
                             ? const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: SizedBox(
@@ -150,13 +154,13 @@ class _ChatPageState extends State<ChatPage> {
                               )
                             : IconButton(
                                 onPressed: () async {
-                          await loadingController.run(
-                            LoadingKey.sendMessage.name, 
-                            () async {
-                              await  chatController.sendMessage();
-                            }
-                          );
-                        },
+                                  await loadingController.run(
+                                    LoadingKey.sendMessage.name,
+                                    () async {
+                                      await chatController.sendMessage();
+                                    },
+                                  );
+                                },
                                 icon: Icon(Icons.send),
                                 color: Colors.white,
                               ),
@@ -198,12 +202,11 @@ class _MessageBubble extends StatelessWidget {
     required this.message,
     required this.isMe,
     required this.time,
-    required this.type
+    required this.type,
   });
 
   @override
   Widget build(BuildContext context) {
-  
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -225,49 +228,47 @@ class _MessageBubble extends StatelessWidget {
                 : const Radius.circular(16),
           ),
         ),
-            
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-  children: 
-  // chatController.messages.map((msg) {
-  //    print("FULL MSG: $msg");
-  // print("MESSAGE TYPE: ${msg['type']}");
-  // print("MESSAGE VALUE: ${msg['content']}");
-
-  // final type = msg['type']?.toString().toLowerCase();
-
-  // if (type == "image") {
-  //   return Image.network(msg['content']);
-  // } else {
-  //   return Text(
-  //     msg['content']?.toString() ?? '',
-  //     style: TextStyle(
-  //       color: isMe ? Colors.white : Colors.black,
-  //       fontSize: 15,
-  //     ),
-  //   );
-  // }
-  // }).toList(),
-          [
-            if (type == "image")
-              Image.network(message)
-            else
-              Text(
-                message,
-                style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black,
-                  fontSize: 15,
+          children:
+              // chatController.messages.map((msg) {
+              //    print("FULL MSG: $msg");
+              // print("MESSAGE TYPE: ${msg['type']}");
+              // print("MESSAGE VALUE: ${msg['content']}");
+              // final type = msg['type']?.toString().toLowerCase();
+              // if (type == "image") {
+              //   return Image.network(msg['content']);
+              // } else {
+              //   return Text(
+              //     msg['content']?.toString() ?? '',
+              //     style: TextStyle(
+              //       color: isMe ? Colors.white : Colors.black,
+              //       fontSize: 15,
+              //     ),
+              //   );
+              // }
+              // }).toList(),
+              [
+                if (type == "image")
+                  Image.network(message)
+                else
+                  Text(
+                    message,
+                    style: TextStyle(
+                      color: isMe ? Colors.white : Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTime(time),
+                  style: TextStyle(
+                    color: isMe ? Colors.white70 : Colors.black54,
+                    fontSize: 11,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _formatTime(time),
-                style: TextStyle(
-                  color: isMe ? Colors.white70 : Colors.black54,
-                  fontSize: 11,
-                ),
-              ),
-          ],
+              ],
         ),
       ),
     );

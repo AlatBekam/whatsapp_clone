@@ -1,11 +1,8 @@
 import 'package:get/get.dart';
 
-enum LoadingKey {
-    getMessage,
-    sendMessage
-  }
+enum LoadingKey { getMessage, sendMessage }
 
-class LoadingController extends GetxController{
+class LoadingController extends GetxController {
   var loadingMap = <String, bool>{}.obs;
 
   bool isLoading(String key) => loadingMap[key] ?? false;
@@ -14,14 +11,17 @@ class LoadingController extends GetxController{
     loadingMap[key] = true;
   }
 
-  void stop(String key){
+  void stop(String key) {
     loadingMap[key] = false;
   }
 
-  Future<T?> run <T>(String key, Future<T> Function() process) async {
+  Future<T?> run<T>(String key, Future<T> Function() process) async {
     try {
+      print('start loading $key');
       start(key);
+      return await process();
     } finally {
+      print('stop loading $key');
       stop(key);
     }
   }
