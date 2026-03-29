@@ -36,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
                 GestureDetector(
                   onTap: () => chatController.getImage(),
                   child: SvgPicture.asset(
-                    'assets/camera.svg',
+                    'assets/svg/camera.svg',
                     width: 25,
                     color: warna.Hitam(),
                     

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:whatsapp_clone/services/Theme.dart';
-import 'package:whatsapp_clone/services/theme/theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart' hide warna;
 
 List<dynamic> templateChat({required List<Map<String, dynamic>> listData}) =>
     List.generate(listData.length, (index) {

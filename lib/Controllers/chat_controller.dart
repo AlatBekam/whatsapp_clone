@@ -54,13 +54,18 @@ class ChatController extends GetxController {
 
   Future<void> getImage() async {
     await _requestPermission();
-    final PickFile = await picker.pickImage(source: ImageSource.camera);
-    if (PickFile != null) {
-      image = File(PickFile.path);
-      update();
-      await sendMessage();
-      update();
-    }
+    
+    try {
+  final PickFile = await picker.pickImage(source: ImageSource.camera);
+  if (PickFile != null) {
+    image = File(PickFile.path);
+    update();
+    await sendMessage();
+    update();
+  }
+} on Exception catch (e) {
+  print("error bagian perizinan pada getiamge: $e");
+}
   }
 
 
