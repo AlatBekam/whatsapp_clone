@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
 import '../../widgets/SnackbarHelper.dart';
 
