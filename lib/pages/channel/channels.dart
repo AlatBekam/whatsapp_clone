@@ -123,7 +123,7 @@ class _channelsState extends State<channels> {
                                     'Sport',
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.titleLarge,
+                                    ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
                                     width: 90,
@@ -177,7 +177,7 @@ class _channelsState extends State<channels> {
                                     'Gaming',
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.titleLarge,
+                                    ).textTheme.labelMedium,
                                   ),
                                   SizedBox(
                                     width: 90,

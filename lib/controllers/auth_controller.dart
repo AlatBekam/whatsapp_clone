@@ -7,9 +7,9 @@ import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class AuthController extends GetxController {
-  final AuthService _authService = AuthService();
   final ApiServices _api = ApiServices();
-  final status = Status.success.obs;
+  final AuthService _authService = AuthService();
+  final status = Status.loading.obs;
 
   Future<void> login(String name, String password) async {
     status.value = Status.loading;
@@ -73,7 +73,6 @@ class AuthController extends GetxController {
       String? token = await _authService.getToken();
 
       if (token == null) {
-        status.value = Status.success;
         Get.offAllNamed(Routes.login);
         return;
       }
@@ -84,7 +83,7 @@ class AuthController extends GetxController {
 
       if (userEXP <= timeNow) {
         await AuthService().removeToken();
-        status.value = Status.success;
+
         Get.offAllNamed(Routes.login);
         return;
       }

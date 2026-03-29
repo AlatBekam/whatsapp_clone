@@ -9,6 +9,7 @@ import 'package:whatsapp_clone/services/route_handler.dart';
 
 class ApiServices {
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
+  final _token = AuthService().getToken();
 
   Map<String, String> _setHeadersToken(String? token) {
     if (token == null) return {'Content-type': 'application/json'};
@@ -141,7 +142,7 @@ class ApiServices {
 
     var resp = await http.post(
       fullURL,
-      headers: _setHeadersToken(await AuthService().getToken()),
+      headers: _setHeadersToken(await _token),
       body: jsonEncode(data),
     );
 
@@ -165,14 +166,9 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    print(
-      "_SetHeadersToken: ${_setHeadersToken(await AuthService().getToken())}",
-    );
+    print("_SetHeadersToken: ${_setHeadersToken(await _token)}");
 
-    var resp = await http.get(
-      fullURL,
-      headers: _setHeadersToken(await AuthService().getToken()),
-    );
+    var resp = await http.get(fullURL, headers: _setHeadersToken(await _token));
 
     _checkResponse(resp.statusCode, resp.body);
 
@@ -203,7 +199,7 @@ class ApiServices {
 
     var resp = await http.put(
       fullURL,
-      headers: _setHeadersToken(await AuthService().getToken()),
+      headers: _setHeadersToken(await _token),
       body: jsonEncode(data),
     );
 
@@ -218,7 +214,7 @@ class ApiServices {
 
     var resp = await http.delete(
       fullURL,
-      headers: _setHeadersToken(await AuthService().getToken()),
+      headers: _setHeadersToken(await _token),
     );
 
     _checkResponse(resp.statusCode, resp.body);
