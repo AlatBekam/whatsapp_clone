@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
+import '../../widgets/SnackbarHelper.dart';
 
 class KomunitasPage extends StatelessWidget {
   final CommunityController controller = Get.find();
-  // GETX CONTROLLER
-  // final CommunityController controller =
-  //     Get.put(CommunityController());
 
-  KomunitasPage({super.key});
+  KomunitasPage({super.key}){
+    controller.fetchCommunities();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +32,9 @@ class KomunitasPage extends StatelessWidget {
             ),
             onSelected: (value) {
               if (value == "Pengaturan") {
-                Get.toNamed(Routes.pengaturan);
+                Get.toNamed(Routes.settings);
               }
             },
-
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: "Pengaturan",
@@ -52,7 +51,16 @@ class KomunitasPage extends StatelessWidget {
         if (communityController.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
+        if (communityController.errorMessage.value.isNotEmpty) {
+          // tampilkan snackbar sekali
+          Future.microtask(() {
+            SnackbarHelper.error(
+              communityController.errorMessage.value,
+            );
+          });
 
+          return Center(child: Text("Gagal memuat data"));
+        }
         return ListView(
           children: [
             // CREATE COMMUNITY
@@ -153,7 +161,6 @@ Widget CommunityCard(
         child: InkWell(
           onTap: () {
             communityController.goDetail(community);
-            // Get.toNamed(Routes.communityInfo, arguments: community);
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

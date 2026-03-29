@@ -3,15 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
 import 'package:whatsapp_clone/pages/call/calling.dart';
 import 'package:whatsapp_clone/controllers/chat_controller.dart';
-import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/pages/call/calling.dart';
 import 'package:whatsapp_clone/pages/community/CommunityPage.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/widgets/BottomNavBar.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:get/get.dart';
+import 'package:whatsapp_clone/widgets/widget_pop_menu_button_three_dots_appbar.dart';
 
 List<Map<String, dynamic>> datauser = [];
 final ApiServices api = ApiServices();
@@ -58,17 +60,6 @@ class _homeState extends State<home> {
       ),
     );
   }
-
-  //  Future<String?> getUserId() async {
-  //   return await ApiServices().dptToken();
-  // }
-
-  // Future<void> loadUserId() async {
-  //   currentUserId = await getUserId();
-  //   setState(() {
-
-  //   });
-  // }
 }
 
 Widget widgetitemlist({
@@ -170,6 +161,24 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
+  Future<void> _requestPermission() async {
+    final permission = Permission.camera;
+
+    if(await permission.isDenied) {
+      final result =await permission.request();
+      if(result.isGranted){
+        print('access granted');
+      }
+      if(result.isDenied){
+        print('access denied');
+      }
+      if(result.isPermanentlyDenied){
+        print('access permanently denied');
+      }
+      }  
+  }
+
   Future<void> _getUser() async {
     try {
       var data = await api.httpGET('public/users');
@@ -252,6 +261,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _getUser();
     _getCurrentId();
+    _requestPermission();
     // _getCurrentUserId();
     // _tabController = TabController(length: children.length, vsync: this);
   }
@@ -280,43 +290,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        actions: [
-          PopupMenuButton<String>(
-            color: warna.Merah(),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            elevation: 8,
-            constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
-            offset: Offset(0, 40),
-            icon: SvgPicture.asset(
-              'assets/svg/three-dots-vertical.svg',
-              width: 19,
-              color: warna.Hitam(),
-            ),
-            onSelected: (value) {
-              if (value == 'Logout') {
-                Get.offAllNamed(Routes.login);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'Logout',
-                child: Center(
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: warna.Putih(),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+        actions: [widgetPopMenuButtonThreeDotsAppBar(context)],
 
         //   bottom: TabBar(
         //     tabs: children.map<Widget>((child) {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
-import 'package:whatsapp_clone/pages/status/status_page.dart';
-import 'package:whatsapp_clone/widgets/template_chat.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
+import 'package:whatsapp_clone/widgets/template_add_channel.dart';
+import 'package:whatsapp_clone/widgets/widget_loading_transparent.dart';
 
 class channels extends StatefulWidget {
   const channels({super.key});
@@ -17,14 +17,14 @@ class channels extends StatefulWidget {
 class _channelsState extends State<channels> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    controllerChannel.initData();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   controllerChannel.initData();
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('channels Load');
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -39,27 +39,30 @@ class _channelsState extends State<channels> {
                   'assets/svg/search.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 SvgPicture.asset(
                   'assets/svg/filter.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ],
             ),
           ],
         ),
+        elevation: 1,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shadowColor: Colors.black,
       ),
 
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
+      body: Obx(
+        () => Stack(
+          children: [
+            ListView(
               children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  margin: EdgeInsets.fromLTRB(16, 10, 16, 0),
                   child: Column(
                     spacing: 10,
                     children: [
@@ -68,24 +71,24 @@ class _channelsState extends State<channels> {
                         children: [
                           Text(
                             'Explore Channels',
-                            style: TextStyle(fontSize: ukText - 5),
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(
-                            width: 100,
+                            width: 90,
                             height: 30,
                             child: ElevatedButton(
                               onPressed: () {
                                 return print('Test');
                               },
                               style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                shadowColor: Colors.transparent,
-                                backgroundColor: warna.buttonPutih(),
-                                foregroundColor: warna.Hitam(),
+                                padding: EdgeInsets.all(0),
+                                backgroundColor: HSLColor.fromColor(
+                                  Theme.of(context).colorScheme.secondary,
+                                ).withAlpha(0.3).toColor(),
                               ),
                               child: Text(
                                 'See All',
-                                style: TextStyle(fontSize: ukText - 6),
+                                style: Theme.of(context).textTheme.labelLarge,
                               ),
                             ),
                           ),
@@ -93,9 +96,12 @@ class _channelsState extends State<channels> {
                       ),
 
                       Obx(() {
+                        // if (controllerChannel.status.value == Status.loading) {
+                        //   return widgetLoadingTransparent(context);
+                        // }
                         return Column(
                           children: [
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .take(4)
                                   .toList(),
@@ -115,31 +121,37 @@ class _channelsState extends State<channels> {
                                 children: [
                                   Text(
                                     'Sport',
-                                    style: TextStyle(fontSize: ukText - 5),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleLarge,
                                   ),
                                   SizedBox(
-                                    width: 100,
+                                    width: 90,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
                                         return print('Test');
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        backgroundColor: warna.buttonPutih(),
-                                        foregroundColor: warna.Hitam(),
+                                        padding: EdgeInsets.all(0),
+                                        backgroundColor: HSLColor.fromColor(
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ).withAlpha(0.3).toColor(),
                                       ),
                                       child: Text(
                                         'See All',
-                                        style: TextStyle(fontSize: ukText - 6),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelLarge,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
 
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .where(
                                     (tipeChannel) =>
@@ -163,31 +175,37 @@ class _channelsState extends State<channels> {
                                 children: [
                                   Text(
                                     'Gaming',
-                                    style: TextStyle(fontSize: ukText - 5),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleLarge,
                                   ),
                                   SizedBox(
-                                    width: 100,
+                                    width: 90,
                                     height: 30,
                                     child: ElevatedButton(
                                       onPressed: () {
                                         return print('Test');
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        backgroundColor: warna.buttonPutih(),
-                                        foregroundColor: warna.Hitam(),
+                                        padding: EdgeInsets.all(0),
+                                        backgroundColor: HSLColor.fromColor(
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ).withAlpha(0.3).toColor(),
                                       ),
                                       child: Text(
                                         'See All',
-                                        style: TextStyle(fontSize: ukText - 6),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelLarge,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
 
-                            ...TemplateAddChannel(
+                            ...templateAddChannel(
                               listData: controllerChannel.discoverChannel
                                   .where(
                                     (tipeChannel) =>
@@ -211,8 +229,11 @@ class _channelsState extends State<channels> {
                 ),
               ],
             ),
-          ),
-        ],
+
+            if (controllerChannel.status.value == Status.loading)
+              widgetLoadingTransparent(context),
+          ],
+        ),
       ),
     );
   }

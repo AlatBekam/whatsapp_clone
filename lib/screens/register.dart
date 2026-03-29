@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:whatsapp_clone/screens/login.dart';
@@ -31,7 +34,7 @@ class _registerState extends State<register> {
             children: [
               Text(
                 'Welcome, Please input your data to register',
-                style: TextStyle(fontSize: ukText),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               SizedBox(
                 height: 50,
@@ -46,7 +49,7 @@ class _registerState extends State<register> {
                   ),
 
                   validator: (username) {
-                    if (username == null) {
+                    if (username == null || username.isEmpty) {
                       return "Please enter your Name";
                     }
 
@@ -68,8 +71,8 @@ class _registerState extends State<register> {
                   ),
 
                   validator: (emaill) {
-                    if (emaill == null) {
-                      return "Please enter your Name";
+                    if (emaill == null || emaill.isEmpty) {
+                      return "Please enter your Email";
                     }
 
                     email = emaill;
@@ -101,8 +104,8 @@ class _registerState extends State<register> {
                   ),
 
                   validator: (passwordd) {
-                    if (passwordd == null) {
-                      return "Please enter your Name";
+                    if (passwordd == null || passwordd.isEmpty) {
+                      return "Please enter your Password";
                     }
 
                     password = passwordd;
@@ -119,8 +122,12 @@ class _registerState extends State<register> {
                     height: 35,
                     child: ElevatedButton(
                       onPressed: () {
+                        print(user);
+                        print(email);
+                        print(password);
+
                         if (_formKey.currentState!.validate()) {
-                          _register();
+                          controllerAuth.register(user, email, password);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -131,20 +138,23 @@ class _registerState extends State<register> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('Register'),
+                      child: Text(
+                        'Register',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ),
                   ),
 
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
+                      Get.toNamed(Routes.login);
                     },
                     child: Text(
                       'Already have an account? Login',
-                      style: TextStyle(color: Colors.blue),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ],
@@ -154,22 +164,5 @@ class _registerState extends State<register> {
         ),
       ),
     );
-  }
-
-  void _register() async {
-    var dataUser = {'name': user, 'email': email, 'password': password};
-
-    var res = await ApiServices().httpPOST(
-      data: dataUser,
-      apiUrl: 'public/users',
-    );
-
-    var body = jsonDecode(res.body);
-
-    if (body['success']) {
-      Navigator.pushReplacementNamed(context, '/login');
-    } else if (body['success'] == false) {
-      print(body['message']);
-    }
   }
 }

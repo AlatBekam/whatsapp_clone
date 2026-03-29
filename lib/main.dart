@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
 import 'package:whatsapp_clone/controllers/status_controller.dart';
 import 'package:whatsapp_clone/controllers/chat_controller.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'controllers/CommunityController.dart';
 
 void main() {
@@ -18,6 +20,7 @@ initialGetx() {
   Get.put(ControllerChannel());
   Get.put(ChatController());
   Get.put(LoadingController());
+  Get.put(AuthController());
 }
 
 class WhatsApp extends StatelessWidget {
@@ -41,30 +44,10 @@ class WhatsApp extends StatelessWidget {
         page: () =>
             Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
       ),
+
+      themeMode: ThemeMode.system,
+      theme: CustomAppTheme.light(),
+      darkTheme: CustomAppTheme.dark(),
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:whatsapp_clone/services/route_handler.dart' as router;
-// import 'package:get/get.dart';
-
-// void main() {
-//   runApp(WhatsApp());
-// }
-
-// // ignore: camel_case_types
-// class WhatsApp extends StatelessWidget {
-//   const WhatsApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetMaterialApp(
-//       // Inisialisasi router
-//       onGenerateRoute: router.generateRoute,
-//       // inisialisasi halaman router awal disaat app terbuka
-//       initialRoute: "/splashScreen",
-//     );
-//   }
-// }

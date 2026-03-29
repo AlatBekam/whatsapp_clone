@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:whatsapp_clone/Services/route_handler.dart';
+import 'dart:io';
+import 'package:whatsapp_clone/services/route_handler.dart';
 
 class ApiServices {
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
-  final _token = AuthService().getToken();
 
   Map<String, String> _setHeadersToken(String? token) {
     if (token == null) return {'Content-type': 'application/json'};
@@ -18,13 +19,103 @@ class ApiServices {
     };
   }
 
-  void _checkResponse(int StatusCode) async {
+  void _checkResponse(int StatusCode, dynamic body) async {
     if (StatusCode == 401) {
+      // if (body["error"] == "") {
+      //   Get.snackbar("Error", body["error"]);
+      // }
       await AuthService().removeToken();
+      AlertDialog alert = AlertDialog(
+        title: Text("Your section already expired"),
+        content: Text("Please login again"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Get.offAllNamed(Routes.login);
+            },
+            child: Text("OK"),
+          ),
+        ],
+      );
 
-      Get.offAllNamed(Routes.login);
+      showDialog(context: Get.context!, builder: (context) => alert);
+    }
+
+    if (StatusCode == 200 || StatusCode == 201) {
+      // print("ini body $body");
+      // if (body["response-message"].isNotEmpty &&
+      //     body["response-message"] != null) {
+      //   Get.snackbar(
+      //     "Success",
+      //     body["response-message"],
+      //     snackPosition: SnackPosition.BOTTOM,
+      //   );
+      // }
+    }
+
+    if (StatusCode == 409) {
+      Get.snackbar(
+        "Error",
+        body["error"] ?? "Conflic",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+
+    if (StatusCode == 400) {
+      Get.snackbar(
+        "Error",
+        body["error"] ?? "Bad request",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+
+    if (StatusCode == 404) {
+      Get.snackbar(
+        "Error",
+        body["error"] ?? "Not found",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+
+    if (StatusCode == 500) {
+      Get.snackbar(
+        "Error",
+        body["error"] ?? "Internal server error",
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
+
+  Future<String?> uploadImageWithToken({
+  required File file,
+  required String apiUrl,
+}) async {
+  var uri = Uri.parse(_baseUrl + apiUrl);
+
+  var request = http.MultipartRequest("POST", uri);
+
+  final token = await AuthService().getToken();
+  print('token: $token');
+
+  request.headers['Authorization'] = 'Bearer $token';
+
+  request.files.add(
+    await http.MultipartFile.fromPath(
+      "image",
+      file.path,
+    ),
+  );
+
+  var response = await request.send();
+
+  if (response.statusCode == 200) {
+    final res = await response.stream.bytesToString();
+    final data = jsonDecode(res);
+    return data["url"];
+  }
+
+  return null;
+}
 
   httpPOST({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
@@ -36,7 +127,7 @@ class ApiServices {
       body: jsonEncode(data),
     );
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, jsonDecode(resp.body));
 
     return resp;
   }
@@ -50,11 +141,11 @@ class ApiServices {
 
     var resp = await http.post(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, jsonDecode(resp.body));
 
     return resp;
   }
@@ -65,7 +156,7 @@ class ApiServices {
 
     var resp = await http.get(fullURL, headers: _setHeadersToken(null));
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, jsonDecode(resp.body));
 
     return resp;
   }
@@ -74,9 +165,16 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    var resp = await http.get(fullURL, headers: _setHeadersToken(await _token));
+    print(
+      "_SetHeadersToken: ${_setHeadersToken(await AuthService().getToken())}",
+    );
 
-    _checkResponse(resp.statusCode);
+    var resp = await http.get(
+      fullURL,
+      headers: _setHeadersToken(await AuthService().getToken()),
+    );
+
+    _checkResponse(resp.statusCode, resp.body);
 
     return resp;
   }
@@ -91,7 +189,7 @@ class ApiServices {
       body: jsonEncode(data),
     );
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, resp.body);
 
     return resp;
   }
@@ -105,11 +203,11 @@ class ApiServices {
 
     var resp = await http.put(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, resp.body);
 
     return resp;
   }
@@ -120,10 +218,10 @@ class ApiServices {
 
     var resp = await http.delete(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
     );
 
-    _checkResponse(resp.statusCode);
+    _checkResponse(resp.statusCode, resp.body);
 
     return resp;
   }

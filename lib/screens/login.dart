@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/screens/register.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/pages/status/status_page.dart';
 import 'package:get/get.dart';
+import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 // Map<String, dynamic>? userData = {};
 
@@ -24,144 +23,133 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            spacing: 10,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Welcome, Please Login first before using this app",
-                style: TextStyle(fontSize: ukText),
-              ),
-
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Username",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 10.0),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-
-                  validator: (username) {
-                    if (username == null) {
-                      return 'Please enter Username!';
-                    }
-                    user = username;
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(
-                // height: double.infinity,
-                height: 50,
-                width: double.infinity,
-                child: TextFormField(
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    hintStyle: TextStyle(),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 10.0),
-                      borderRadius: BorderRadius.circular(20),
+      body: Stack(
+        children: [
+          Obx(() {
+            if (controllerAuth.status.value == Status.loading) {
+              print('status: ${controllerAuth.status.value}');
+              return const Center(child: CircularProgressIndicator());
+            }
+            print('status: ${controllerAuth.status.value}');
+            return Container(
+              padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Welcome, Please Login first before using this app",
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
 
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        // Aksi yang ingin dilakukan saat ikon ditekan
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                      child: Icon(Icons.visibility),
-                    ),
-                  ),
-
-                  validator: (passwordd) {
-                    if (passwordd == null) {
-                      return 'Please enter your password';
-                    }
-                    password = passwordd;
-                    return null;
-                  },
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 35,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _login();
-                        }
-                        ;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: warna.Hijau(),
-                        foregroundColor: warna.Putih(),
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    SizedBox(
+                      height: 50,
+                      width: double.infinity,
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "Username",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 10.0),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
-                      ),
-                      child: Text("Login"),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // Aksi yang ingin dilakukan saat teks "Don't have an account?" ditekan
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => register()),
-                      );
-                    },
-                    child: Text(
-                      "Don't have an account?",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+
+                        validator: (username) {
+                          if (username == null) {
+                            return 'Please enter Username!';
+                          }
+                          user = username;
+                          return null;
+                        },
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      // height: double.infinity,
+                      height: 50,
+                      width: double.infinity,
+                      child: TextFormField(
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          hintStyle: TextStyle(),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 10.0),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              // Aksi yang ingin dilakukan saat ikon ditekan
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            child: Icon(Icons.visibility),
+                          ),
+                        ),
+
+                        validator: (passwordd) {
+                          if (passwordd == null) {
+                            return 'Please enter your password';
+                          }
+                          password = passwordd;
+                          return null;
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          height: 35,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                controllerAuth.login(user, password);
+                              }
+                              ;
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: warna.Hijau(),
+                              foregroundColor: warna.Putih(),
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              "Login",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Aksi yang ingin dilakukan saat teks "Don't have an account?" ditekan
+                            Get.toNamed(Routes.register);
+                          },
+                          child: Text(
+                            "Don't have an account?",
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
+            );
+          }),
+        ],
       ),
     );
-  }
-
-  void _login() async {
-    // setState(() {
-
-    // });
-
-    var dataUser = {'name': user, 'password': password};
-
-    var res = await ApiServices().httpPOST(
-      data: dataUser,
-      apiUrl: 'public/login',
-    );
-    // print(res.body);
-    var body = jsonDecode(res.body);
-
-    if (body['success']) {
-      String token = body['token'];
-
-      await AuthService().addToken(token);
-      // Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
-      Get.offAllNamed("/home");
-    }
   }
 }

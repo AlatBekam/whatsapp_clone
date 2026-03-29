@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
@@ -9,26 +12,63 @@ class ChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = RxList();
   final TextEditingController messageController = TextEditingController();
   var isSending = false.obs;
-  String? _currentUserId;
+  String? currentUserId;
   RxnString currentUserId1 = RxnString();
   RxnString title = RxnString();
   String? currentChatId;
   bool _argsLoaded = false;
-  // var isLoading = false.obs;
+  var isLoading = false.obs;
+  final picker = ImagePicker();
+  File? image;
 
-  
+
 
   @override
   void onInit() {
     super.onInit();
     _initializeUser();
+    _getCurrentUserId();
   }
 
   Future<void> _initializeUser() async {
-    await _getCurrentUserId();
+    
     await _getChatData();
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
   }
+
+  Future<void> _requestPermission() async {
+    final permission = Permission.camera;
+
+    if(await permission.isDenied) {
+      final result =await permission.request();
+      if(result.isGranted){
+        print('access granted');
+      }
+      if(result.isDenied){
+        print('access denied');
+      }
+      if(result.isPermanentlyDenied){
+        print('access permanently denied');
+      }
+      }  
+  }
+
+  Future<void> getImage() async {
+    await _requestPermission();
+    
+    try {
+  final PickFile = await picker.pickImage(source: ImageSource.camera);
+  if (PickFile != null) {
+    image = File(PickFile.path);
+    update();
+    await sendMessage();
+    update();
+  }
+} on Exception catch (e) {
+  print("error bagian perizinan pada getiamge: $e");
+}
+  }
+
 
   // void _loadArguments() {
   //   final args = Get.arguments;
@@ -41,7 +81,7 @@ class ChatController extends GetxController {
   //   }
   //   _argsLoaded = true;
   //   // Data will load after user init
-  //   if (_currentUserId != null) _getChatData();
+  //   if (currentUserId != null) _getChatData();
   // }
 
   Future<void> _getCurrentUserId() async {
@@ -50,9 +90,9 @@ class ChatController extends GetxController {
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
 
-        _currentUserId = decodeToken['id']?.toString();
+        currentUserId = decodeToken['id']?.toString();
         update();
-        print("Current user ID: $_currentUserId");
+        print("Current user ID: $currentUserId");
       }
     } catch (e) {
       print("Error getting current user ID: $e");
@@ -60,6 +100,10 @@ class ChatController extends GetxController {
   }
 
   Future<void> _getChatData() async {
+    if (currentUserId == null) {
+      print("Current user ID not loaded yet");
+      return;
+    }
 
     await loadingController.run(LoadingKey.getMessage.name, () async {
 final String? targetChatId = currentChatId;
@@ -141,9 +185,9 @@ final String? targetChatId = currentChatId;
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
-    if (messageText.isEmpty ||
+    if (messageText.isEmpty && image == null||
         (currentUserId1.value?.isEmpty ?? true) ||
-        _currentUserId == null) {
+        currentUserId == null) {
       Get.snackbar("Error", "Cannot send message: missing receiver ID");
       return;
     }
@@ -152,10 +196,30 @@ final String? targetChatId = currentChatId;
     update();
 
     try {
+       String messageContent = messageText;
+       String type= "text";
+
+
+    // 🔥 kalau ada gambar
+    if (image != null) {
+      final url = await ApiServices().uploadImageWithToken(
+        file: image!,
+        apiUrl: "private/upload",
+      );
+
+      if (url == null) {
+        throw Exception("Upload gagal");
+      }
+
+      messageContent = url;
+      type = "image";
+    }
+
       final requestData = {
-        'message': messageText,
+        'message': messageContent,
         'receiver_id': currentUserId1.value,
-        'sender_id': _currentUserId,
+        'type' : type,
+        'sender_id': currentUserId,
         'chat_id': currentChatId ?? '',
       };
       print("Sending to receiver ${currentUserId1.value}: $requestData");
@@ -167,6 +231,8 @@ final String? targetChatId = currentChatId;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         messageController.clear();
+        image = null;
+        update();
         await _getChatData(); // Refresh
         print("Message sent successfully");
       } else {
@@ -183,15 +249,19 @@ final String? targetChatId = currentChatId;
     }
   }
 
+  // Future<String?> uploadImage({required File imageFile }) async {
+  
+  // }
+
   bool checkIsMe(Map<String, dynamic> message) {
-    if (_currentUserId == null) return false;
+    if (currentUserId == null) return false;
 
     // Check sender_id - can be string or int
     final senderId = message['sender_id'];
     if (senderId == null) return false;
 
     // Compare as strings to handle both types
-    return senderId.toString() == _currentUserId;
+    return senderId.toString() == currentUserId;
   }
 
   Future<dynamic>? goDetail({

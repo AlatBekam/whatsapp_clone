@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/services/Theme.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:get/get.dart';
 import '../../../controllers/CommunityController.dart';
+import '../../widgets/SnackbarHelper.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
@@ -37,10 +38,16 @@ class KomunitasInfoPage extends StatelessWidget {
             ),
             onSelected: (value) async {
               if (value == "delete") {
-                await controller.deleteCommunity(
+                var result = await controller.deleteCommunity(
                   controller.community.communityId,
                 );
-                Get.back(result: true);
+
+                if (result == true) {
+                  Get.back(result: true);
+                  SnackbarHelper.success("Community berhasil dinonaktifkan");
+                } else {
+                  SnackbarHelper.error(result.toString());
+                }
               }
             },
             itemBuilder: (context) => [
@@ -124,11 +131,14 @@ class KomunitasInfoPage extends StatelessWidget {
                       communityController.nama.text,
                       communityController.deskripsi.text,
                     );
-                    if (result) {
+                    if (result == true) {
                       Get.back(result: true);
+                      SnackbarHelper.success("Community berhasil diperbarui");
+                    } else {
+                      SnackbarHelper.error(result.toString());
                     }
                   } else {
-                    Get.snackbar("Error", "Nama dan deskripsi harus diisi");
+                    SnackbarHelper.error("Nama dan deskripsi harus diisi");
                   }
                 },
                 child: const Text(
