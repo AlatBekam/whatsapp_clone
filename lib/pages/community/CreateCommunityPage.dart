@@ -3,6 +3,7 @@ import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../widgets/SnackbarHelper.dart';
 
 class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
@@ -98,11 +99,19 @@ class _CreateCommunityState extends State<CreateCommunity> {
               communityController.nama.text,
               communityController.deskripsi.text,
             );
-            if (result) {
+            
+            print("RESULT: $result");
+
+            if (result == true) {
               Get.back(result: true);
+              Future.delayed(Duration(milliseconds: 100), () {
+                SnackbarHelper.success("Community berhasil dibuat");
+              });
+            } else {
+              SnackbarHelper.error(result.toString());
             }
           } else {
-            Get.snackbar("Error", "Nama dan deskripsi harus diisi");
+            SnackbarHelper.error("Nama dan deskripsi harus diisi");
           }
         },
         child: Icon(Icons.arrow_forward),
