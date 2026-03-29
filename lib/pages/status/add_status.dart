@@ -32,7 +32,10 @@ class _addStatusState extends State<addStatus> {
                     decoration: InputDecoration(
                       hintText: "Type a Status",
                       border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: ukText + 3),
+                      hintStyle: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                     ),
                     textAlign: TextAlign.center,
 
@@ -171,7 +174,7 @@ class _addStatusState extends State<addStatus> {
                                           'Status (10 Excluded)',
                                           style: Theme.of(
                                             context,
-                                          ).textTheme.displaySmall,
+                                          ).textTheme.titleMedium,
                                         ),
                                       ],
                                     ),

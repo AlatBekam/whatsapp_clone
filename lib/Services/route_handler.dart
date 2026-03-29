@@ -26,7 +26,7 @@ class Routes {
   static const addChannel = "/addChannel";
   static const addStatus = "/addStatus";
   static const community = "/Community";
-  static const pengaturan = "/Pengaturan";
+  static const settings = "/settings";
   static const createCommunity = "/CreateCommunity";
   static const communityInfo = "/CommunityInfo";
   static const dummyNoState = "/dummyNoState";
@@ -54,7 +54,7 @@ class AppRoutes {
 
     GetPage(name: Routes.community, page: () => KomunitasPage()),
 
-    GetPage(name: Routes.pengaturan, page: () => PengaturanPage()),
+    GetPage(name: Routes.settings, page: () => PengaturanPage()),
 
     GetPage(name: Routes.createCommunity, page: () => CreateCommunity()),
 

@@ -9,7 +9,6 @@ import 'package:whatsapp_clone/services/route_handler.dart';
 
 class ApiServices {
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
-  final _token = AuthService().getToken();
 
   Map<String, String> _setHeadersToken(String? token) {
     if (token == null) return {'Content-type': 'application/json'};
@@ -42,15 +41,17 @@ class ApiServices {
       showDialog(context: Get.context!, builder: (context) => alert);
     }
 
-    // if (StatusCode == 200 || StatusCode == 201) {
-    //   if (body["response-message"] != null) {
-    //     Get.snackbar(
-    //       "Success",
-    //       body["response-message"],
-    //       snackPosition: SnackPosition.BOTTOM,
-    //     );
-    //   }
-    // }
+    if (StatusCode == 200 || StatusCode == 201) {
+      // print("ini body $body");
+      // if (body["response-message"].isNotEmpty &&
+      //     body["response-message"] != null) {
+      //   Get.snackbar(
+      //     "Success",
+      //     body["response-message"],
+      //     snackPosition: SnackPosition.BOTTOM,
+      //   );
+      // }
+    }
 
     if (StatusCode == 409) {
       Get.snackbar(
@@ -140,7 +141,7 @@ class ApiServices {
 
     var resp = await http.post(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
 
@@ -164,7 +165,14 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    var resp = await http.get(fullURL, headers: _setHeadersToken(await _token));
+    print(
+      "_SetHeadersToken: ${_setHeadersToken(await AuthService().getToken())}",
+    );
+
+    var resp = await http.get(
+      fullURL,
+      headers: _setHeadersToken(await AuthService().getToken()),
+    );
 
     _checkResponse(resp.statusCode, resp.body);
 
@@ -195,7 +203,7 @@ class ApiServices {
 
     var resp = await http.put(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
 
@@ -210,7 +218,7 @@ class ApiServices {
 
     var resp = await http.delete(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
     );
 
     _checkResponse(resp.statusCode, resp.body);
