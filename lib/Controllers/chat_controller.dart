@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 
 class ChatController extends GetxController {
+  ApiServices _apiServices = ApiServices();
+  AuthService _authService = AuthService();
+
   RxList<Map<String, dynamic>> messages = RxList();
   final TextEditingController messageController = TextEditingController();
   var isSending = false.obs;
@@ -126,7 +129,7 @@ class ChatController extends GetxController {
 
   Future<void> _getCurrentUserId() async {
     try {
-      final token = await AuthService().getToken();
+      final token = await _authService.getToken();
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
 
@@ -240,9 +243,11 @@ class ChatController extends GetxController {
 
       // 🔥 kalau ada gambar
       if (image != null) {
-        final url = await ApiServices().uploadImageWithToken(
+        // final url = await ApiServices().uploadImageWithToken(
+        final url = await _apiServices.uploadImageWithTokens(
           file: image!,
           apiUrl: "private/upload",
+          paths: "",
         );
 
         if (url == null) {

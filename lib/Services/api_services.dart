@@ -86,18 +86,20 @@ class ApiServices {
     }
   }
 
-  Future<String?> uploadImageWithToken({
+  Future<String?> uploadImageWithTokens({
     required File file,
     required String apiUrl,
+    required String paths,
   }) async {
     var uri = Uri.parse(_baseUrl + apiUrl);
 
     var request = http.MultipartRequest("POST", uri);
 
-    final token = await AuthService().getToken();
-    print('token: $token');
+    print("requst uploadImage : $request");
 
-    request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Authorization'] =
+        'Bearer ${await AuthService().getToken()}';
+    request.fields['paths'] = paths;
 
     request.files.add(await http.MultipartFile.fromPath("image", file.path));
 
@@ -133,9 +135,6 @@ class ApiServices {
   }) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
-    print(
-      "_setHeaderToken: ${_setHeadersToken(await AuthService().getToken())}",
-    );
 
     var resp = await http.post(
       fullURL,
@@ -164,10 +163,6 @@ class ApiServices {
   httpGETWithToken(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
-
-    print(
-      "_SetHeadersToken: ${_setHeadersToken(await AuthService().getToken())}",
-    );
 
     var resp = await http.get(
       fullURL,

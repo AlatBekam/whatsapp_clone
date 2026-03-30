@@ -27,7 +27,7 @@ class ControllerChannel extends GetxController {
   Future getUser() async {
     status.value = Status.loading;
     try {
-      String? token = await AuthService().getToken();
+      String? token = await _authService.getToken();
       var userID;
 
       if (token != null) {
