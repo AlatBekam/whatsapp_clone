@@ -6,6 +6,9 @@ import 'package:whatsapp_clone/controllers/chat_controller.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
+import 'package:whatsapp_clone/widgets/bubble_chat.dart';
+import 'package:whatsapp_clone/widgets/chat_header.dart';
+import 'package:whatsapp_clone/widgets/text_field.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -17,41 +20,46 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Obx(() {
-              return Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Text('${chatController.currentUserId1.value}'),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(chatController.title.value ?? ""),
-                ],
-              );
-            }),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => chatController.getImage(),
-                  child: SvgPicture.asset(
-                    'assets/svg/camera.svg',
-                    width: 25,
-                    color: warna.Hitam(),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                SvgPicture.asset(
-                  'assets/svg/three-dots-vertical.svg',
-                  width: 25,
-                  color: warna.Hitam(),
-                ),
-              ],
-            ),
-          ],
-        ),
+        title: Obx(() => ChatHeader(
+          title: chatController.title.value ?? "", 
+          userId: chatController.currentUserId1.value, 
+          onCameraTap: () => chatController.getImage(),
+          ))
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     Obx(() {
+        //       return Row(
+        //         children: [
+        //           CircleAvatar(
+        //             backgroundColor: Colors.green,
+        //             child: Text('${chatController.currentUserId1.value}'),
+        //           ),
+        //           const SizedBox(width: 10),
+        //           Text(chatController.title.value ?? ""),
+        //         ],
+        //       );
+        //     }),
+        //     Row(
+        //       children: [
+        //         GestureDetector(
+        //           onTap: () => chatController.getImage(),
+        //           child: SvgPicture.asset(
+        //             'assets/svg/camera.svg',
+        //             width: 25,
+        //             color: warna.Hitam(),
+        //           ),
+        //         ),
+        //         const SizedBox(width: 20),
+        //         SvgPicture.asset(
+        //           'assets/svg/three-dots-vertical.svg',
+        //           width: 25,
+        //           color: warna.Hitam(),
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
       ),
       body: Stack(
         children: [
@@ -91,7 +99,7 @@ class _ChatPageState extends State<ChatPage> {
                           ?.toString()
                           .toLowerCase();
 
-                      return _MessageBubble(
+                      return MessageBubble(
                         message: messageContent,
                         isMe: isMe,
                         time: timestamp,
@@ -103,24 +111,10 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Container(
                 padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: chatController.messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Type a message',
-                          prefixIcon: const Icon(Icons.emoji_emotions),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (_) => () async {
+                child: Obx(
+                  () => KolomChat(
+                    controller: chatController.messageController,
+                    Sending: () async {
                           await loadingController.run(
                             LoadingKey.sendMessage.name,
                             () async {
@@ -128,46 +122,74 @@ class _ChatPageState extends State<ChatPage> {
                             },
                           );
                         },
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: warna.Hijau(),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Obx(
-                        () =>
-                            loadingController.isLoading(
-                              LoadingKey.sendMessage.name,
-                            )
-                            ? const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : IconButton(
-                                onPressed: () async {
-                                  await loadingController.run(
-                                    LoadingKey.sendMessage.name,
-                                    () async {
-                                      await chatController.sendMessage();
-                                    },
-                                  );
-                                },
-                                icon: Icon(Icons.send),
-                                color: Colors.white,
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
+                    Loading: loadingController.isLoading(LoadingKey.sendMessage.name),
+                  ),
+                )
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Expanded(
+                //       child: TextField(
+                //         controller: chatController.messageController,
+                //         decoration: InputDecoration(
+                //           hintText: 'Type a message',
+                //           prefixIcon: const Icon(Icons.emoji_emotions),
+                //           contentPadding: const EdgeInsets.symmetric(
+                //             horizontal: 16,
+                //             vertical: 12,
+                //           ),
+                //           border: OutlineInputBorder(
+                //             borderRadius: BorderRadius.circular(30),
+                //           ),
+                //         ),
+                //         onSubmitted: (_) => () async {
+                //           await loadingController.run(
+                //             LoadingKey.sendMessage.name,
+                //             () async {
+                //               await chatController.sendMessage();
+                //             },
+                //           );
+                //         },
+                //       ),
+                //     ),
+                //     const SizedBox(width: 15),
+                //     Container(
+                //       decoration: BoxDecoration(
+                //         color: warna.Hijau(),
+                //         shape: BoxShape.circle,
+                //       ),
+                //       child: Obx(
+                //         () =>
+                //             loadingController.isLoading(
+                //               LoadingKey.sendMessage.name,
+                //             )
+                //             ? const Padding(
+                //                 padding: EdgeInsets.all(12),
+                //                 child: SizedBox(
+                //                   width: 20,
+                //                   height: 20,
+                //                   child: CircularProgressIndicator(
+                //                     strokeWidth: 2,
+                //                     color: Colors.white,
+                //                   ),
+                //                 ),
+                //               )
+                //             : IconButton(
+                //                 onPressed: () async {
+                //                   await loadingController.run(
+                //                     LoadingKey.sendMessage.name,
+                //                     () async {
+                //                       await chatController.sendMessage();
+                //                     },
+                //                   );
+                //                 },
+                //                 icon: Icon(Icons.send),
+                //                 color: Colors.white,
+                //               ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ),
             ],
           ),
@@ -192,100 +214,100 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
-class _MessageBubble extends StatelessWidget {
-  final String message;
-  final bool isMe;
-  final String time;
-  final String type;
+// class _MessageBubble extends StatelessWidget {
+//   final String message;
+//   final bool isMe;
+//   final String time;
+//   final String type;
 
-  const _MessageBubble({
-    required this.message,
-    required this.isMe,
-    required this.time,
-    required this.type,
-  });
+//   const _MessageBubble({
+//     required this.message,
+//     required this.isMe,
+//     required this.time,
+//     required this.type,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: isMe ? warna.Hijau() : Colors.grey[300],
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: isMe
-                ? const Radius.circular(16)
-                : const Radius.circular(4),
-            bottomRight: isMe
-                ? const Radius.circular(4)
-                : const Radius.circular(16),
-          ),
-        ),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Align(
+//       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+//       child: Container(
+//         margin: const EdgeInsets.symmetric(vertical: 5),
+//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+//         constraints: BoxConstraints(
+//           maxWidth: MediaQuery.of(context).size.width * 0.75,
+//         ),
+//         decoration: BoxDecoration(
+//           color: isMe ? warna.Hijau() : Colors.grey[300],
+//           borderRadius: BorderRadius.only(
+//             topLeft: const Radius.circular(16),
+//             topRight: const Radius.circular(16),
+//             bottomLeft: isMe
+//                 ? const Radius.circular(16)
+//                 : const Radius.circular(4),
+//             bottomRight: isMe
+//                 ? const Radius.circular(4)
+//                 : const Radius.circular(16),
+//           ),
+//         ),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children:
-              // chatController.messages.map((msg) {
-              //    print("FULL MSG: $msg");
-              // print("MESSAGE TYPE: ${msg['type']}");
-              // print("MESSAGE VALUE: ${msg['content']}");
-              // final type = msg['type']?.toString().toLowerCase();
-              // if (type == "image") {
-              //   return Image.network(msg['content']);
-              // } else {
-              //   return Text(
-              //     msg['content']?.toString() ?? '',
-              //     style: TextStyle(
-              //       color: isMe ? Colors.white : Colors.black,
-              //       fontSize: 15,
-              //     ),
-              //   );
-              // }
-              // }).toList(),
-              [
-                if (type == "image")
-                  Image.network(message)
-                else
-                  Text(
-                    message,
-                    style: TextStyle(
-                      color: isMe ? Colors.white : Colors.black,
-                      fontSize: 15,
-                    ),
-                  ),
-                const SizedBox(height: 4),
-                Text(
-                  _formatTime(time),
-                  style: TextStyle(
-                    color: isMe ? Colors.white70 : Colors.black54,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-        ),
-      ),
-    );
-  }
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.end,
+//           children:
+//               // chatController.messages.map((msg) {
+//               //    print("FULL MSG: $msg");
+//               // print("MESSAGE TYPE: ${msg['type']}");
+//               // print("MESSAGE VALUE: ${msg['content']}");
+//               // final type = msg['type']?.toString().toLowerCase();
+//               // if (type == "image") {
+//               //   return Image.network(msg['content']);
+//               // } else {
+//               //   return Text(
+//               //     msg['content']?.toString() ?? '',
+//               //     style: TextStyle(
+//               //       color: isMe ? Colors.white : Colors.black,
+//               //       fontSize: 15,
+//               //     ),
+//               //   );
+//               // }
+//               // }).toList(),
+//               [
+//                 if (type == "image")
+//                   Image.network(message)
+//                 else
+//                   Text(
+//                     message,
+//                     style: TextStyle(
+//                       color: isMe ? Colors.white : Colors.black,
+//                       fontSize: 15,
+//                     ),
+//                   ),
+//                 const SizedBox(height: 4),
+//                 Text(
+//                   _formatTime(time),
+//                   style: TextStyle(
+//                     color: isMe ? Colors.white70 : Colors.black54,
+//                     fontSize: 11,
+//                   ),
+//                 ),
+//               ],
+//         ),
+//       ),
+//     );
+//   }
 
-  String _formatTime(String timeString) {
-    if (timeString.isEmpty) return '';
-    try {
-      final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(timeString) * 1000,
-      ).toLocal();
-      final hour = dateTime.hour.toString().padLeft(2, '0');
-      final minute = dateTime.minute.toString().padLeft(2, '0');
-      return '$hour:$minute';
-    } catch (e) {
-      print("Error parsing time: $e");
-      return '';
-    }
-  }
-}
+//   String _formatTime(String timeString) {
+//     if (timeString.isEmpty) return '';
+//     try {
+//       final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+//         int.parse(timeString) * 1000,
+//       ).toLocal();
+//       final hour = dateTime.hour.toString().padLeft(2, '0');
+//       final minute = dateTime.minute.toString().padLeft(2, '0');
+//       return '$hour:$minute';
+//     } catch (e) {
+//       print("Error parsing time: $e");
+//       return '';
+//     }
+//   }
+// }
