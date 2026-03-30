@@ -21,8 +21,6 @@ class ChatController extends GetxController {
   final picker = ImagePicker();
   File? image;
 
-
-
   @override
   void onInit() {
     super.onInit();
@@ -31,44 +29,86 @@ class ChatController extends GetxController {
   }
 
   Future<void> _initializeUser() async {
-    
     await _getChatData();
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
   }
 
-  Future<void> _requestPermission() async {
-    final permission = Permission.camera;
+  Future<void> _requestPermission({required bool isGallery}) async {
+    Permission permission;
+    if (isGallery) {
+      permission = Permission.photos;
+      permission = Permission.videos;
+    } else {
+      permission = Permission.camera;
+    }
 
-    if(await permission.isDenied) {
-      final result =await permission.request();
-      if(result.isGranted){
+    if (await permission.isDenied) {
+      final result = await permission.request();
+      if (result.isGranted) {
         print('access granted');
       }
-      if(result.isDenied){
+      if (result.isDenied) {
         print('access denied');
       }
-      if(result.isPermanentlyDenied){
+      if (result.isPermanentlyDenied) {
         print('access permanently denied');
       }
-      }  
+    }
   }
 
   Future<void> getImage() async {
-    await _requestPermission();
-    
-    try {
-  final PickFile = await picker.pickImage(source: ImageSource.camera);
-  if (PickFile != null) {
-    image = File(PickFile.path);
-    update();
-    await sendMessage();
-    update();
-  }
-} on Exception catch (e) {
-  print("error bagian perizinan pada getiamge: $e");
-}
-  }
+    // await _requestPermission(isGallery: true);
 
+    print("masuk ke get image");
+
+    try {
+      XFile? PickFile = await showDialog<XFile?>(
+        context: Get.context!,
+        builder: (context) => AlertDialog(
+          title: Text("Select Image"),
+          content: Text("Select image from camera or gallery"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _requestPermission(isGallery: true);
+                final file = await picker.pickImage(
+                  source: ImageSource.gallery,
+                );
+                print("PickFile: $file");
+                Get.back(result: file);
+              },
+              child: Text("Gallery"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _requestPermission(isGallery: false);
+                final file = await picker.pickImage(source: ImageSource.camera);
+                print("PickFile: $file");
+                Get.back(result: file);
+              },
+              child: Text("Camera"),
+            ),
+          ],
+        ),
+      );
+
+      if (PickFile != null) {
+        print("PickFile: $PickFile");
+        image = File(PickFile.path);
+        update();
+        await sendMessage();
+        update();
+      }
+    } on Exception catch (e) {
+      print("error bagian perizinan pada getiamge: $e");
+    }
+  }
 
   // void _loadArguments() {
   //   final args = Get.arguments;
@@ -106,67 +146,67 @@ class ChatController extends GetxController {
     }
 
     await loadingController.run(LoadingKey.getMessage.name, () async {
-final String? targetChatId = currentChatId;
+      final String? targetChatId = currentChatId;
 
-    print(
-      "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
-    );
+      print(
+        "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
+      );
 
-    // isLoading.value = true;
-    await Future.delayed(Durations.medium4);
-    try {
-      final response = await ApiServices().httpGETWithToken("private/chats");
-      // if (response.statusCode != 200) {
-      //   throw Exception("Failed to load chats: ${response.statusCode}");
-      // }
-      final data = jsonDecode(response.body);
+      // isLoading.value = true;
+      await Future.delayed(Durations.medium4);
+      try {
+        final response = await ApiServices().httpGETWithToken("private/chats");
+        // if (response.statusCode != 200) {
+        //   throw Exception("Failed to load chats: ${response.statusCode}");
+        // }
+        final data = jsonDecode(response.body);
 
-      print("Chats response: $data");
+        print("Chats response: $data");
 
-      List<Map<String, dynamic>> parsedData = [];
-      if (data is Map && data['chats'] != null) {
-        final chats = List<dynamic>.from(data['chats']);
-        for (var chat in chats) {
-          final chatUsers = chat['user_id'];
-          bool matches = false;
+        List<Map<String, dynamic>> parsedData = [];
+        if (data is Map && data['chats'] != null) {
+          final chats = List<dynamic>.from(data['chats']);
+          for (var chat in chats) {
+            final chatUsers = chat['user_id'];
+            bool matches = false;
 
-          if (targetChatId != null &&
-              chat['chat_id']?.toString() == targetChatId) {
-            matches = true;
-          } else if (chatUsers is List) {
-            matches = chatUsers.any(
-              (id) => id.toString() == currentUserId1.value,
-            );
-          } else if (chatUsers?.toString() == currentUserId1.value) {
-            matches = true;
-          }
+            if (targetChatId != null &&
+                chat['chat_id']?.toString() == targetChatId) {
+              matches = true;
+            } else if (chatUsers is List) {
+              matches = chatUsers.any(
+                (id) => id.toString() == currentUserId1.value,
+              );
+            } else if (chatUsers?.toString() == currentUserId1.value) {
+              matches = true;
+            }
 
-          if (matches && chat['messages'] != null) {
-            parsedData = List<Map<String, dynamic>>.from(chat['messages']);
-            parsedData.sort((a, b) {
-              final timeA = a['timestamp'] ?? a['created_at'] ?? '0';
-              final timeB = b['timestamp'] ?? b['created_at'] ?? '0';
-              return int.tryParse(
-                    timeA.toString(),
-                  )?.compareTo(int.tryParse(timeB.toString()) ?? 0) ??
-                  0;
-            });
-            break;
+            if (matches && chat['messages'] != null) {
+              parsedData = List<Map<String, dynamic>>.from(chat['messages']);
+              parsedData.sort((a, b) {
+                final timeA = a['timestamp'] ?? a['created_at'] ?? '0';
+                final timeB = b['timestamp'] ?? b['created_at'] ?? '0';
+                return int.tryParse(
+                      timeA.toString(),
+                    )?.compareTo(int.tryParse(timeB.toString()) ?? 0) ??
+                    0;
+              });
+              break;
+            }
           }
         }
+
+        messages.value = parsedData;
+        print("Loaded ${messages.length} messages");
+        print('$data');
+        update();
+      } catch (e) {
+        print("GET Error: $e");
+
+        Get.snackbar("Error", "Error loading messages: $e");
+      } finally {
+        // isLoading.value = false;
       }
-
-      messages.value = parsedData;
-      print("Loaded ${messages.length} messages");
-      print('$data');
-      update();
-    } catch (e) {
-      print("GET Error: $e");
-
-      Get.snackbar("Error", "Error loading messages: $e");
-    } finally {
-      // isLoading.value = false;
-    }
     });
     // if (_currentUserId == null) {
     //   print("Current user ID not loaded yet");
@@ -174,7 +214,6 @@ final String? targetChatId = currentChatId;
     // }
 
     // final String targetUserId = user_id ?? userId;
-    
   }
 
   @override
@@ -185,7 +224,7 @@ final String? targetChatId = currentChatId;
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
-    if (messageText.isEmpty && image == null||
+    if (messageText.isEmpty && image == null ||
         (currentUserId1.value?.isEmpty ?? true) ||
         currentUserId == null) {
       Get.snackbar("Error", "Cannot send message: missing receiver ID");
@@ -196,29 +235,28 @@ final String? targetChatId = currentChatId;
     update();
 
     try {
-       String messageContent = messageText;
-       String type= "text";
+      String messageContent = messageText;
+      String type = "text";
 
+      // 🔥 kalau ada gambar
+      if (image != null) {
+        final url = await ApiServices().uploadImageWithToken(
+          file: image!,
+          apiUrl: "private/upload",
+        );
 
-    // 🔥 kalau ada gambar
-    if (image != null) {
-      final url = await ApiServices().uploadImageWithToken(
-        file: image!,
-        apiUrl: "private/upload",
-      );
+        if (url == null) {
+          throw Exception("Upload gagal");
+        }
 
-      if (url == null) {
-        throw Exception("Upload gagal");
+        messageContent = url;
+        type = "image";
       }
-
-      messageContent = url;
-      type = "image";
-    }
 
       final requestData = {
         'message': messageContent,
         'receiver_id': currentUserId1.value,
-        'type' : type,
+        'type': type,
         'sender_id': currentUserId,
         'chat_id': currentChatId ?? '',
       };
@@ -250,7 +288,7 @@ final String? targetChatId = currentChatId;
   }
 
   // Future<String?> uploadImage({required File imageFile }) async {
-  
+
   // }
 
   bool checkIsMe(Map<String, dynamic> message) {

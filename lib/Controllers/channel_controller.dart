@@ -6,7 +6,7 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class ControllerChannel extends GetxController {
-  dynamic apiServices = ApiServices();
+  ApiServices apiServices = ApiServices();
   AuthService _authService = AuthService();
   var followedChannel = <Map<String, dynamic>>[].obs;
   var discoverChannel = <Map<String, dynamic>>[].obs;

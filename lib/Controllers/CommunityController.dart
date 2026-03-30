@@ -8,6 +8,9 @@ import '../Services/route_handler.dart';
 CommunityController communityController = Get.find<CommunityController>();
 
 class CommunityController extends GetxController {
+  ApiServices apiServices = ApiServices();
+  AuthService _authService = AuthService();
+
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
 
@@ -30,9 +33,7 @@ class CommunityController extends GetxController {
     try {
       isLoading(true);
 
-      var response = await ApiServices().httpGETWithToken(
-        "private/community",
-      );
+      var response = await apiServices.httpGETWithToken("private/community");
 
       final data = HttpHandler.handleResponse(response);
 
@@ -49,7 +50,7 @@ class CommunityController extends GetxController {
   // CREATE
   Future createCommunity(String name, String description) async {
     try {
-      var response = await ApiServices().httpPOSTWithToken(
+      var response = await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
         data: {
           "community_name": name,
@@ -69,18 +70,11 @@ class CommunityController extends GetxController {
   }
 
   // UPDATE
-  Future updateCommunity(
-    String id,
-    String name,
-    String description,
-  ) async {
+  Future updateCommunity(String id, String name, String description) async {
     try {
-      var response = await ApiServices().httpPUTWithToken(
+      var response = await apiServices.httpPUTWithToken(
         apiUrl: "private/community/$id",
-        data: {
-          "community_name": name,
-          "description": description,
-        },
+        data: {"community_name": name, "description": description},
       );
 
       HttpHandler.handleResponse(response);
@@ -96,7 +90,7 @@ class CommunityController extends GetxController {
   // DELETE
   Future deleteCommunity(String id) async {
     try {
-      var response = await ApiServices().httpDELETEWithToken(
+      var response = await apiServices.httpDELETEWithToken(
         "private/community/$id",
       );
 

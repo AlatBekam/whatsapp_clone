@@ -121,6 +121,9 @@ Widget widgetitemlist({
             userId: userId,
             chatId: chatId,
           );
+
+          print("userId: $userId");
+          print("chatId: $chatId");
         },
       );
     },
@@ -161,23 +164,22 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  // Future<void> _requestPermission() async {
+  //   final permission = Permission.camera;
 
-  Future<void> _requestPermission() async {
-    final permission = Permission.camera;
-
-    if(await permission.isDenied) {
-      final result =await permission.request();
-      if(result.isGranted){
-        print('access granted');
-      }
-      if(result.isDenied){
-        print('access denied');
-      }
-      if(result.isPermanentlyDenied){
-        print('access permanently denied');
-      }
-      }  
-  }
+  //   if (await permission.isDenied) {
+  //     final result = await permission.request();
+  //     if (result.isGranted) {
+  //       print('access granted');
+  //     }
+  //     if (result.isDenied) {
+  //       print('access denied');
+  //     }
+  //     if (result.isPermanentlyDenied) {
+  //       print('access permanently denied');
+  //     }
+  //   }
+  // }
 
   Future<void> _getUser() async {
     try {
@@ -261,7 +263,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _getUser();
     _getCurrentId();
-    _requestPermission();
+    // _requestPermission();
     // _getCurrentUserId();
     // _tabController = TabController(length: children.length, vsync: this);
   }
