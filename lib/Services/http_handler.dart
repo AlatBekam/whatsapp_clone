@@ -20,39 +20,22 @@ class HttpHandler {
 
     try {
       final body = jsonDecode(response.body);
-      message = body['message'] ?? message;
+      message = body['message'] ?? body['error'] ??  message;
     } catch (_) {}
 
-    // HANDLE KHUSUS
-    if (statusCode == 401) {
-      throw Exception("Session expired, silakan login ulang");
+    switch (statusCode) {
+      case 400:
+        throw Exception(message);
+      case 401:
+        throw Exception("Session expired, Please login again");
+      case 404:
+        throw Exception("Data tidak ditemukan");
+      case 409:
+        throw Exception(message);
+      case 500:
+        throw Exception("Server error");
+      default:
+        throw Exception(message);
     }
-
-    if (statusCode == 500) {
-      throw Exception("Server error");
-    }
-
-    throw Exception(message);
   }
-
-  // /// GLOBAL SNACKBAR
-  // static void showError(String message) {
-  //   Get.snackbar(
-  //     "Error",
-  //     message,
-  //     snackPosition: SnackPosition.BOTTOM,
-  //     backgroundColor: Colors.red,
-  //     colorText: Colors.white,
-  //   );
-  // }
-
-  // static void showSuccess(String message) {
-  //   Get.snackbar(
-  //     "Success",
-  //     message,
-  //     snackPosition: SnackPosition.BOTTOM,
-  //     backgroundColor: Colors.green,
-  //     colorText: Colors.white,
-  //   );
-  // }
 }

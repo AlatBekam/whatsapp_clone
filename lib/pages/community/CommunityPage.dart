@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
-import '../../widgets/SnackbarHelper.dart';
+import '../../widgets/TemplateSnackbar.dart';
 
 class KomunitasPage extends StatelessWidget {
   final CommunityController controller = Get.find();
@@ -54,7 +54,7 @@ class KomunitasPage extends StatelessWidget {
         if (communityController.errorMessage.value.isNotEmpty) {
           // tampilkan snackbar sekali
           Future.microtask(() {
-            SnackbarHelper.error(
+            TemplateSnackbar.error(
               communityController.errorMessage.value,
             );
           });

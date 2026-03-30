@@ -89,10 +89,10 @@ Widget widgetitemlist({
           // Try to find existing chat with this user
           String? chatId;
           try {
-            final response = await ApiServices().httpGETWithToken(
+            final chatData = await ApiServices().httpGETWithToken(
               "private/chats",
             );
-            final chatData = jsonDecode(response.body);
+            // final chatData = jsonDecode(response.body);
             if (chatData != null &&
                 chatData is Map &&
                 chatData['chats'] != null) {

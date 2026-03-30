@@ -33,9 +33,7 @@ class CommunityController extends GetxController {
     try {
       isLoading(true);
 
-      var response = await apiServices.httpGETWithToken("private/community");
-
-      final data = HttpHandler.handleResponse(response);
+      final data = await apiServices.httpGETWithToken("private/community");
 
       communities.value = (data as List)
           .map((e) => CommunityModel.fromJson(e))
@@ -50,7 +48,7 @@ class CommunityController extends GetxController {
   // CREATE
   Future createCommunity(String name, String description) async {
     try {
-      var response = await apiServices.httpPOSTWithToken(
+     await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
         data: {
           "community_name": name,
@@ -58,8 +56,6 @@ class CommunityController extends GetxController {
           "announcement_group_id": null,
         },
       );
-
-      HttpHandler.handleResponse(response);
 
       await fetchCommunities();
 
@@ -72,12 +68,10 @@ class CommunityController extends GetxController {
   // UPDATE
   Future updateCommunity(String id, String name, String description) async {
     try {
-      var response = await apiServices.httpPUTWithToken(
+      await apiServices.httpPUTWithToken(
         apiUrl: "private/community/$id",
         data: {"community_name": name, "description": description},
       );
-
-      HttpHandler.handleResponse(response);
 
       await fetchCommunities();
 
@@ -90,11 +84,9 @@ class CommunityController extends GetxController {
   // DELETE
   Future deleteCommunity(String id) async {
     try {
-      var response = await apiServices.httpDELETEWithToken(
+      await apiServices.httpDELETEWithToken(
         "private/community/$id",
       );
-
-      HttpHandler.handleResponse(response);
 
       await fetchCommunities();
 
