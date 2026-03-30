@@ -34,15 +34,22 @@ class ApiServices {
 
     request.files.add(await http.MultipartFile.fromPath("image", file.path));
 
-    var response = await request.send();
+    final streamedResponse = await request.send();
 
-    if (response.statusCode == 200) {
-      final res = await response.stream.bytesToString();
-      final data = jsonDecode(res);
-      return data["url"];
-    }
+    final response = await http.Response.fromStream(streamedResponse);
 
-    return null;
+    final data = HttpHandler.handleResponse(response);
+
+    return data["url"];
+    // var response = await request.send();
+
+    // if (response.statusCode == 200) {
+    //   final res = await response.stream.bytesToString();
+    //   final data = jsonDecode(res);
+    //   return data["url"];
+    // }
+
+    // return null;
   }
 
   httpPOST({Map<String, dynamic>? data, required String apiUrl}) async {
