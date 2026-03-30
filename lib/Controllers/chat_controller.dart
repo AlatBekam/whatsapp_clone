@@ -227,7 +227,7 @@ class ChatController extends GetxController {
     if (messageText.isEmpty && image == null ||
         (currentUserId1.value?.isEmpty ?? true) ||
         currentUserId == null) {
-      Get.snackbar("Error", "Cannot send message: missing receiver ID");
+      Get.snackbar("Error", "Cannot send message: Missing content or user ID");
       return;
     }
 
