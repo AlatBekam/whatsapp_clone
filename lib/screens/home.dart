@@ -272,7 +272,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: warna.Putih(),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: warna.Hijau(),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -286,7 +286,7 @@ class _ChatPageState extends State<ChatPage> {
                   'assets/svg/camera.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
               ],
             ),

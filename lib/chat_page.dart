@@ -20,6 +20,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Obx(() => ChatHeader(
           title: chatController.title.value ?? "", 
           userId: chatController.currentUserId1.value, 

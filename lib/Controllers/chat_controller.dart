@@ -8,7 +8,7 @@ import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 import 'package:whatsapp_clone/Services/gambar_service.dart';
-import 'package:whatsapp_clone/Services/permission.dart';
+import 'package:whatsapp_clone/Services/Permission.dart';
 
 class ChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = RxList();
