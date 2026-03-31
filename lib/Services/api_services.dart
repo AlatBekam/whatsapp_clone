@@ -95,13 +95,14 @@ class ApiServices {
 
     var request = http.MultipartRequest("POST", uri);
 
-    print("requst uploadImage : $request");
-
     request.headers['Authorization'] =
         'Bearer ${await AuthService().getToken()}';
     request.fields['paths'] = paths;
+    print("request path: ${request.fields['paths']}");
 
     request.files.add(await http.MultipartFile.fromPath("image", file.path));
+
+    print("request: $request");
 
     var response = await request.send();
 

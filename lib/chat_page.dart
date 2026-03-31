@@ -14,6 +14,12 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   @override
+  void initState() {
+    super.initState();
+    chatController.initData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.green,
-                    child: Text('${chatController.currentUserId1.value}'),
+                    child: Text('${chatController.receiverId.value}'),
                   ),
                   const SizedBox(width: 10),
                   Text(chatController.title.value ?? ""),

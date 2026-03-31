@@ -22,11 +22,11 @@ class CommunityController extends GetxController {
 
   var errorMessage = ''.obs;
 
-  @override
-  void onInit() {
-    fetchCommunities();
-    super.onInit();
-  }
+  // @override
+  // void onInit() {
+  //   fetchCommunities();
+  //   super.onInit();
+  // }
 
   // GET COMMUNITIES (SUDAH CLEAN)
   Future fetchCommunities() async {
@@ -113,6 +113,10 @@ class CommunityController extends GetxController {
   void clearForm() {
     nama.clear();
     deskripsi.clear();
+  }
+
+  Future initData() async {
+    await fetchCommunities();
   }
 }
 

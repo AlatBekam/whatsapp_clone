@@ -16,7 +16,7 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   var isSending = false.obs;
   String? currentUserId;
-  RxnString currentUserId1 = RxnString();
+  RxnString receiverId = RxnString();
   RxnString title = RxnString();
   String? currentChatId;
   bool _argsLoaded = false;
@@ -24,17 +24,12 @@ class ChatController extends GetxController {
   final picker = ImagePicker();
   File? image;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _initializeUser();
-    _getCurrentUserId();
-  }
-
-  Future<void> _initializeUser() async {
-    await _getChatData();
-    await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   _initializeUser();
+  //   _getCurrentUserId();
+  // }
 
   Future<void> _requestPermission({required bool isGallery}) async {
     Permission permission;
@@ -116,10 +111,10 @@ class ChatController extends GetxController {
   // void _loadArguments() {
   //   final args = Get.arguments;
   //   if (args is Map) {
-  //     currentUserId1.value = args['user_id']?.toString();
+  //     receiverId.value = args['user_id']?.toString();
   //     currentChatId = args['chat_id']?.toString();
   //     print(
-  //       "Args loaded: user_id=${currentUserId1.value}, chat_id=$currentChatId",
+  //       "Args loaded: user_id=${receiverId.value}, chat_id=$currentChatId",
   //     );
   //   }
   //   _argsLoaded = true;
@@ -152,7 +147,7 @@ class ChatController extends GetxController {
       final String? targetChatId = currentChatId;
 
       print(
-        "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
+        "Loading chat for user: ${receiverId.value}, chatId: $targetChatId",
       );
 
       // isLoading.value = true;
@@ -178,9 +173,9 @@ class ChatController extends GetxController {
               matches = true;
             } else if (chatUsers is List) {
               matches = chatUsers.any(
-                (id) => id.toString() == currentUserId1.value,
+                (id) => id.toString() == receiverId.value,
               );
-            } else if (chatUsers?.toString() == currentUserId1.value) {
+            } else if (chatUsers?.toString() == receiverId.value) {
               matches = true;
             }
 
@@ -227,8 +222,11 @@ class ChatController extends GetxController {
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
+    print("ini messageText di sendmessage: ${messageText}");
+    print("ini receiverId: ${receiverId.value}");
+    print("ini currentUserId: ${currentUserId}");
     if (messageText.isEmpty && image == null ||
-        (currentUserId1.value?.isEmpty ?? true) ||
+        (receiverId.value?.isEmpty ?? true) ||
         currentUserId == null) {
       Get.snackbar("Error", "Cannot send message: missing receiver ID");
       return;
@@ -243,11 +241,10 @@ class ChatController extends GetxController {
 
       // 🔥 kalau ada gambar
       if (image != null) {
-        // final url = await ApiServices().uploadImageWithToken(
         final url = await _apiServices.uploadImageWithTokens(
           file: image!,
           apiUrl: "private/upload",
-          paths: "",
+          paths: "chats/${currentChatId}",
         );
 
         if (url == null) {
@@ -260,12 +257,12 @@ class ChatController extends GetxController {
 
       final requestData = {
         'message': messageContent,
-        'receiver_id': currentUserId1.value,
+        'receiver_id': receiverId.value,
         'type': type,
         'sender_id': currentUserId,
         'chat_id': currentChatId ?? '',
       };
-      print("Sending to receiver ${currentUserId1.value}: $requestData");
+      print("Sending to receiver ${receiverId.value}: $requestData");
 
       final response = await ApiServices().httpPOSTWithToken(
         data: requestData,
@@ -273,6 +270,11 @@ class ChatController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final resBody = jsonDecode(response.body);
+
+        // ✅ set chat id kalau sebelumnya null
+        currentChatId ??= resBody['chat_id'];
+
         messageController.clear();
         image = null;
         update();
@@ -292,10 +294,6 @@ class ChatController extends GetxController {
     }
   }
 
-  // Future<String?> uploadImage({required File imageFile }) async {
-
-  // }
-
   bool checkIsMe(Map<String, dynamic> message) {
     if (currentUserId == null) return false;
 
@@ -311,11 +309,11 @@ class ChatController extends GetxController {
     required String title,
     required String userId,
     String? chatId,
-  }) {
-    currentUserId1.value = userId;
+  }) async {
+    receiverId.value = userId;
     currentChatId = chatId;
     chatController.title.value = title;
-    _getChatData();
+    await _getChatData();
     return Get.toNamed('/chat');
   }
 
@@ -323,6 +321,11 @@ class ChatController extends GetxController {
   void onClose() {
     messageController.dispose();
     super.onClose();
+  }
+
+  Future initData() async {
+    await _getCurrentUserId();
+    await _getChatData();
   }
 }
 

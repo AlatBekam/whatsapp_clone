@@ -36,18 +36,13 @@ class ControllerStatus extends GetxController {
         userID = decodeToken['id'];
       }
 
-      var responseData = await ApiServices().httpGET('public/users/statuses');
-      
-      if (responseData.statusCode == 200) {
-        var dataStatus = jsonDecode(responseData.body);
-        if (dataStatus is Map && dataStatus.containsKey('data')) {
-            dataStatus = dataStatus['data'];
-        }
+      var dataStatus = await ApiServices().httpGET('public/users/statuses');
 
-        if (dataStatus == null || dataStatus.isEmpty) {
-          status.value = Status.empty;
-          return;
-        } else {
+      dataStatus = jsonDecode(dataStatus.body);
+      if (dataStatus == null || dataStatus.isEmpty) {
+        status.value = Status.empty;
+        return;
+      } else {
         statusDatas = List<Map<String, dynamic>>.from(
           dataStatus,
         ).where((item) => item['UserID'] != userID).toList();
@@ -61,7 +56,6 @@ class ControllerStatus extends GetxController {
           myStatusStatus.value = Status.success;
         }
         print('myStatusStatus: ${myStatusStatus.value}');
-        }
       }
       status.value = Status.success;
     } catch (e) {

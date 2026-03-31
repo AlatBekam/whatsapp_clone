@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/widgets/widget_pop_menu_button_three_dots_appbar.dart';
 import '../../widgets/SnackbarHelper.dart';
 
 class KomunitasPage extends StatelessWidget {
   final CommunityController controller = Get.find();
 
-  KomunitasPage({super.key}){
-    controller.fetchCommunities();
+  KomunitasPage({super.key}) {
+    controller.initData();
   }
 
   @override
@@ -22,30 +23,7 @@ class KomunitasPage extends StatelessWidget {
           'Community',
           style: TextStyle(color: warna.Hitam(), fontSize: 19),
         ),
-        actions: [
-          PopupMenuButton<String>(
-            color: warna.Putih(),
-            icon: SvgPicture.asset(
-              'assets/svg/three-dots-vertical.svg',
-              width: 19,
-              color: warna.Hitam(),
-            ),
-            onSelected: (value) {
-              if (value == "Pengaturan") {
-                Get.toNamed(Routes.settings);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: "Pengaturan",
-                child: Text(
-                  "Pengaturan",
-                  style: TextStyle(color: warna.Hitam()),
-                ),
-              ),
-            ],
-          ),
-        ],
+        actions: [widgetPopMenuButtonThreeDotsAppBar(context)],
       ),
       body: Obx(() {
         if (communityController.isLoading.value) {
@@ -54,9 +32,7 @@ class KomunitasPage extends StatelessWidget {
         if (communityController.errorMessage.value.isNotEmpty) {
           // tampilkan snackbar sekali
           Future.microtask(() {
-            SnackbarHelper.error(
-              communityController.errorMessage.value,
-            );
+            SnackbarHelper.error(communityController.errorMessage.value);
           });
 
           return Center(child: Text("Gagal memuat data"));
