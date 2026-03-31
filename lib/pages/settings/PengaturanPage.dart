@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
-class PengaturanPage extends StatelessWidget {
+class PengaturanPage extends StatefulWidget {
   const PengaturanPage({super.key});
 
+  @override
+  State<PengaturanPage> createState() => _PengaturanPageState();
+}
+
+class _PengaturanPageState extends State<PengaturanPage> {
+      String? result = 'light';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Pengaturan')),
       body: ListTile(
-        leading: Icon(Icons.sunny),
+        leading: Icon(result == 'light' ? Icons.sunny : Icons.nightlight_round),
         title: Text('Tema'),
-        subtitle: Text('Terang'),
+        subtitle: Text(result == 'light' ? 'Terang' : 'Gelap'),
         onTap: () {
           showDialog(
             context: context, builder: (context) {
@@ -24,7 +30,9 @@ class PengaturanPage extends StatelessWidget {
                       title: Text('Terang'),
                       onTap: () {
                         // Ganti ke tema terang
-                        Navigator.pop(context);
+                        Navigator.pop(context, result = 'light');
+                        setState(() {
+                        });
                       },
                     ),
                     ListTile(
@@ -32,13 +40,21 @@ class PengaturanPage extends StatelessWidget {
                       title: Text('Gelap'),
                       onTap: () {
                         // Ganti ke tema gelap
-                        Navigator.pop(context);
+                        Navigator.pop(context, result = 'dark');
+                        setState(() {
+                        });
                       },
                     ),
                   ],
                 ),
               );
             });
+            // if (result != null) {
+            //   setState(() {
+            //     // Perbarui state dengan tema yang dipilih
+            //   });
+            // }
+
           // Navigasi ke halaman Akun
         },
       ),
