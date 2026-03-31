@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:whatsapp_clone/services/api_services.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/widgets/TemplateSnackbar.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class AuthController extends GetxController {
@@ -14,13 +16,12 @@ class AuthController extends GetxController {
   Future<void> login(String name, String password) async {
     status.value = Status.loading;
     try {
-      var res = await _api.httpPOST(
+      final body = await _api.httpPOST(
         data: {'name': name, 'password': password},
         apiUrl: 'public/login',
       );
-      var body = jsonDecode(res.body);
 
-      print(body);
+      print("login response: $body");
 
       if (body['success']) {
         await _authService.addToken(body['token']);
@@ -28,7 +29,7 @@ class AuthController extends GetxController {
       }
       status.value = Status.success;
     } catch (e) {
-      Get.snackbar("Error", "Login failed, cause $e");
+      TemplateSnackbar.error("Login failed: $e");
       print("Error at login controller $e");
       status.value = Status.error;
     }
@@ -38,15 +39,14 @@ class AuthController extends GetxController {
     try {
       status.value = Status.loading;
       var _data = {'name': name, 'email': email, 'password': password};
-      var res = await _api.httpPOST(data: _data, apiUrl: 'public/users');
-      var body = jsonDecode(res.body);
+      final body = await _api.httpPOST(data: _data, apiUrl: 'public/users');
 
       if (body['success']) {
         Get.offAllNamed(Routes.login);
       }
       status.value = Status.success;
     } catch (e) {
-      Get.snackbar("Error", "Register failed, cause $e");
+      TemplateSnackbar.error("Register failed: $e");
       print("Error at register controller $e");
       status.value = Status.error;
     }
@@ -61,9 +61,31 @@ class AuthController extends GetxController {
       }
       status.value = Status.success;
     } catch (e) {
-      Get.snackbar("Error", "Logout failed, cause $e");
+      TemplateSnackbar.error("Logout failed: $e");
       print("Error at logout controller $e");
       status.value = Status.error;
+    }
+  }
+
+  Future<void> logoutBecauseExpired(String message) async {
+    try {
+      await _authService.removeToken();
+      AlertDialog alert = AlertDialog(
+        title: Text("Your section already expired"),
+        content: Text("Please login again"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Get.offAllNamed(Routes.login);
+            },
+            child: Text("OK"),
+          ),
+        ],
+      );
+
+      showDialog(context: Get.context!, builder: (context) => alert);
+    } catch (e) {
+      TemplateSnackbar.error("Logout failed: $e");
     }
   }
 
@@ -92,7 +114,7 @@ class AuthController extends GetxController {
       Get.offAllNamed(Routes.home);
       status.value = Status.success;
     } catch (e) {
-      Get.snackbar("Error", "Logout failed, cause $e");
+      TemplateSnackbar.error("Logout failed: $e");
       print("Error at checkIfLogin controller $e");
       status.value = Status.error;
     }

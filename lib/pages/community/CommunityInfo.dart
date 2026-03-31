@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:get/get.dart';
 import '../../../controllers/CommunityController.dart';
-import '../../widgets/SnackbarHelper.dart';
+import '../../widgets/TemplateSnackbar.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
@@ -44,9 +44,9 @@ class KomunitasInfoPage extends StatelessWidget {
 
                 if (result == true) {
                   Get.back(result: true);
-                  SnackbarHelper.success("Community berhasil dinonaktifkan");
+                  TemplateSnackbar.success("Community berhasil dinonaktifkan");
                 } else {
-                  SnackbarHelper.error(result.toString());
+                  TemplateSnackbar.error(result.toString());
                 }
               }
             },
@@ -133,12 +133,12 @@ class KomunitasInfoPage extends StatelessWidget {
                     );
                     if (result == true) {
                       Get.back(result: true);
-                      SnackbarHelper.success("Community berhasil diperbarui");
+                      TemplateSnackbar.success("Community berhasil diperbarui");
                     } else {
-                      SnackbarHelper.error(result.toString());
+                      TemplateSnackbar.error(result.toString());
                     }
                   } else {
-                    SnackbarHelper.error("Nama dan deskripsi harus diisi");
+                    TemplateSnackbar.error("Nama dan deskripsi harus diisi");
                   }
                 },
                 child: const Text(

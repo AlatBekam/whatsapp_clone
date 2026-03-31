@@ -36,10 +36,10 @@ class ControllerStatus extends GetxController {
         userID = decodeToken['id'];
       }
 
-      var responseData = await ApiServices().httpGET('public/users/statuses');
+      var dataStatus = await ApiServices().httpGET('public/users/statuses');
       
-      if (responseData.statusCode == 200) {
-        var dataStatus = jsonDecode(responseData.body);
+      if (dataStatus.statusCode == 200) {
+        // var dataStatus = jsonDecode(dataStatus.body);
         if (dataStatus is Map && dataStatus.containsKey('data')) {
             dataStatus = dataStatus['data'];
         }
@@ -73,10 +73,10 @@ class ControllerStatus extends GetxController {
   Future getViewedStatus() async {
     status.value = Status.loading;
     try {
-      var dataViewStatus = await ApiServices().httpGETWithToken(
+      final dataViewStatus = await ApiServices().httpGETWithToken(
         'private/users/statuses',
       );
-      dataViewStatus = jsonDecode(dataViewStatus.body);
+      // dataViewStatus = jsonDecode(dataViewStatus.body);
 
       viewedStatusDatas = List<Map<String, dynamic>>.from(dataViewStatus);
       viewedIDS = Set<String>.from(
@@ -134,12 +134,12 @@ class ControllerStatus extends GetxController {
     try {
       var statusData = {'Content': contentStatus};
 
-      var res = await ApiServices().httpPOSTWithToken(
+      final res = await ApiServices().httpPOSTWithToken(
         data: statusData,
         apiUrl: 'private/users/status',
       );
 
-      res = jsonDecode(res.body);
+      // res = jsonDecode(res.body);
       status.value = Status.success;
       return res['success'];
     } catch (e) {

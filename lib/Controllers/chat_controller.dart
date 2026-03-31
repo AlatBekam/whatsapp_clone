@@ -24,8 +24,8 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initializeUser();
     _getCurrentUserId();
+    _initializeUser();
   }
 
   Future<void> _initializeUser() async {
@@ -155,11 +155,11 @@ class ChatController extends GetxController {
       // isLoading.value = true;
       await Future.delayed(Durations.medium4);
       try {
-        final response = await ApiServices().httpGETWithToken("private/chats");
+        final data = await ApiServices().httpGETWithToken("private/chats");
         // if (response.statusCode != 200) {
         //   throw Exception("Failed to load chats: ${response.statusCode}");
         // }
-        final data = jsonDecode(response.body);
+        // final data = jsonDecode(response.body);
 
         print("Chats response: $data");
 
