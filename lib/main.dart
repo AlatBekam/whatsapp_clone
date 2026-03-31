@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
+import 'package:whatsapp_clone/Services/gambar_service.dart';
 import 'package:whatsapp_clone/controllers/auth_controller.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
 import 'package:whatsapp_clone/controllers/status_controller.dart';
@@ -21,6 +22,7 @@ initialGetx() {
   Get.put(ChatController());
   Get.put(LoadingController());
   Get.put(AuthController());
+  Get.put(GambarService());
 }
 
 class WhatsApp extends StatelessWidget {
