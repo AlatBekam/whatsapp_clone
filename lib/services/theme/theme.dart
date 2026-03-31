@@ -59,7 +59,7 @@ class CustomAppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme(
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         primary: Color(0xFF25D366),
         onPrimary: HSLColor.fromColor(
           Color(0xFF25D366),
@@ -88,4 +88,5 @@ class CustomAppTheme {
       elevatedButtonTheme: CustomElevatedButtonTheme.dark(),
     );
   }
+  
 }
