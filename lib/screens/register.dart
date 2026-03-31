@@ -1,24 +1,25 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/controllers/auth_controller.dart';
+import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
-import 'package:whatsapp_clone/register.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/screens/login.dart';
 
-// Map<String, dynamic>? userData = {};
-
-class Login extends StatefulWidget {
-  const Login({super.key});
+class register extends StatefulWidget {
+  const register({super.key});
 
   @override
-  _LoginState createState() => _LoginState();
+  _registerState createState() => _registerState();
 }
 
-class _LoginState extends State<Login> {
-  bool _obscureText = true;
+class _registerState extends State<register> {
   final _formKey = GlobalKey<FormState>();
-  var user, password;
+  bool _obscureText = true;
+  var user, email, password;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +33,9 @@ class _LoginState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Welcome, Please Login first before using this app",
-                style: TextStyle(fontSize: ukText),
+                'Welcome, Please input your data to register',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-
               SizedBox(
                 height: 50,
                 width: double.infinity,
@@ -49,23 +49,44 @@ class _LoginState extends State<Login> {
                   ),
 
                   validator: (username) {
-                    if (username == null) {
-                      return 'Please enter Username!';
+                    if (username == null || username.isEmpty) {
+                      return "Please enter your Name";
                     }
+
                     user = username;
                     return null;
                   },
                 ),
               ),
               SizedBox(
-                // height: double.infinity,
+                height: 50,
+                width: double.infinity,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 10.0),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+
+                  validator: (emaill) {
+                    if (emaill == null || emaill.isEmpty) {
+                      return "Please enter your Email";
+                    }
+
+                    email = emaill;
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(
                 height: 50,
                 width: double.infinity,
                 child: TextFormField(
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     hintText: "Password",
-                    hintStyle: TextStyle(),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(width: 10.0),
                       borderRadius: BorderRadius.circular(20),
@@ -83,50 +104,54 @@ class _LoginState extends State<Login> {
                   ),
 
                   validator: (passwordd) {
-                    if (passwordd == null) {
-                      return 'Please enter your password';
+                    if (passwordd == null || passwordd.isEmpty) {
+                      return "Please enter your Password";
                     }
+
                     password = passwordd;
                     return null;
                   },
                 ),
               ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: 100,
+                    width: 120,
                     height: 35,
                     child: ElevatedButton(
                       onPressed: () {
+                        print(user);
+                        print(email);
+                        print(password);
+
                         if (_formKey.currentState!.validate()) {
-                          _login();
+                          controllerAuth.register(user, email, password);
                         }
-                        ;
                       },
                       style: ElevatedButton.styleFrom(
-                        elevation: 0,
                         backgroundColor: warna.Hijau(),
-                        foregroundColor: warna.Putih(),
+                        foregroundColor: Colors.white,
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text("Login"),
+                      child: Text(
+                        'Register',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ),
                   ),
+
                   GestureDetector(
                     onTap: () {
-                      // Aksi yang ingin dilakukan saat teks "Don't have an account?" ditekan
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => register()),
-                      );
+                      Get.toNamed(Routes.login);
                     },
                     child: Text(
-                      "Don't have an account?",
-                      style: TextStyle(
+                      'Already have an account? Login',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.blue,
                         decoration: TextDecoration.underline,
                       ),
@@ -139,27 +164,5 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-  void _login() async {
-    // setState(() {
-
-    // });
-
-    var dataUser = {'name': user, 'password': password};
-
-    var res = await ApiServices().httpPOST(
-      data: dataUser,
-      apiUrl: 'public/login',
-    );
-    // print(res.body);
-    var body = jsonDecode(res.body);
-
-    if (body['success']) {
-      String token = body['token'];
-
-      await AuthService().addToken(token);
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (Router) => false);
-    }
   }
 }

@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:whatsapp_clone/Services/http_handler.dart';
 
 class ApiServices {
   static const String _baseUrl = "http://10.0.2.2:8080/api/";
-  final _token = AuthService().getToken();
 
   Map<String, String> _setHeadersToken(String? token) {
     if (token == null) return {'Content-type': 'application/json'};
@@ -16,15 +19,51 @@ class ApiServices {
     };
   }
 
+  Future<String?> uploadImageWithToken({
+    required File file,
+    required String apiUrl,
+  }) async {
+    var uri = Uri.parse(_baseUrl + apiUrl);
+
+    var request = http.MultipartRequest("POST", uri);
+
+    final token = await AuthService().getToken();
+    print('token: $token');
+
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.files.add(await http.MultipartFile.fromPath("image", file.path));
+
+    final streamedResponse = await request.send();
+
+    final response = await http.Response.fromStream(streamedResponse);
+
+    final data = HttpHandler.handleResponse(response);
+
+    return data["url"];
+    // var response = await request.send();
+
+    // if (response.statusCode == 200) {
+    //   final res = await response.stream.bytesToString();
+    //   final data = jsonDecode(res);
+    //   return data["url"];
+    // }
+
+    // return null;
+  }
+
   httpPOST({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    return await http.post(
+    var resp = await http.post(
       fullURL,
       headers: _setHeadersToken(null),
       body: jsonEncode(data),
     );
+    // _checkResponse(resp.statusCode, jsonDecode(resp.body));
+
+    return HttpHandler.handleResponse(resp);
   }
 
   httpPOSTWithToken({
@@ -33,39 +72,57 @@ class ApiServices {
   }) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
+    print(
+      "_setHeaderToken: ${_setHeadersToken(await AuthService().getToken())}",
+    );
 
-    return await http.post(
+    var resp = await http.post(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
+
+    print("resp: ${resp.body}");
+
+    return HttpHandler.handleResponse(resp);
   }
 
-  Future httpGET(String apiUrl) async {
+  httpGET(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    return await http.get(fullURL, headers: _setHeadersToken(null));
+    var resp = await http.get(fullURL, headers: _setHeadersToken(null));
+
+    return HttpHandler.handleResponse(resp);
   }
 
-  Future httpGETWithToken(String apiUrl) async {
+  httpGETWithToken(String apiUrl) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    String? a = await AuthService().getToken();
+    print(
+      "_SetHeadersToken: ${_setHeadersToken(await AuthService().getToken())}",
+    );
 
-    return await http.get(fullURL, headers: _setHeadersToken(await a));
+    var resp = await http.get(
+      fullURL,
+      headers: _setHeadersToken(await AuthService().getToken()),
+    );
+
+    return HttpHandler.handleResponse(resp);
   }
 
-  Future httpPUT({Map<String, dynamic>? data, required String apiUrl}) async {
+  httpPUT({Map<String, dynamic>? data, required String apiUrl}) async {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    return await http.post(
+    var resp = await http.put(
       fullURL,
       headers: _setHeadersToken(null),
       body: jsonEncode(data),
     );
+
+    return HttpHandler.handleResponse(resp);
   }
 
   Future httpPUTWithToken({
@@ -75,58 +132,26 @@ class ApiServices {
     var fullUrl = _baseUrl + apiUrl;
     Uri fullURL = Uri.parse(fullUrl);
 
-    return await http.post(
+    var resp = await http.put(
       fullURL,
-      headers: _setHeadersToken(await _token),
+      headers: _setHeadersToken(await AuthService().getToken()),
       body: jsonEncode(data),
     );
+
+    return HttpHandler.handleResponse(resp);
   }
 
-  Future createCommunity(String name, String desc) async {
-    var url = "private/community";
+  Future httpDELETEWithToken(String apiUrl) async {
+    var fullUrl = _baseUrl + apiUrl;
+    Uri fullURL = Uri.parse(fullUrl);
 
-    Map<String, dynamic> datas = {
-      "community_name": name,
-      "description": desc,
-      "announcement_group_id": null,
-    };
-
-    return await httpPOSTWithToken(data: datas, apiUrl: url);
-  }
-
-  Future<List<dynamic>> getCommunity() async {
-    var url = _baseUrl + "private/community";
-    final token = await AuthService().getToken();
-    var response = await http.get(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
+    var resp = await http.delete(
+      fullURL,
+      headers: _setHeadersToken(await AuthService().getToken()),
     );
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception("Failed to load community");
-    }
-  }
+    // _checkResponse(resp.statusCode, resp.body);
 
-  Future deleteCommunity(String id) async {
-    var url = _baseUrl + "private/community/$id";
-    final token = await AuthService().getToken();
-
-    return await http.delete(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
-    );
-  }
-
-  Future updateCommunity(String id, String name, String desc) async {
-    var url = _baseUrl + "private/community/$id";
-    final token = await AuthService().getToken();
-    Map data = {"community_name": name, "description": desc};
-    return await http.put(
-      Uri.parse(url),
-      headers: await _setHeadersToken(token),
-      body: jsonEncode(data),
-    );
+    return HttpHandler.handleResponse(resp);
   }
 }
 
@@ -146,51 +171,69 @@ class AuthService {
   }
 }
 
-// GET, POST, DELETE, UPDATE / PUT
+  // void _checkResponse(int StatusCode, dynamic body) async {
+  //   if (StatusCode == 401) {
+  //     // if (body["error"] == "") {
+  //     //   Get.snackbar("Error", body["error"]);
+  //     // }
+  //     await AuthService().removeToken();
+  //     AlertDialog alert = AlertDialog(
+  //       title: Text("Your section already expired"),
+  //       content: Text("Please login again"),
+  //       actions: [
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             Get.offAllNamed(Routes.login);
+  //           },
+  //           child: Text("OK"),
+  //         ),
+  //       ],
+  //     );
 
-// class HttpServices {
-//   Future<Map<String, String>> headers() async => {
-//     'Authorization': 'Bearer ${await AuthService().getToken()}',
-//     'Content-type': 'application/json',
-//   };
-//   static Future get(String url, {Map<String, dynamic>? data}) async {
-//     var headers = await HttpServices().headers();
-//     await http
-//         .get(Uri.parse(ApiServices._baseUrl + url), headers: headers)
-//         .then((response) {
-//           if (response.statusCode == 200) {
-//             var data = jsonDecode(response.body);
-//             print("data Result: $data");
-//             return data;
-//           } else {
-//             print("error: ${response.body}");
-//           }
-//           if (response.statusCode == 401) {
-//             print("Unauth");
-//             throw Exception(["Unauth"]);
-//           }
-//         });
-//   }
+  //     showDialog(context: Get.context!, builder: (context) => alert);
+  //   }
 
-//   static Future post(String url, {Map<String, dynamic>? data}) async {
-//     var headers = await HttpServices().headers();
-//     await http
-//         .post(
-//           Uri.parse(ApiServices._baseUrl + url),
-//           headers: headers,
-//           body: jsonEncode(Map.from(data ?? {})),
-//         )
-//         .then((response) {
-//           print("response.body: ${response.body}");
-//           print("response.statusCode: ${response.statusCode}");
-//           if (response.statusCode.toString() == "200") {
-//             var data = jsonDecode(response.body);
-//             return data;
-//           }
-//           if (response.statusCode.toString() == "401") {
-//             print("Unauth");
-//             throw Exception(["Unauth"]);
-//           }
-//         });
-//   }
-// }
+    // if (StatusCode == 200 || StatusCode == 201) {
+    //   // print("ini body $body");
+    //   // if (body["response-message"].isNotEmpty &&
+    //   //     body["response-message"] != null) {
+    //   //   Get.snackbar(
+    //   //     "Success",
+    //   //     body["response-message"],
+    //   //     snackPosition: SnackPosition.BOTTOM,
+    //   //   );
+    //   // }
+    // }
+
+  //   if (StatusCode == 409) {
+  //     Get.snackbar(
+  //       "Error",
+  //       body["error"] ?? "Conflic",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   }
+
+  //   if (StatusCode == 400) {
+  //     Get.snackbar(
+  //       "Error",
+  //       body["error"] ?? "Bad request",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   }
+
+  //   if (StatusCode == 404) {
+  //     Get.snackbar(
+  //       "Error",
+  //       body["error"] ?? "Not found",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   }
+
+  //   if (StatusCode == 500) {
+  //     Get.snackbar(
+  //       "Error",
+  //       body["error"] ?? "Internal server error",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   }
+  // }

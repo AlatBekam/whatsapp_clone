@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
+import 'package:whatsapp_clone/controllers/CommunityController.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:get/get.dart';
+import '../../widgets/TemplateSnackbar.dart';
 
-class CreateCommunity extends StatelessWidget {
+class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
 
-  final TextEditingController nama = TextEditingController();
-  final TextEditingController deskripsi = TextEditingController();
+  @override
+  State<CreateCommunity> createState() => _CreateCommunityState();
+}
+
+class _CreateCommunityState extends State<CreateCommunity> {
+  final CommunityController controller = Get.find();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.clearForm();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +50,7 @@ class CreateCommunity extends StatelessWidget {
                 ),
                 child: Center(
                   child: SvgPicture.asset(
-                    'assets/logokomunitas.svg',
+                    'assets/svg/logokomunitas.svg',
                     color: warna.Putih(),
                     width: 80,
                     height: 80,
@@ -46,7 +58,7 @@ class CreateCommunity extends StatelessWidget {
                 ),
               ),
               TextField(
-                controller: nama,
+                controller: controller.nama,
                 decoration: InputDecoration(
                   hintText: 'Nama Komunitas',
                   contentPadding: EdgeInsets.symmetric(
@@ -62,7 +74,7 @@ class CreateCommunity extends StatelessWidget {
               SizedBox(height: 20),
 
               TextField(
-                controller: deskripsi,
+                controller: controller.deskripsi,
                 decoration: InputDecoration(
                   hintText: 'Deskripsi Komunitas',
                   contentPadding: EdgeInsets.symmetric(
@@ -81,13 +93,25 @@ class CreateCommunity extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          var response = await ApiServices().createCommunity(
-            nama.text,
-            deskripsi.text
-          );
+          if (communityController.nama.text.trim().isNotEmpty &&
+              communityController.deskripsi.text.trim().isNotEmpty) {
+            var result = await controller.createCommunity(
+              communityController.nama.text,
+              communityController.deskripsi.text,
+            );
+            
+            print("RESULT: $result");
 
-          if (response.statusCode == 200) {
-            Navigator.pop(context, true);
+            if (result == true) {
+              Get.back(result: true);
+              Future.delayed(Duration(milliseconds: 100), () {
+                TemplateSnackbar.success("Community berhasil dibuat");
+              });
+            } else {
+              TemplateSnackbar.error(result.toString());
+            }
+          } else {
+            TemplateSnackbar.error("Nama dan deskripsi harus diisi");
           }
         },
         child: Icon(Icons.arrow_forward),

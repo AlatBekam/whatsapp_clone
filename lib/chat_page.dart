@@ -1,161 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:whatsapp_clone/Services/Theme.dart';
-import 'package:whatsapp_clone/Services/api_services.dart';
+import 'package:whatsapp_clone/controllers/chat_controller.dart';
+import 'package:whatsapp_clone/services/theme/theme.dart';
+import 'package:get/get.dart';
+import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 
-List<Map<String, dynamic>> datachat = [];
-
-class Chatpage extends StatefulWidget {
-  final String title;
-  final String userId;
-
-  const Chatpage({super.key, required this.title, required this.userId});
-
+class ChatPage extends StatefulWidget {
   @override
-  State<Chatpage> createState() => _ChatpageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatpageState extends State<Chatpage> {
-  final TextEditingController _messageController = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _isLoading = false;
-  bool _isSending = false;
-  String? _currentUserId;
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUserId();
-    _getChatData();
-  }
-
-  Future<void> _getCurrentUserId() async {
-    try {
-      final token = await AuthService().getToken();
-      if (token != null) {
-        Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
-        setState(() {
-          _currentUserId = decodeToken['id']?.toString();
-        });
-        print("Current user ID: $_currentUserId");
-      }
-    } catch (e) {
-      print("Error getting current user ID: $e");
-    }
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _getChatData() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final data = await ApiServices().httpGETWithToken("private/chats");
-
-      // Debug: Print received data
-      print("GET Response: $data");
-      print("Data Type: ${data.runtimeType}");
-      print("Current user ID: $_currentUserId");
-
-      // Handle null or non-list responses
-      List<Map<String, dynamic>> parsedData = [];
-      if (data != null && data is Map && data['chats'] != null) {
-        final chats = data['chats'] as List<dynamic>;
-        for (var chat in chats) {
-          if (chat['messages'] != null) {
-            final messages = List<Map<String, dynamic>>.from(chat['messages']);
-            parsedData.addAll(messages);
-          }
-        }
-      }
-
-      print("Parsed messages: $parsedData");
-
-      setState(() {
-        _messages = parsedData;
-        datachat = parsedData;
-      });
-    } catch (e) {
-      print("GET Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading messages: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final messageText = _messageController.text.trim();
-    if (messageText.isEmpty) return;
-
-    setState(() {
-      _isSending = true;
-    });
-
-    try {
-      // Debug: Print data yang akan dikirim
-      final requestData = {
-        'message': messageText,
-        'receiver_id': widget.userId,
-      };
-      print("Sending message data: $requestData");
-
-      // Kirim pesan ke server menggunakan endpoint /api/private/chats
-      final response = await ApiServices().httpPOSTWithToken(
-        data: requestData,
-        apiUrl: "private/chats",
-      );
-
-      // Debug: Print response dari server
-      print("POST Response Status: ${response.statusCode}");
-      print("POST Response Body: ${response.body}");
-
-      // Refresh chat data setelah mengirim pesan
-      await _getChatData();
-
-      _messageController.clear();
-    } catch (e) {
-      print("POST Error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error sending message: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSending = false;
-        });
-      }
-    }
-  }
-
-  bool _checkIsMe(Map<String, dynamic> message) {
-    if (_currentUserId == null) return false;
-
-    // Check sender_id - can be string or int
-    final senderId = message['sender_id'];
-    if (senderId == null) return false;
-
-    // Compare as strings to handle both types
-    return senderId.toString() == _currentUserId ||
-        senderId.toString() == _currentUserId.toString();
-  }
-
+class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,26 +20,31 @@ class _ChatpageState extends State<Chatpage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Obx(() {
+              return Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text('${chatController.currentUserId1.value}'),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(chatController.title.value ?? ""),
+                ],
+              );
+            }),
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Text('C${widget.userId}'),
+                GestureDetector(
+                  onTap: () => chatController.getImage(),
+                  child: SvgPicture.asset(
+                    'assets/svg/camera.svg',
+                    width: 25,
+                    color: warna.Hitam(),
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text(widget.title),
-              ],
-            ),
-            Row(
-              children: [
+                const SizedBox(width: 20),
                 SvgPicture.asset(
-                  'assets/camera.svg',
-                  width: 25,
-                  color: warna.Hitam(),
-                ),
-                SizedBox(width: 20),
-                SvgPicture.asset(
-                  'assets/three-dots-vertical.svg',
+                  'assets/svg/three-dots-vertical.svg',
                   width: 25,
                   color: warna.Hitam(),
                 ),
@@ -191,113 +53,156 @@ class _ChatpageState extends State<Chatpage> {
           ],
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Chat messages list
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : _messages.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet.\nStart the conversation!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _messages.length,
-                    padding: EdgeInsets.all(10),
+          Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  if (loadingController.isLoading(LoadingKey.getMessage.name)) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (chatController.messages.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No messages yet.\nStart the conversation!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: chatController.messages.length,
+                    padding: const EdgeInsets.all(10),
                     itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      // Support multiple field names for message content
+                      final message = chatController.messages[index];
                       final messageContent =
                           message['content']?.toString() ??
                           message['message']?.toString() ??
                           message['text']?.toString() ??
                           '';
-                      final isMe = _checkIsMe(message);
+                      final isMe = chatController.checkIsMe(message);
                       final timestamp =
                           message['timestamp']?.toString() ??
                           message['created_at']?.toString() ??
                           message['time']?.toString() ??
                           '';
+                      final messagetype = message['type']
+                          ?.toString()
+                          .toLowerCase();
 
                       return _MessageBubble(
                         message: messageContent,
                         isMe: isMe,
                         time: timestamp,
+                        type: messagetype!,
                       );
                     },
-                  ),
-          ),
-
-          // Message input
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message',
-                      prefixIcon: Icon(Icons.emoji_emotions),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
+                  );
+                }),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: chatController.messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message',
+                          prefixIcon: const Icon(Icons.emoji_emotions),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onSubmitted: (_) => () async {
+                          await loadingController.run(
+                            LoadingKey.sendMessage.name,
+                            () async {
+                              await chatController.sendMessage();
+                            },
+                          );
+                        },
                       ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
+                    const SizedBox(width: 15),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: warna.Hijau(),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Obx(
+                        () =>
+                            loadingController.isLoading(
+                              LoadingKey.sendMessage.name,
+                            )
+                            ? const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: () async {
+                                  await loadingController.run(
+                                    LoadingKey.sendMessage.name,
+                                    () async {
+                                      await chatController.sendMessage();
+                                    },
+                                  );
+                                },
+                                icon: Icon(Icons.send),
+                                color: Colors.white,
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 15),
-                Container(
-                  decoration: BoxDecoration(
-                    color: warna.Hijau(),
-                    shape: BoxShape.circle,
-                  ),
-                  child: _isSending
-                      ? Padding(
-                          padding: EdgeInsets.all(12),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : IconButton(
-                          onPressed: _sendMessage,
-                          icon: Icon(Icons.send),
-                          color: Colors.white,
-                        ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+
+          // Obx(() {
+          //   if (chatController.isLoading.value) {
+          //     return Container(
+          //       decoration: BoxDecoration(
+          //         color: Colors.black.withValues(alpha: 0.3),
+          //       ),
+          //       alignment: Alignment.center,
+          //       child: CircularProgressIndicator(
+          //         color: Theme.of(context).primaryColor,
+          //       ),
+          //     );
+          //   }
+          //   return SizedBox.shrink();
+          // }),
         ],
       ),
     );
   }
 }
 
-// Message bubble widget
 class _MessageBubble extends StatelessWidget {
   final String message;
   final bool isMe;
   final String time;
+  final String type;
 
   const _MessageBubble({
     required this.message,
     required this.isMe,
     required this.time,
+    required this.type,
   });
 
   @override
@@ -305,39 +210,65 @@ class _MessageBubble extends StatelessWidget {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
           color: isMe ? warna.Hijau() : Colors.grey[300],
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: isMe ? Radius.circular(16) : Radius.circular(4),
-            bottomRight: isMe ? Radius.circular(4) : Radius.circular(16),
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: isMe
+                ? const Radius.circular(16)
+                : const Radius.circular(4),
+            bottomRight: isMe
+                ? const Radius.circular(4)
+                : const Radius.circular(16),
           ),
         ),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              message,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
-                fontSize: 15,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              _formatTime(time),
-              style: TextStyle(
-                color: isMe ? Colors.white70 : Colors.black54,
-                fontSize: 11,
-              ),
-            ),
-          ],
+          children:
+              // chatController.messages.map((msg) {
+              //    print("FULL MSG: $msg");
+              // print("MESSAGE TYPE: ${msg['type']}");
+              // print("MESSAGE VALUE: ${msg['content']}");
+              // final type = msg['type']?.toString().toLowerCase();
+              // if (type == "image") {
+              //   return Image.network(msg['content']);
+              // } else {
+              //   return Text(
+              //     msg['content']?.toString() ?? '',
+              //     style: TextStyle(
+              //       color: isMe ? Colors.white : Colors.black,
+              //       fontSize: 15,
+              //     ),
+              //   );
+              // }
+              // }).toList(),
+              [
+                if (type == "image")
+                  Image.network(message)
+                else
+                  Text(
+                    message,
+                    style: TextStyle(
+                      color: isMe ? Colors.white : Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTime(time),
+                  style: TextStyle(
+                    color: isMe ? Colors.white70 : Colors.black54,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
         ),
       ),
     );
@@ -346,11 +277,14 @@ class _MessageBubble extends StatelessWidget {
   String _formatTime(String timeString) {
     if (timeString.isEmpty) return '';
     try {
-      final DateTime dateTime = DateTime.parse(timeString);
+      final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        int.parse(timeString) * 1000,
+      ).toLocal();
       final hour = dateTime.hour.toString().padLeft(2, '0');
       final minute = dateTime.minute.toString().padLeft(2, '0');
       return '$hour:$minute';
     } catch (e) {
+      print("Error parsing time: $e");
       return '';
     }
   }

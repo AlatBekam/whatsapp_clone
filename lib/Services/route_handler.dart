@@ -1,74 +1,65 @@
-import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/CommunityInfo.dart';
-import 'package:whatsapp_clone/add_channel.dart';
-import 'package:whatsapp_clone/channels.dart';
-import 'package:whatsapp_clone/chat_page.dart';
-import 'package:whatsapp_clone/home.dart';
-import 'package:whatsapp_clone/CommunityPage.dart';
-import 'package:whatsapp_clone/login.dart';
-import 'package:whatsapp_clone/register.dart';
-import 'package:whatsapp_clone/splash_screen.dart';
-import 'package:whatsapp_clone/PengaturanPage.dart';
-import 'package:whatsapp_clone/CreateCommunityPage.dart';
-import 'package:whatsapp_clone/status_page.dart';
+import 'package:get/get.dart';
 
-Route<dynamic> generateRoute(RouteSettings settings) {
-  switch (settings.name) {
-    case '/home':
-      return MaterialPageRoute(builder: (context) => home());
-    case '/chat':
-      final args = settings.arguments as Map<String, dynamic>?;
-      final title = args?['title'] as String? ?? "Chat";
-      final userId = args?['user_id'] as String? ?? "0";
-      return MaterialPageRoute(
-        builder: (context) => Chatpage(title: title, userId: userId),
-      );
+import 'package:whatsapp_clone/chat_page.dart' as Chat;
+import 'package:whatsapp_clone/pages/channel/add_channel.dart';
+import 'package:whatsapp_clone/pages/channel/channels.dart';
+import 'package:whatsapp_clone/pages/community/CommunityInfo.dart';
+import 'package:whatsapp_clone/pages/community/CommunityPage.dart';
+import 'package:whatsapp_clone/pages/community/CreateCommunityPage.dart';
+import 'package:whatsapp_clone/pages/settings/PengaturanPage.dart';
+import 'package:whatsapp_clone/pages/status/add_status.dart';
+import 'package:whatsapp_clone/pages/status/no_status_screen.dart';
+import 'package:whatsapp_clone/pages/status/status_page.dart';
+import 'package:whatsapp_clone/screens/home.dart';
+import 'package:whatsapp_clone/screens/login.dart';
+import 'package:whatsapp_clone/screens/register.dart';
+import 'package:whatsapp_clone/screens/splash_screen.dart';
 
-    case '/splashScreen':
-      return MaterialPageRoute(builder: (context) => SplashScreen());
+class Routes {
+  static const home = "/home";
+  static const chat = "/chat";
+  static const splashScreen = "/splashScreen";
+  static const login = "/login";
+  static const register = "/register";
+  static const statusPage = "/statusPage";
+  static const channels = "/channels";
+  static const addChannel = "/addChannel";
+  static const addStatus = "/addStatus";
+  static const community = "/Community";
+  static const settings = "/settings";
+  static const createCommunity = "/CreateCommunity";
+  static const communityInfo = "/CommunityInfo";
+  static const dummyNoState = "/dummyNoState";
+}
 
-    case '/login':
-      return MaterialPageRoute(builder: (context) => Login());
+class AppRoutes {
+  static final routes = [
+    GetPage(name: Routes.home, page: () => home()),
 
-    case '/register':
-      return MaterialPageRoute(builder: (context) => register());
+    GetPage(name: Routes.chat, page: () => Chat.ChatPage()),
 
-    case '/statusPage':
-      return MaterialPageRoute(builder: (context) => StatusPage());
+    GetPage(name: Routes.splashScreen, page: () => SplashScreen()),
 
-    // case '/getToken':
-    //   return MaterialPageRoute(builder: (context) => ApiServices.getToken());
+    GetPage(name: Routes.login, page: () => Login()),
 
-    case '/channels':
-      return MaterialPageRoute(builder: (context) => channels());
+    GetPage(name: Routes.register, page: () => register()),
 
-    case '/addChannel':
-      return MaterialPageRoute(builder: (context) => addChannel());
+    GetPage(name: Routes.statusPage, page: () => StatusPage()),
 
-    case '/kontak':
-      return MaterialPageRoute(builder: (context) => SplashScreen());
+    GetPage(name: Routes.channels, page: () => channels()),
 
-    case '/Community':
-      return MaterialPageRoute(builder: (context) => KomunitasPage());
+    GetPage(name: Routes.addChannel, page: () => addChannel()),
 
-    case '/Pengaturan':
-      return MaterialPageRoute(builder: (context) => PengaturanPage());
+    GetPage(name: Routes.addStatus, page: () => addStatus()),
 
-    case '/CreateCommunity':
-      return MaterialPageRoute(builder: (context) => CreateCommunity());
+    GetPage(name: Routes.community, page: () => KomunitasPage()),
 
-    case '/CommunityInfo':
-      final args = settings.arguments as Map<String, dynamic>;
+    GetPage(name: Routes.settings, page: () => PengaturanPage()),
 
-      return MaterialPageRoute(
-        builder: (context) => KomunitasInfoPage(),
-        settings: RouteSettings(arguments: args),
-      );
+    GetPage(name: Routes.createCommunity, page: () => CreateCommunity()),
 
-    default:
-      return MaterialPageRoute(
-        builder: (context) =>
-            Scaffold(body: Center(child: Text("Route tidak ditemukan"))),
-      );
-  }
+    GetPage(name: Routes.communityInfo, page: () => KomunitasInfoPage()),
+
+    GetPage(name: Routes.dummyNoState, page: () => NoStatusScreen()),
+  ];
 }
