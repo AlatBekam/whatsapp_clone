@@ -11,6 +11,7 @@ class CommunityController extends GetxController {
   ApiServices apiServices = ApiServices();
   AuthService _authService = AuthService();
 
+  // tambahkan bagian untuk menerima data gambar profil komunitas
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
 
@@ -51,6 +52,7 @@ class CommunityController extends GetxController {
      await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
         data: {
+          "community_image_url": null,
           "community_name": name,
           "description": description,
           "announcement_group_id": null,
@@ -70,7 +72,11 @@ class CommunityController extends GetxController {
     try {
       await apiServices.httpPUTWithToken(
         apiUrl: "private/community/$id",
-        data: {"community_name": name, "description": description},
+        data: {
+          "community_image_url": null,
+          "community_name": name,
+          "description": description,
+        },
       );
 
       await fetchCommunities();
