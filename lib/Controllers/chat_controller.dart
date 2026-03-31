@@ -7,6 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Controllers/LoadingController.dart';
+import 'package:whatsapp_clone/Services/gambar_service.dart';
+import 'package:whatsapp_clone/Services/permission.dart';
 
 class ChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = RxList();
@@ -20,6 +22,7 @@ class ChatController extends GetxController {
   var isLoading = false.obs;
   final picker = ImagePicker();
   File? image;
+  RequestPermission requestPermission = RequestPermission();
 
   @override
   void onInit() {
@@ -33,81 +36,82 @@ class ChatController extends GetxController {
     await Future.delayed(Duration(milliseconds: 100)); // Ensure ready
   }
 
-  Future<void> _requestPermission({required bool isGallery}) async {
-    Permission permission;
-    if (isGallery) {
-      permission = Permission.photos;
-      permission = Permission.videos;
-    } else {
-      permission = Permission.camera;
-    }
+  // Future<void> _requestPermission({required bool isGallery}) async {
+  //   Permission permission;
+  //   if (isGallery) {
+  //     permission = Permission.photos;
+  //     permission = Permission.videos;
+  //   } else {
+  //     permission = Permission.camera;
+  //   }
 
-    if (await permission.isDenied) {
-      final result = await permission.request();
-      if (result.isGranted) {
-        print('access granted');
-      }
-      if (result.isDenied) {
-        print('access denied');
-      }
-      if (result.isPermanentlyDenied) {
-        print('access permanently denied');
-      }
-    }
-  }
+  //   if (await permission.isDenied) {
+  //     final result = await permission.request();
+  //     if (result.isGranted) {
+  //       print('access granted');
+  //     }
+  //     if (result.isDenied) {
+  //       print('access denied');
+  //     }
+  //     if (result.isPermanentlyDenied) {
+  //       print('access permanently denied');
+  //     }
+  //   }
+  // }
 
   Future<void> getImage() async {
     // await _requestPermission(isGallery: true);
 
-    print("masuk ke get image");
+    print("masuk ke get image chat controller");
+    await gambarService.getImage();
 
-    try {
-      XFile? PickFile = await showDialog<XFile?>(
-        context: Get.context!,
-        builder: (context) => AlertDialog(
-          title: Text("Select Image"),
-          content: Text("Select image from camera or gallery"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await _requestPermission(isGallery: true);
-                final file = await picker.pickImage(
-                  source: ImageSource.gallery,
-                );
-                print("PickFile: $file");
-                Get.back(result: file);
-              },
-              child: Text("Gallery"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await _requestPermission(isGallery: false);
-                final file = await picker.pickImage(source: ImageSource.camera);
-                print("PickFile: $file");
-                Get.back(result: file);
-              },
-              child: Text("Camera"),
-            ),
-          ],
-        ),
-      );
+    // try {
+    //   XFile? PickFile = await showDialog<XFile?>(
+    //     context: Get.context!,
+    //     builder: (context) => AlertDialog(
+    //       title: Text("Select Image"),
+    //       content: Text("Select image from camera or gallery"),
+    //       actions: [
+    //         TextButton(
+    //           onPressed: () {
+    //             Get.back();
+    //           },
+    //           child: Text("Cancel"),
+    //         ),
+    //         TextButton(
+    //           onPressed: () async {
+    //             await requestPermission.req(isGallery: true);
+    //             final file = await picker.pickImage(
+    //               source: ImageSource.gallery,
+    //             );
+    //             print("PickFile: $file");
+    //             Get.back(result: file);
+    //           },
+    //           child: Text("Gallery"),
+    //         ),
+    //         TextButton(
+    //           onPressed: () async {
+    //             await requestPermission.req(isGallery: false);
+    //             final file = await picker.pickImage(source: ImageSource.camera);
+    //             print("PickFile: $file");
+    //             Get.back(result: file);
+    //           },
+    //           child: Text("Camera"),
+    //         ),
+    //       ],
+    //     ),
+      // );
 
-      if (PickFile != null) {
-        print("PickFile: $PickFile");
-        image = File(PickFile.path);
+      if (GambarService.image2 != null) {
+        print("PickFile: $GambarService.image2");
+        image = File(GambarService.image2!.path);
         update();
         await sendMessage();
         update();
       }
-    } on Exception catch (e) {
-      print("error bagian perizinan pada getiamge: $e");
-    }
+    // } on Exception catch (e) {
+    //   print("error bagian perizinan pada getiamge: $e");
+    // }
   }
 
   // void _loadArguments() {
@@ -267,17 +271,17 @@ class ChatController extends GetxController {
         apiUrl: "private/chats",
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
         messageController.clear();
         image = null;
         update();
         await _getChatData(); // Refresh
         print("Message sent successfully");
-      } else {
-        throw Exception(
-          "Server error: ${response.statusCode} - ${response.body}",
-        );
-      }
+      // if (response.statusCode == 200 || response.statusCode == 201) {
+      // } else {
+      //   throw Exception(
+      //     "Server error: ${response.statusCode} - ${response.body}",
+      //   );
+      // }
     } catch (e) {
       print("Send error: $e");
       Get.snackbar("Error", "Failed to send: $e");

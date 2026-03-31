@@ -184,7 +184,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _getUser() async {
     try {
       var data = await api.httpGET('public/users');
-      data = jsonDecode(data.body);
+      // data = jsonDecode(data.body);
       // print("DATA: $data");
       setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
