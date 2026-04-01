@@ -12,25 +12,44 @@ class PengaturanPage extends StatefulWidget {
 }
 
 class _PengaturanPageState extends State<PengaturanPage> {
+
+  Icon _getIcon(AppTheme theme) {
+  switch (theme) {
+    case AppTheme.Light:
+      return Icon(Icons.sunny);
+    case AppTheme.Dark:
+      return Icon(Icons.nightlight_round);
+    case AppTheme.Default:
+      return Icon(Icons.settings_backup_restore);
+  }
+}
+
+String _getText(AppTheme theme) {
+  switch (theme) {
+    case AppTheme.Light:
+      return 'Terang';
+    case AppTheme.Dark:
+      return 'Gelap';
+    case AppTheme.Default:
+      return 'Default';
+  }
+}
+
+  late AppTheme _selectedTheme;
+
+  void initState() {
+    super.initState();
+    _selectedTheme = widget.currentTheme;
+    }
       // String? result = 'light';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Pengaturan')),
       body: ListTile(
-        leading: Icon(
-          switch (widget.currentTheme) {
-            AppTheme.Light => Icons.sunny,
-            AppTheme.Dark => Icons.nightlight_round,
-            AppTheme.Default => Icons.settings_backup_restore,
-          },),
+        leading: _getIcon(_selectedTheme),
         title: Text('Tema'),
-        subtitle: Text(
-          switch (widget.currentTheme) {
-            AppTheme.Light => 'Terang',
-            AppTheme.Dark => 'Gelap',
-            AppTheme.Default => 'Default',
-          },),
+        subtitle: Text(_getText(_selectedTheme)),
         onTap: () async {
           final result = await showDialog(
             context: context, builder: (context) {
@@ -76,6 +95,7 @@ class _PengaturanPageState extends State<PengaturanPage> {
             if (result != null) {
               widget.onThemeChanged(result);
               setState(() {
+                _selectedTheme = result;
               });
             }
 
