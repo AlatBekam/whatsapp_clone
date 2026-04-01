@@ -8,11 +8,11 @@ import '../../widgets/widget_loading_transparent.dart';
 import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
-  final CommunityController controller = Get.find();
+  // final CommunityController controller = Get.find();
 
-  KomunitasPage({super.key}){
-    controller.fetchCommunities();
-  }
+  // KomunitasPage({super.key}){
+  //   communityController.fetchCommunities();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,21 +70,44 @@ Widget _buildCommunityContent(BuildContext context) {
   }
 
   if (communityController.status.value == Status.empty) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.groups, size: 70),
-          SizedBox(height: 12),
-          Text("Belum ada komunitas"),
-        ],
-      ),
+    return ListView(
+      children: [
+        _buildCommunityCard(context),
+        SizedBox(height: 150),
+        Center(
+          child: Column(
+            children: [
+              Icon(Icons.groups, size: 70),
+              SizedBox(height: 12),
+              Text("Belum ada komunitas"),
+            ],
+          ),
+        ),
+      ] ,
     );
   }
 
   return ListView(
     children: [
 // CREATE COMMUNITY
+      _buildCommunityCard(context),
+
+// COMMUNITY LIST
+      Column(
+        children: List.generate(communityController.communities.length, (
+          index,
+        ) {
+          var community = communityController.communities[index];
+          return CommunityCard(context, community);
+        }),
+      ),
+    ],
+  );
+}
+
+Widget _buildCommunityCard(BuildContext context) {
+  return Column(
+    children: [
       Material(
         color: warna.Putih(),
         child: InkWell(
@@ -153,17 +176,7 @@ Widget _buildCommunityContent(BuildContext context) {
           ),
         ),
       ),
-
-// COMMUNITY LIST
-      Column(
-        children: List.generate(communityController.communities.length, (
-          index,
-        ) {
-          var community = communityController.communities[index];
-          return CommunityCard(context, community);
-        }),
-      ),
-    ],
+    ]
   );
 }
 

@@ -15,13 +15,13 @@ class CreateCommunity extends StatefulWidget {
 }
 
 class _CreateCommunityState extends State<CreateCommunity> {
-  final CommunityController controller = Get.find();
+  // final CommunityController controller = Get.find();
   final _formKey = GlobalKey<FormState>();
   @override
-  void dispose() {
-    // TODO: implement dispose
-    controller.clearForm();
-    super.dispose();
+  void initState() {
+    // TODO: implement initState
+    communityController.clearForm();
+    // super.initState();
   }
 
   @override
@@ -69,7 +69,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                         children: [
 // FORM NAMA COMMUNITY
                           TextFormField(
-                            controller: controller.nama,
+                            controller: communityController.nama,
                             decoration: InputDecoration(
                               hintText: 'Nama Komunitas',
                               contentPadding: EdgeInsets.symmetric(
@@ -92,7 +92,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                           
 // FORM DESKRIPSI COMMUNITY
                           TextFormField(
-                            controller: controller.deskripsi,
+                            controller: communityController.deskripsi,
                             decoration: InputDecoration(
                               hintText: 'Deskripsi Komunitas',
                               contentPadding: EdgeInsets.symmetric(
@@ -117,7 +117,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 ),
               ),
             ),
-            if (controller.status.value == Status.loading)
+            if (communityController.status.value == Status.loading)
               widgetLoadingTransparent(context),
           ],
         );
@@ -127,11 +127,11 @@ class _CreateCommunityState extends State<CreateCommunity> {
       floatingActionButton: Obx(() {
         return FloatingActionButton (
           backgroundColor: warna.buttonHijau(),
-          onPressed: controller.status.value == Status.loading ? null : () async {
+          onPressed: communityController.status.value == Status.loading ? null : () async {
             if (_formKey.currentState!.validate()) {
-              var result = await controller.createCommunity(
-                controller.nama.text,
-                controller.deskripsi.text,
+              var result = await communityController.createCommunity(
+                communityController.nama.text,
+                communityController.deskripsi.text,
               );
               if (result == true) {
                 Get.back(result: true);

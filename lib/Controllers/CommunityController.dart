@@ -100,7 +100,11 @@ class CommunityController extends GetxController {
         "private/community/$id",
       );
 
-      await fetchCommunities();
+      communities.removeWhere((item) => item.communityId == id);
+
+      status.value = communities.isEmpty
+        ? Status.empty
+        : Status.success;
       return true;
     } catch (e) {
       status.value = Status.error; 
