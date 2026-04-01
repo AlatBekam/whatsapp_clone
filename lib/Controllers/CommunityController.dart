@@ -4,6 +4,7 @@ import '../Services/http_handler.dart';
 import '../Models/CommunityModel.dart';
 import 'package:flutter/material.dart';
 import '../Services/route_handler.dart';
+import '../widgets/enum_status.dart';
 
 CommunityController communityController = Get.find<CommunityController>();
 
@@ -19,8 +20,7 @@ class CommunityController extends GetxController {
   CommunityModel get community => selectedCommunity.value!;
 
   var communities = <CommunityModel>[].obs;
-  var isLoading = true.obs;
-
+  var status = Status.loading.obs;
   var errorMessage = ''.obs;
 
   @override
@@ -31,23 +31,27 @@ class CommunityController extends GetxController {
 
   // GET COMMUNITIES (SUDAH CLEAN)
   Future fetchCommunities() async {
+    status.value = Status.loading;
     try {
-      isLoading(true);
-
       final data = await apiServices.httpGETWithToken("private/community");
 
       communities.value = (data as List)
           .map((e) => CommunityModel.fromJson(e))
           .toList();
+      if (communities.isEmpty) {
+        status.value = Status.empty;
+      } else {
+        status.value = Status.success;
+      }
     } catch (e) {
       errorMessage.value = e.toString();
-    } finally {
-      isLoading(false);
+      status.value = Status.error;
     }
   }
 
   // CREATE
   Future createCommunity(String name, String description) async {
+    status.value = Status.loading;
     try {
      await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
@@ -60,15 +64,16 @@ class CommunityController extends GetxController {
       );
 
       await fetchCommunities();
-
       return true;
     } catch (e) {
+      status.value = Status.error;
       return e.toString();
     }
   }
 
   // UPDATE
   Future updateCommunity(String id, String name, String description) async {
+    status.value = Status.loading;
     try {
       await apiServices.httpPUTWithToken(
         apiUrl: "private/community/$id",
@@ -80,24 +85,29 @@ class CommunityController extends GetxController {
       );
 
       await fetchCommunities();
-
       return true;
     } catch (e) {
+      status.value = Status.error;
       return e.toString();
     }
   }
 
   // DELETE
   Future deleteCommunity(String id) async {
+    status.value = Status.loading; 
     try {
       await apiServices.httpDELETEWithToken(
         "private/community/$id",
       );
 
-      await fetchCommunities();
+      communities.removeWhere((item) => item.communityId == id);
 
+      status.value = communities.isEmpty
+        ? Status.empty
+        : Status.success;
       return true;
     } catch (e) {
+      status.value = Status.error; 
       return e.toString();
     }
   }

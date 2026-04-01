@@ -4,14 +4,15 @@ import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
-import '../../widgets/TemplateSnackbar.dart';
+import '../../widgets/widget_loading_transparent.dart';
+import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
-  final CommunityController controller = Get.find();
+  // final CommunityController controller = Get.find();
 
-  KomunitasPage({super.key}){
-    controller.fetchCommunities();
-  }
+  // KomunitasPage({super.key}){
+  //   communityController.fetchCommunities();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,140 +48,136 @@ class KomunitasPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (communityController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (communityController.errorMessage.value.isNotEmpty) {
-          // tampilkan snackbar sekali
-          Future.microtask(() {
-            TemplateSnackbar.error(
-              communityController.errorMessage.value,
-            );
-          });
-
-          return Center(child: Text("Gagal memuat data"));
-        }
-        if (communityController.communities.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.groups,
-                  size: 70,
-                  color: warna.AbuAbu(),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  "Belum ada komunitas",
-                  style: TextStyle(
-                    color: warna.AbuAbuTua(),
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    var result =
-                        await Get.toNamed(Routes.createCommunity);
-
-                    if (result == true) {
-                      communityController.fetchCommunities();
-                    }
-                  },
-                  child: Text("Buat Komunitas"),
-                ),
-              ],
-            ),
-          );
-        }
-        return ListView(
+      body: Obx((){
+        return Stack(
           children: [
-            // CREATE COMMUNITY
-            Material(
-              color: warna.Putih(),
-              child: InkWell(
-                onTap: () async {
-                  var result = await Get.toNamed(Routes.createCommunity);
-                  if (result == true) {
-                    communityController.fetchCommunities();
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: warna.AbuAbu(),
-                              borderRadius: BorderRadius.circular(9),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'assets/svg/logokomunitas.svg',
-                                color: warna.Putih(),
-                                width: 25,
-                                height: 25,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: -1,
-                            right: -1,
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: warna.Hijau(),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: warna.Putih(),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                size: 15,
-                                color: warna.Putih(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 15),
-                      Text(
-                        "New Community",
-                        style: TextStyle(
-                          color: warna.Hitam(),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _buildCommunityContent(context),
 
-            // COMMUNITY LIST
-            Column(
-              children: List.generate(communityController.communities.length, (
-                index,
-              ) {
-                var community = communityController.communities[index];
-                return CommunityCard(context, community);
-              }),
-            ),
+            if (communityController.status.value == Status.loading)
+              widgetLoadingTransparent(context),
           ],
         );
       }),
     );
   }
+}
+
+Widget _buildCommunityContent(BuildContext context) {
+  if (communityController.status.value == Status.error) {
+    return Center(
+      child: Text("Gagal memuat data"),
+    );
+  }
+
+  if (communityController.status.value == Status.empty) {
+    return ListView(
+      children: [
+        _buildCommunityCard(context),
+        SizedBox(height: 150),
+        Center(
+          child: Column(
+            children: [
+              Icon(Icons.groups, size: 70),
+              SizedBox(height: 12),
+              Text("Belum ada komunitas"),
+            ],
+          ),
+        ),
+      ] ,
+    );
+  }
+
+  return ListView(
+    children: [
+// CREATE COMMUNITY
+      _buildCommunityCard(context),
+
+// COMMUNITY LIST
+      Column(
+        children: List.generate(communityController.communities.length, (
+          index,
+        ) {
+          var community = communityController.communities[index];
+          return CommunityCard(context, community);
+        }),
+      ),
+    ],
+  );
+}
+
+Widget _buildCommunityCard(BuildContext context) {
+  return Column(
+    children: [
+      Material(
+        color: warna.Putih(),
+        child: InkWell(
+          onTap: () async {
+            var result = await Get.toNamed(Routes.createCommunity);
+            if (result == true) {
+              communityController.fetchCommunities();
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: warna.AbuAbu(),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/svg/logokomunitas.svg',
+                          color: warna.Putih(),
+                          width: 25,
+                          height: 25,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -1,
+                      right: -1,
+                        child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: warna.Hijau(),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: warna.Putih(),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          size: 15,
+                          color: warna.Putih(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 15),
+                Text(
+                  "New Community",
+                  style: TextStyle(
+                    color: warna.Hitam(),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ]
+  );
 }
 
 Widget CommunityCard(
