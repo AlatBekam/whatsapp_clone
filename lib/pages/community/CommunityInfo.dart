@@ -9,6 +9,7 @@ class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
 
   final CommunityController controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
   // final CommunityModel community = Get.arguments;
 
   @override
@@ -72,49 +73,64 @@ class KomunitasInfoPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-
-            Text(
-              "Nama Community",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: warna.Hitam(),
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            TextField(
-              controller: communityController.nama,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Nama Community",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: warna.Hitam(),
+                    ),
+                  ),
+// FORM NAMA COMMUNITY
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: communityController.nama,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Nama komunitas harus diisi';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+// FORM DESKRIPSI COMMUNITY
+                  Text(
+                    "Deskripsi",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: warna.Hitam(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                  controller: communityController.deskripsi,
+                  maxLines: 3,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Deskripsi komunitas harus diisi';
+                    }
+                    return null;
+                  },
                 ),
+                const SizedBox(height: 30),
+                ]
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            Text(
-              "Deskripsi",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: warna.Hitam(),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            TextField(
-              controller: communityController.deskripsi,
-              maxLines: 3,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 30),
+            // const SizedBox(height: 30),
 
             SizedBox(
               width: double.infinity,
@@ -124,8 +140,7 @@ class KomunitasInfoPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () async {
-                  if (communityController.nama.text.isNotEmpty &&
-                      communityController.deskripsi.text.isNotEmpty) {
+                  if (_formKey.currentState!.validate()) {
                     var result = await controller.updateCommunity(
                       controller.community.communityId,
                       communityController.nama.text,
@@ -133,12 +148,10 @@ class KomunitasInfoPage extends StatelessWidget {
                     );
                     if (result == true) {
                       Get.back(result: true);
-                      TemplateSnackbar.success("Community berhasil diperbarui");
+                      Future.microtask(() => TemplateSnackbar.success("Community berhasil diperbarui"));
                     } else {
                       TemplateSnackbar.error(result.toString());
                     }
-                  } else {
-                    TemplateSnackbar.error("Nama dan deskripsi harus diisi");
                   }
                 },
                 child: const Text(

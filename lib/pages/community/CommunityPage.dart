@@ -61,6 +61,40 @@ class KomunitasPage extends StatelessWidget {
 
           return Center(child: Text("Gagal memuat data"));
         }
+        if (communityController.communities.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.groups,
+                  size: 70,
+                  color: warna.AbuAbu(),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Belum ada komunitas",
+                  style: TextStyle(
+                    color: warna.AbuAbuTua(),
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    var result =
+                        await Get.toNamed(Routes.createCommunity);
+
+                    if (result == true) {
+                      communityController.fetchCommunities();
+                    }
+                  },
+                  child: Text("Buat Komunitas"),
+                ),
+              ],
+            ),
+          );
+        }
         return ListView(
           children: [
             // CREATE COMMUNITY

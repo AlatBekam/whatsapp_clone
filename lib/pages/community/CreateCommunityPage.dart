@@ -14,6 +14,7 @@ class CreateCommunity extends StatefulWidget {
 
 class _CreateCommunityState extends State<CreateCommunity> {
   final CommunityController controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
   @override
   void dispose() {
     // TODO: implement dispose
@@ -57,62 +58,125 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   ),
                 ),
               ),
-              TextField(
-                controller: controller.nama,
-                decoration: InputDecoration(
-                  hintText: 'Nama Komunitas',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+// FORM NAMA COMMUNITY
+                    TextFormField(
+                      controller: controller.nama,
+                      decoration: InputDecoration(
+                        hintText: 'Nama Komunitas',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 20,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Nama komunitas harus diisi';
+                        }
+                        return null;
+                      },
+                    ),
 
-              SizedBox(height: 20),
+                    SizedBox(height: 20),
+                    
+// FORM DESKRIPSI COMMUNITY
+                    TextFormField(
+                      controller: controller.deskripsi,
+                      decoration: InputDecoration(
+                        hintText: 'Deskripsi Komunitas',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 40,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Deskripsi komunitas harus diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                )
+              )
+              
+// // FORM NAMA COMMUNITY
+//               TextField(
+//                 controller: controller.nama,
+//                 decoration: InputDecoration(
+//                   hintText: 'Nama Komunitas',
+//                   contentPadding: EdgeInsets.symmetric(
+//                     horizontal: 20,
+//                     vertical: 20,
+//                   ),
+//                   border: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(8),
+//                   ),
+//                 ),
+//               ),
 
-              TextField(
-                controller: controller.deskripsi,
-                decoration: InputDecoration(
-                  hintText: 'Deskripsi Komunitas',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 40,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+//               SizedBox(height: 20),
+// // FORM DESKRIPSI COMMUNITY
+//               TextField(
+//                 controller: controller.deskripsi,
+//                 decoration: InputDecoration(
+//                   hintText: 'Deskripsi Komunitas',
+//                   contentPadding: EdgeInsets.symmetric(
+//                     horizontal: 20,
+//                     vertical: 40,
+//                   ),
+//                   border: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(8),
+//                   ),
+//                 ),
+//               ),
             ],
           ),
         ),
       ),
+// TOMBOL SUBMIT
       floatingActionButton: FloatingActionButton(
         backgroundColor: warna.buttonHijau(),
         onPressed: () async {
-          if (communityController.nama.text.trim().isNotEmpty &&
-              communityController.deskripsi.text.trim().isNotEmpty) {
+          if (_formKey.currentState!.validate()) {
             var result = await controller.createCommunity(
-              communityController.nama.text,
-              communityController.deskripsi.text,
+              controller.nama.text,
+              controller.deskripsi.text,
             );
-            
-            print("RESULT: $result");
-
             if (result == true) {
               Get.back(result: true);
-              Future.delayed(Duration(milliseconds: 100), () {
-                TemplateSnackbar.success("Community berhasil dibuat");
-              });
+              Future.microtask(() => TemplateSnackbar.success("Community berhasil dibuat"));
             } else {
               TemplateSnackbar.error(result.toString());
             }
-          } else {
-            TemplateSnackbar.error("Nama dan deskripsi harus diisi");
           }
+          // if (controller.nama.text.trim().isNotEmpty &&
+          //     controller.deskripsi.text.trim().isNotEmpty) {
+          //   var result = await controller.createCommunity(
+          //     controller.nama.text,
+          //     controller.deskripsi.text,
+          //   );
+            
+          //   print("RESULT: $result");
+
+          //   if (result == true) {
+          //     TemplateSnackbar.success("Community berhasil dibuat");
+          //     Get.back(result: true);
+          //   } else {
+          //     TemplateSnackbar.error(result.toString());
+          //   }
+          // } else {
+          //   TemplateSnackbar.error("Nama dan deskripsi harus diisi");
+          // }
         },
         child: Icon(Icons.arrow_forward),
       ),
