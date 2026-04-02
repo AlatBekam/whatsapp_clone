@@ -44,21 +44,22 @@ class _WhatsAppState extends State<WhatsApp> {
   ThemeMode _themeMode = ThemeMode.light;
   AppTheme _currentAppTheme = AppTheme.Light;
 
-// void perubahanTema() {
-//   ThemeMode get themeMode {
-//       switch (_currentAppTheme) {
-//         case AppTheme.Light:
-//           return ThemeMode.light;
-//         case AppTheme.Dark:
-//           return ThemeMode.dark;
-//         case AppTheme.Default:
-//           return ThemeMode.system;
-//       }
-//     }
-// }
+
+  // ThemeMode get themeMode {
+  //     switch (_currentAppTheme) {
+  //       case AppTheme.Light:
+  //         return ThemeMode.light;
+  //       case AppTheme.Dark:
+  //         return ThemeMode.dark;
+  //       case AppTheme.Default:
+  //         return ThemeMode.system;
+  //     }
+  //   }
+
 
 void changeTheme(AppTheme mode) {
   setState(() {
+    _currentAppTheme = mode;
     switch (mode) {
       case AppTheme.Light:
         _themeMode = ThemeMode.light;
@@ -86,7 +87,7 @@ void changeTheme(AppTheme mode) {
       /// daftar routing aplikasi
       getPages: [
         ...AppRoutes.routes,
-        GetPage(name: Routes.settings, page: () => PengaturanPage(onThemeChanged: changeTheme, currentTheme: _currentAppTheme)),
+        GetPage(name: Routes.settings, page: () => PengaturanPage(onThemeChanged: changeTheme, currentTheme: _currentAppTheme,)),
       ],
 
       /// pengganti default route lama yg ada di file routes_handler.dart
