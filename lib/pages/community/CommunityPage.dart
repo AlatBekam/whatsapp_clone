@@ -8,6 +8,9 @@ import '../../widgets/widget_loading_transparent.dart';
 import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
+  KomunitasPage({super.key}) {
+    communityController.fetchCommunities();
+  }
 
   @override
   Widget build(BuildContext context) {

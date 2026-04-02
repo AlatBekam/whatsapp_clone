@@ -56,48 +56,85 @@ class _CreateCommunityState extends State<CreateCommunity> {
                         final image = gambarService.selectedImage.value;
 
                         return Container(
-                          margin: EdgeInsets.only(top: 45, bottom: 30),
-                          width: 100,
-                          height: 98,
-                          decoration: BoxDecoration(
-                            color: warna.AbuAbu(),
-                            borderRadius: BorderRadius.circular(15),
-                            image: image != null
-                                ? DecorationImage(
-                                    image: FileImage(File(image.path)),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                          ),
-                          child: image == null
-                              ? Center(
-                                  child: SvgPicture.asset(
-                                    'assets/svg/logokomunitas.svg',
-                                    color: warna.Putih(),
-                                    width: 80,
-                                    height: 80,
+                          margin: const EdgeInsets.only(top: 45, bottom: 30),
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 98,
+                                decoration: BoxDecoration(
+                                  color: warna.AbuAbu(),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: image != null
+                                      ? DecorationImage(
+                                          image: FileImage(File(image.path)),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                                child: image == null
+                                    ? Center(
+                                        child: SvgPicture.asset(
+                                          'assets/svg/logokomunitas.svg',
+                                          color: warna.Putih(),
+                                          width: 80,
+                                          height: 80,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 14,
+                                  backgroundColor: warna.Hijau(),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: Colors.white,
                                   ),
-                                )
-                              : null,
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       }),
                     ),
-                    // Container(
-                    //   margin: EdgeInsets.only(top: 45, bottom: 30),
-                    //   width: 100,
-                    //   height: 98,
-                    //   decoration: BoxDecoration(
-                    //     color: warna.AbuAbu(),
-                    //     borderRadius: BorderRadius.circular(15),
-                    //   ),
-                    //   child: Center(
-                    //     child: SvgPicture.asset(
-                    //       'assets/svg/logokomunitas.svg',
-                    //       color: warna.Putih(),
-                    //       width: 80,
-                    //       height: 80,
-                    //     ),
-                    //   ),
+                    // GestureDetector(
+                    //   onTap: () async {
+                    //     await gambarService.getImage();
+                    //   },
+                    //   child: Obx(() {
+                    //     final image = gambarService.selectedImage.value;
+
+                    //     return Container(
+                    //       margin: EdgeInsets.only(top: 45, bottom: 30),
+                    //       width: 100,
+                    //       height: 98,
+                    //       decoration: BoxDecoration(
+                    //         color: warna.AbuAbu(),
+                    //         borderRadius: BorderRadius.circular(15),
+                    //         image: image != null
+                    //             ? DecorationImage(
+                    //                 image: FileImage(File(image.path)),
+                    //                 fit: BoxFit.cover,
+                    //               )
+                    //             : null,
+                    //       ),
+                    //       child: image == null
+                    //           ? Center(
+                    //               child: SvgPicture.asset(
+                    //                 'assets/svg/logokomunitas.svg',
+                    //                 color: warna.Putih(),
+                    //                 width: 80,
+                    //                 height: 80,
+                    //               ),
+                    //             )
+                    //           : null,
+                    //     );
+                    //   }),
                     // ),
                     Form(
                       key: _formKey,

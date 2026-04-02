@@ -12,7 +12,6 @@ CommunityController communityController = Get.find<CommunityController>();
 class CommunityController extends GetxController {
   ApiServices apiServices = ApiServices();
 
-  // tambahkan bagian untuk menerima data gambar profil komunitas
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
 
@@ -23,13 +22,7 @@ class CommunityController extends GetxController {
   var status = Status.loading.obs;
   var errorMessage = ''.obs;
 
-  @override
-  void onInit() {
-    fetchCommunities();
-    super.onInit();
-  }
-
-  // GET COMMUNITIES (SUDAH CLEAN)
+  // GET COMMUNITIES
   Future fetchCommunities() async {
     status.value = Status.loading;
     try {
