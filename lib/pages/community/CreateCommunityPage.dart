@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import '../../widgets/TemplateSnackbar.dart';
 import '../../widgets/enum_status.dart';
 import '../../widgets/widget_loading_transparent.dart';
+import 'dart:io';
+import '../../Services/gambar_service.dart';
 
 class CreateCommunity extends StatefulWidget {
   CreateCommunity({super.key});
@@ -15,12 +17,12 @@ class CreateCommunity extends StatefulWidget {
 }
 
 class _CreateCommunityState extends State<CreateCommunity> {
-  // final CommunityController controller = Get.find();
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     // TODO: implement initState
     communityController.clearForm();
+    gambarService.clearImage();
     // super.initState();
   }
 
@@ -46,23 +48,94 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 padding: EdgeInsets.only(left: 20, right: 20),
                 child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 45, bottom: 30),
-                      width: 100,
-                      height: 98,
-                      decoration: BoxDecoration(
-                        color: warna.AbuAbu(),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/svg/logokomunitas.svg',
-                          color: warna.Putih(),
-                          width: 80,
-                          height: 80,
-                        ),
-                      ),
+                    GestureDetector(
+                      onTap: () async {
+                        await gambarService.getImage();
+                      },
+                      child: Obx(() {
+                        final image = gambarService.selectedImage.value;
+
+                        return Container(
+                          margin: const EdgeInsets.only(top: 45, bottom: 30),
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 98,
+                                decoration: BoxDecoration(
+                                  color: warna.AbuAbu(),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: image != null
+                                      ? DecorationImage(
+                                          image: FileImage(File(image.path)),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                                child: image == null
+                                    ? Center(
+                                        child: SvgPicture.asset(
+                                          'assets/svg/logokomunitas.svg',
+                                          color: warna.Putih(),
+                                          width: 80,
+                                          height: 80,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 14,
+                                  backgroundColor: warna.Hijau(),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
+                    // GestureDetector(
+                    //   onTap: () async {
+                    //     await gambarService.getImage();
+                    //   },
+                    //   child: Obx(() {
+                    //     final image = gambarService.selectedImage.value;
+
+                    //     return Container(
+                    //       margin: EdgeInsets.only(top: 45, bottom: 30),
+                    //       width: 100,
+                    //       height: 98,
+                    //       decoration: BoxDecoration(
+                    //         color: warna.AbuAbu(),
+                    //         borderRadius: BorderRadius.circular(15),
+                    //         image: image != null
+                    //             ? DecorationImage(
+                    //                 image: FileImage(File(image.path)),
+                    //                 fit: BoxFit.cover,
+                    //               )
+                    //             : null,
+                    //       ),
+                    //       child: image == null
+                    //           ? Center(
+                    //               child: SvgPicture.asset(
+                    //                 'assets/svg/logokomunitas.svg',
+                    //                 color: warna.Putih(),
+                    //                 width: 80,
+                    //                 height: 80,
+                    //               ),
+                    //             )
+                    //           : null,
+                    //     );
+                    //   }),
+                    // ),
                     Form(
                       key: _formKey,
                       child: Column(

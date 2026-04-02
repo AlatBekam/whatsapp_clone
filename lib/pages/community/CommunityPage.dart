@@ -8,11 +8,9 @@ import '../../widgets/widget_loading_transparent.dart';
 import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
-  // final CommunityController controller = Get.find();
-
-  // KomunitasPage({super.key}){
-  //   communityController.fetchCommunities();
-  // }
+  KomunitasPage({super.key}) {
+    communityController.fetchCommunities();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,21 +200,34 @@ Widget CommunityCard(
             ),
             child: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: warna.AbuAbu(),
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      'assets/svg/logokomunitas.svg',
-                      color: warna.Putih(),
-                      width: 20,
-                      height: 20,
-                    ),
-                  ),
+                Builder(
+                  builder: (_) {
+                    final imageUrl = community.communityImageUrl;
+
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(9),
+                      child: (imageUrl != null && imageUrl.isNotEmpty)
+                          ? Image.network(
+                              imageUrl,
+                              width: 40,
+                              height: 38,
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              width: 40,
+                              height: 38,
+                              color: warna.AbuAbu(),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/svg/logokomunitas.svg',
+                                  color: warna.Putih(),
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                    );
+                  },
                 ),
                 SizedBox(width: 15),
                 Text(
