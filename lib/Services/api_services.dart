@@ -1,8 +1,5 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:whatsapp_clone/Services/http_handler.dart';
@@ -22,6 +19,7 @@ class ApiServices {
   Future<String?> uploadImageWithToken({
     required File file,
     required String apiUrl,
+    String folder = "general",
   }) async {
     var uri = Uri.parse(_baseUrl + apiUrl);
 
@@ -31,6 +29,8 @@ class ApiServices {
     print('token: $token');
 
     request.headers['Authorization'] = 'Bearer $token';
+
+    request.fields["paths"] = folder;
 
     request.files.add(await http.MultipartFile.fromPath("image", file.path));
 

@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:whatsapp_clone/Services/Permission.dart';
-import 'package:whatsapp_clone/controllers/chat_controller.dart';
 
 class GambarService extends GetxController {
  static XFile? image2;
+ Rxn<XFile> selectedImage = Rxn<XFile>(); // reactive
   RequestPermission requestPermission = RequestPermission();
   final picker = ImagePicker();
   Future<void> getImage() async {
@@ -52,9 +50,15 @@ class GambarService extends GetxController {
         ),
       );
       image2 = PickFile;
+      selectedImage.value = PickFile;
     } on Exception catch (e) {
       print("error bagian perizinan pada getiamge: $e");
     }
+  }
+
+  void clearImage() {
+    image2 = null;
+    selectedImage.value = null;
   }
 }
 

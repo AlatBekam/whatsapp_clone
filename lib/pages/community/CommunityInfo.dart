@@ -6,13 +6,14 @@ import '../../../controllers/CommunityController.dart';
 import '../../widgets/TemplateSnackbar.dart';
 import '../../widgets/enum_status.dart';
 import '../../widgets/widget_loading_transparent.dart';
+import 'dart:io';
+import '../../../Services/gambar_service.dart';
 
 class KomunitasInfoPage extends StatelessWidget {
   KomunitasInfoPage({super.key});
 
-  // final CommunityController controller = Get.find();
   final _formKey = GlobalKey<FormState>();
-  // final CommunityModel community = Get.arguments;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +101,61 @@ class KomunitasInfoPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 10),
+// AVATAR
+                      Stack(
+                        children: [
+                          Center(
+                            child: GestureDetector(
+                              onTap: () async {
+                                await gambarService.getImage();
+                              },
+                              child: Obx(() {
+                                final selectedImage = gambarService.selectedImage.value;
+                                final imageUrl = communityController.community.communityImageUrl;
+
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: selectedImage != null
+                                      ? Image.file(
+                                          File(selectedImage.path),
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : (imageUrl != null && imageUrl.isNotEmpty)
+                                          ? Image.network(
+                                              imageUrl,
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Container(
+                                              width: 100,
+                                              height: 100,
+                                              color: warna.AbuAbu(),
+                                              child: Center(
+                                                child: SvgPicture.asset(
+                                                  'assets/svg/logokomunitas.svg',
+                                                  width: 70,
+                                                  height: 70,
+                                                  color: warna.Putih(),
+                                                ),
+                                              ),
+                                            ),
+                                );
+                              }),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 14,
+                              child: Icon(Icons.camera_alt, size: 16),
+                            ),
+                          )
+                      ]),
+                      const SizedBox(height: 20),
                       Form(
                         key: _formKey,
                         child: Column(
@@ -157,7 +213,6 @@ class KomunitasInfoPage extends StatelessWidget {
                           ]
                         ),
                       ),
-                      // const SizedBox(height: 30),
 
                       SizedBox(
                         width: double.infinity,

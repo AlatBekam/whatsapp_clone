@@ -242,7 +242,7 @@ class ChatController extends GetxController {
       String messageContent = messageText;
       String type = "text";
 
-      // 🔥 kalau ada gambar
+      // kalau ada gambar
       if (image != null) {
         final url = await ApiServices().uploadImageWithToken(
           file: image!,
