@@ -14,6 +14,7 @@ class CommunityController extends GetxController {
 
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   Rxn<CommunityModel> selectedCommunity = Rxn<CommunityModel>();
   CommunityModel get community => selectedCommunity.value!;
@@ -22,24 +23,85 @@ class CommunityController extends GetxController {
   var status = Status.loading.obs;
   var errorMessage = ''.obs;
 
-  // GET COMMUNITIES
-  Future fetchCommunities() async {
-    status.value = Status.loading;
-    try {
-      final data = await apiServices.httpGETWithToken("private/community");
+  // PAGINATION STATE
+  var currentPage = 1.obs;
+  var hasMore = true.obs;
+  var isFetchingMore = false.obs;
+  final int limit = 3;
 
-      communities.value = (data as List)
+  @override
+  void onInit() {
+    super.onInit();
+    fetchCommunities();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
+        fetchCommunities(isLoadMore: true);
+      }
+    });
+  }
+  @override
+  void onClose() {
+    scrollController.dispose();
+    nama.dispose();
+    deskripsi.dispose();
+    super.onClose();
+  }
+
+  // GET COMMUNITIES
+  Future fetchCommunities({bool isLoadMore = false}) async {
+    if (isFetchingMore.value || !hasMore.value && isLoadMore) return;
+
+    if (!isLoadMore) {
+      status.value = Status.loading;
+      currentPage.value = 1;
+      hasMore.value = true;
+      communities.clear();
+    }
+
+    isFetchingMore.value = true;
+
+    try {
+      final data = await apiServices.httpGETWithToken(
+        "private/community?page=${currentPage.value}&limit=$limit",
+      );
+
+      final List<CommunityModel> newCommunities = 
+        (data["data"] as List)
           .map((e) => CommunityModel.fromJson(e))
           .toList();
-      if (communities.isEmpty) {
-        status.value = Status.empty;
+      
+      if (newCommunities.length < limit) {
+        hasMore.value = false;
       } else {
-        status.value = Status.success;
+        currentPage.value++;
       }
+      communities.addAll(newCommunities);
+
+      status.value = communities.isEmpty ? Status.empty : Status.success;
     } catch (e) {
       errorMessage.value = e.toString();
       status.value = Status.error;
+    } finally {
+      isFetchingMore.value = false;
     }
+      
+    // status.value = Status.loading;
+    // try {
+    //   final data = await apiServices.httpGETWithToken("private/community");
+
+    //   communities.value = (data as List)
+    //       .map((e) => CommunityModel.fromJson(e))
+    //       .toList();
+    //   if (communities.isEmpty) {
+    //     status.value = Status.empty;
+    //   } else {
+    //     status.value = Status.success;
+    //   }
+    // } catch (e) {
+    //   errorMessage.value = e.toString();
+    //   status.value = Status.error;
+    // }
   }
 
   // CREATE
