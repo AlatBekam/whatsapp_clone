@@ -86,7 +86,7 @@ class ApiServices {
     }
   }
 
-  Future<String?> uploadImageWithTokens({
+  Future<String?> httpPOSTWithFile({
     required File file,
     required String apiUrl,
     required String paths,
@@ -98,20 +98,24 @@ class ApiServices {
     request.headers['Authorization'] =
         'Bearer ${await AuthService().getToken()}';
     request.fields['paths'] = paths;
-    print("request path: ${request.fields['paths']}");
 
     request.files.add(await http.MultipartFile.fromPath("image", file.path));
 
-    print("request: $request");
-
     var response = await request.send();
 
-    if (response.statusCode == 200) {
-      final res = await response.stream.bytesToString();
-      final data = jsonDecode(res);
+    final res = await response.stream.bytesToString();
+    var data;
+    try {
+      data = jsonDecode(res);
+    } catch (e) {
+      data = {"error": "Failed to parse response"};
+    }
+    
+    _checkResponse(response.statusCode, data);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return data["url"];
     }
-
     return null;
   }
 

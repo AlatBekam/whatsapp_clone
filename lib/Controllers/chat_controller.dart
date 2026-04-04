@@ -6,7 +6,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Controllers/LoadingController.dart';
+import 'package:whatsapp_clone/controllers/loading_controller.dart';
 
 class ChatController extends GetxController {
   ApiServices _apiServices = ApiServices();
@@ -20,7 +20,6 @@ class ChatController extends GetxController {
   RxnString title = RxnString();
   String? currentChatId;
   bool _argsLoaded = false;
-  var isLoading = false.obs;
   final picker = ImagePicker();
   File? image;
 
@@ -42,14 +41,18 @@ class ChatController extends GetxController {
 
     if (await permission.isDenied) {
       final result = await permission.request();
-      if (result.isGranted) {
-        print('access granted');
-      }
-      if (result.isDenied) {
-        print('access denied');
-      }
-      if (result.isPermanentlyDenied) {
-        print('access permanently denied');
+      switch (result) {
+        case PermissionStatus.granted:
+          print('access granted');
+          break;
+        case PermissionStatus.denied:
+          print('access denied');
+          break;
+        case PermissionStatus.permanentlyDenied:
+          print('access permanently denied');
+          break;
+        default:
+          print('access denied');
       }
     }
   }
@@ -143,7 +146,7 @@ class ChatController extends GetxController {
       return;
     }
 
-    await loadingController.run(LoadingKey.getMessage.name, () async {
+    await loadingController.runWithEmpty(Keys.getMessage, () async {
       final String? targetChatId = currentChatId;
 
       print(
@@ -205,7 +208,7 @@ class ChatController extends GetxController {
       } finally {
         // isLoading.value = false;
       }
-    });
+    }, isEmpty: () => messages.isEmpty);
     // if (_currentUserId == null) {
     //   print("Current user ID not loaded yet");
     //   return;
@@ -241,7 +244,7 @@ class ChatController extends GetxController {
 
       // 🔥 kalau ada gambar
       if (image != null) {
-        final url = await _apiServices.uploadImageWithTokens(
+        final url = await _apiServices.httpPOSTWithFile(
           file: image!,
           apiUrl: "private/upload",
           paths: "chats/${currentChatId}",

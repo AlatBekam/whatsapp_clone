@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:whatsapp_clone/controllers/chat_controller.dart';
+import 'package:whatsapp_clone/controllers/loading_controller.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:get/get.dart';
-import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -65,46 +65,67 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Expanded(
                 child: Obx(() {
-                  if (loadingController.isLoading(LoadingKey.getMessage.name)) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (chatController.messages.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No messages yet.\nStart the conversation!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: chatController.messages.length,
-                    padding: const EdgeInsets.all(10),
-                    itemBuilder: (context, index) {
-                      final message = chatController.messages[index];
-                      final messageContent =
-                          message['content']?.toString() ??
-                          message['message']?.toString() ??
-                          message['text']?.toString() ??
-                          '';
-                      final isMe = chatController.checkIsMe(message);
-                      final timestamp =
-                          message['timestamp']?.toString() ??
-                          message['created_at']?.toString() ??
-                          message['time']?.toString() ??
-                          '';
-                      final messagetype = message['type']
-                          ?.toString()
-                          .toLowerCase();
-
-                      return _MessageBubble(
-                        message: messageContent,
-                        isMe: isMe,
-                        time: timestamp,
-                        type: messagetype!,
+                  switch (loadingController.dataState(Keys.getMessage)) {
+                    case DataState.loading:
+                      print(
+                        'loading ${loadingController.dataState(Keys.getMessage)}',
                       );
-                    },
-                  );
+                      return const Center(child: CircularProgressIndicator());
+                    case DataState.empty:
+                      print(
+                        'empty ${loadingController.dataState(Keys.getMessage)}',
+                      );
+                      return const Center(
+                        child: Text(
+                          'No messages yet.\nStart the conversation!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    case DataState.error:
+                      print(
+                        'error ${loadingController.dataState(Keys.getMessage)}',
+                      );
+                      return const Center(
+                        child: Text(
+                          'Error loading messages.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      );
+                    case DataState.success:
+                      print(
+                        'success ${loadingController.dataState(Keys.getMessage)}',
+                      );
+                      return ListView.builder(
+                        itemCount: chatController.messages.length,
+                        padding: const EdgeInsets.all(10),
+                        itemBuilder: (context, index) {
+                          final message = chatController.messages[index];
+                          final messageContent =
+                              message['content']?.toString() ??
+                              message['message']?.toString() ??
+                              message['text']?.toString() ??
+                              '';
+                          final isMe = chatController.checkIsMe(message);
+                          final timestamp =
+                              message['timestamp']?.toString() ??
+                              message['created_at']?.toString() ??
+                              message['time']?.toString() ??
+                              '';
+                          final messagetype = message['type']
+                              ?.toString()
+                              .toLowerCase();
+
+                          return _MessageBubble(
+                            message: messageContent,
+                            isMe: isMe,
+                            time: timestamp,
+                            type: messagetype!,
+                          );
+                        },
+                      );
+                  }
                 }),
               ),
               Container(
@@ -128,7 +149,7 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                         onSubmitted: (_) => () async {
                           await loadingController.run(
-                            LoadingKey.sendMessage.name,
+                            Keys.sendMessage,
                             () async {
                               await chatController.sendMessage();
                             },
@@ -144,9 +165,8 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       child: Obx(
                         () =>
-                            loadingController.isLoading(
-                              LoadingKey.sendMessage.name,
-                            )
+                            loadingController.dataState(Keys.sendMessage) ==
+                                DataState.loading
                             ? const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: SizedBox(
@@ -161,7 +181,7 @@ class _ChatPageState extends State<ChatPage> {
                             : IconButton(
                                 onPressed: () async {
                                   await loadingController.run(
-                                    LoadingKey.sendMessage.name,
+                                    Keys.sendMessage,
                                     () async {
                                       await chatController.sendMessage();
                                     },

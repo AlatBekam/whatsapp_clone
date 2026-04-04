@@ -37,11 +37,11 @@ class CustomAppTheme {
         ).withLightness(0.5).toColor(),
         secondary: HSLColor.fromColor(
           Colors.white,
-        ).withLightness(0.7).toColor(),
+        ).withLightness(0.5).toColor(),
         secondaryContainer: HSLColor.fromColor(
           Colors.white,
-        ).withLightness(0.5).toColor(),
-        onSecondary: Colors.black,
+        ).withLightness(0.2).toColor(),
+        onSecondary: Colors.white,
         error: Colors.red,
         onError: Colors.white,
         surface: Colors.white,
@@ -70,10 +70,10 @@ class CustomAppTheme {
         ).withLightness(0.5).toColor(),
         secondary: HSLColor.fromColor(
           Colors.white,
-        ).withLightness(0.7).toColor(),
+        ).withLightness(0.5).toColor(),
         secondaryContainer: HSLColor.fromColor(
           Colors.white,
-        ).withLightness(0.5).toColor(),
+        ).withLightness(0.2).toColor(),
         onSecondary: Colors.white,
         error: Colors.red,
         onError: Colors.black,
