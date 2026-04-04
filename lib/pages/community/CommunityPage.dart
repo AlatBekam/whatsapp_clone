@@ -8,9 +8,7 @@ import '../../widgets/widget_loading_transparent.dart';
 import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
-  KomunitasPage({super.key}) {
-    communityController.fetchCommunities();
-  }
+  const KomunitasPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +48,6 @@ class KomunitasPage extends StatelessWidget {
         return Stack(
           children: [
             _buildCommunityContent(context),
-
-            if (communityController.status.value == Status.loading)
-              widgetLoadingTransparent(context),
           ],
         );
       }),
@@ -85,22 +80,37 @@ Widget _buildCommunityContent(BuildContext context) {
     );
   }
 
-  return ListView(
-    children: [
+  return ListView.builder(
+    controller: communityController.scrollController,
+    itemCount: communityController.communities.length + 2,
+    itemBuilder: (context, index) {
 // CREATE COMMUNITY
-      _buildCommunityCard(context),
-
+      if (index == 0) {
+        return _buildCommunityCard(context);
+      }
 // COMMUNITY LIST
-      Column(
-        children: List.generate(communityController.communities.length, (
-          index,
-        ) {
-          var community = communityController.communities[index];
-          return CommunityCard(context, community);
-        }),
-      ),
-    ],
+      if (index == communityController.communities.length + 1) {
+        return Obx(() {
+          return communityController.isFetchingMore.value
+              ? widgetLoadingTransparent(context)
+              : const SizedBox();
+        });
+      }
+
+      final community = communityController.communities[index - 1];
+
+      return CommunityCard(context, community);
+    }
   );
+//       Column(
+//         children: List.generate(communityController.communities.length, (
+//           index,
+//         ) {
+//           var community = communityController.communities[index];
+//           return CommunityCard(context, community);
+//         }),
+//       ),
+//     ],
 }
 
 Widget _buildCommunityCard(BuildContext context) {
