@@ -178,10 +178,10 @@ class CommunityController extends GetxController {
     final image = gambarService.selectedImage.value;
     if (image == null) return null;
 
-    return await apiServices.uploadImageWithToken(
+    return await apiServices.httpPOSTWithFile(
       file: File(image.path),
       apiUrl: "private/upload",
-      folder: "community",
+      paths: "community",
     );
   }
 

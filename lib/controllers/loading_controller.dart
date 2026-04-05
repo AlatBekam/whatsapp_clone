@@ -52,12 +52,13 @@ class LoadingController extends GetxController {
     bool Function()? isEmpty,
   }) async {
     try {
-      print('start loading $key');
       start(key);
       final result = await process();
 
+      // print('status ${dataState(key)}');
       if (isEmpty != null && isEmpty()) {
         empty(key);
+        print('status ${dataState(key)}');
       } else {
         stop(key);
       }

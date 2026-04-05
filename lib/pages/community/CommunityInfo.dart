@@ -21,8 +21,8 @@ class KomunitasInfoPage extends StatelessWidget {
     communityController.deskripsi.text = communityController.community.description;
       return Obx(() {
         if (communityController.status.value == Status.loading) {
-          return Scaffold(
-            body: widgetLoadingTransparent(context)
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         }
         if (communityController.status.value == Status.error) {

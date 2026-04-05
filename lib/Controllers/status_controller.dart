@@ -10,6 +10,8 @@ import 'package:whatsapp_clone/controllers/loading_controller.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
 class ControllerStatus extends GetxController {
+  ApiServices apiServices = ApiServices();
+  AuthService authService = AuthService();
   var myStatus = <Map<String, dynamic>>[].obs;
   var viewedStatus = <Map<String, dynamic>>[].obs;
   var nonViewedStatus = <Map<String, dynamic>>[].obs;
@@ -17,8 +19,6 @@ class ControllerStatus extends GetxController {
   var userDatas = <String, dynamic>{}.obs;
   List<Map<String, dynamic>> statusDatas = [];
   List<Map<String, dynamic>> viewedStatusDatas = [];
-  var status = Status.loading.obs;
-  var myStatusStatus = Status.empty.obs;
   final picker = ImagePicker();
   File? image;
 
@@ -60,7 +60,7 @@ class ControllerStatus extends GetxController {
   Future getStatus() async {
     // myStatusStatus.value = Status.empty;
     // status.value = Status.loading;
-    String? token = await AuthService().getToken();
+    String? token = await authService.getToken();
     var userID;
 
     if (token != null) {
@@ -68,8 +68,7 @@ class ControllerStatus extends GetxController {
       userID = decodeToken['id'];
     }
 
-    var dataStatus = await ApiServices().httpGET('public/users/statuses');
-    dataStatus = jsonDecode(dataStatus.body);
+    var dataStatus = await apiServices.httpGET('public/users/statuses');
 
     final listData = List<Map<String, dynamic>>.from(dataStatus);
 
@@ -91,7 +90,7 @@ class ControllerStatus extends GetxController {
 
   Future getViewedStatus() async {
     await loadingController.run(Keys.dataFeatureStatusState, () async {
-      var dataViewStatus = await ApiServices().httpGETWithToken(
+      var dataViewStatus = await apiServices.httpGETWithToken(
         'private/users/statuses',
       );
       // dataViewStatus = jsonDecode(dataViewStatus.body);
@@ -112,7 +111,7 @@ class ControllerStatus extends GetxController {
       viewedIDS.add(StatusID);
       var data = {'StatusID': StatusID};
 
-      await ApiServices().httpPOSTWithToken(
+      await apiServices.httpPOSTWithToken(
         data: data,
         apiUrl: 'private/users/status/view',
       );
@@ -133,68 +132,54 @@ class ControllerStatus extends GetxController {
           nonViewedStatus.add(a);
         }
       }
-      status.value = Status.success;
     } catch (e) {
       print('Error splitStatus status_controller.dart: ${e}');
     }
   }
 
   Future<bool> addStatus(String contentStatus, [File? imgFile]) async {
-    bool? result = await loadingController.run(
-      Keys.dataFeatureStatusState,
-      () async {
-        Map<String, dynamic> statusData = {'Content': contentStatus};
-        bool _isSuccess = false;
+    bool?
+    result = await loadingController.run(Keys.dataFeatureStatusState, () async {
+      Map<String, dynamic> statusData = {'Content': contentStatus};
+      bool _isSuccess = false;
 
-        // cek jika gambar ada
-        if (imgFile != null) {
-          var resImage = await ApiServices().httpPOSTWithFile(
-            file: imgFile,
-            apiUrl: 'private/upload',
-            paths: 'statuses',
-          );
-
-          // Check jika respon null diakibatkan gagal upload (token expired)
-          // check di pengiriman gambar
-          if (resImage == null) {
-            this.image = null;
-            update();
-            return false;
-          }
-
-          statusData['ImagePaths'] = resImage;
-        }
-
-        var resp = await ApiServices().httpPOSTWithToken(
-          data: statusData,
-          apiUrl: 'private/users/status',
+      // cek jika gambar ada
+      if (imgFile != null) {
+        var resImage = await apiServices.httpPOSTWithFile(
+          file: imgFile,
+          apiUrl: 'private/upload',
+          paths: 'statuses',
         );
 
-        // check jika respon status code 401 (token expired)
-        // check di pengiriman status
-        if (resp.statusCode == 401) {
+        // Check jika respon null diakibatkan gagal upload (token expired)
+        // check di pengiriman gambar
+        if (resImage == null) {
           this.image = null;
           update();
+          return false;
         }
 
-        // try catch untuk handle jika respon null, otomatis _isSuccess false
-        try {
-          var res = jsonDecode(resp.body);
-          _isSuccess = res['success'];
-        } catch (e) {
-          print('Pengiriman status gagal : ${e}');
-          _isSuccess = false;
-        }
+        statusData['ImagePaths'] = resImage;
+      }
 
-        // check jika respon success true
-        if (_isSuccess == true) {
-          this.image = null;
-          update();
-        }
+      var resp = await apiServices.httpPOSTWithToken(
+        data: statusData,
+        apiUrl: 'private/users/status',
+      );
 
-        return _isSuccess;
-      },
-    );
+      // Karena response sekarang adalah objek Map & jika error dilempar Exception:
+      if (resp != null && resp is Map) {
+        _isSuccess = resp['success'] ?? true;
+      }
+
+      // check jika respon success true
+      if (_isSuccess == true) {
+        this.image = null;
+        update();
+      }
+
+      return _isSuccess;
+    });
 
     return result ?? false;
   }

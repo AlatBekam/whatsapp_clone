@@ -35,7 +35,6 @@ class ControllerChannel extends GetxController {
     }
 
     var data = await apiServices.httpGET('public/users/$userID');
-    data = jsonDecode(data.body);
 
     await Future.wait([
       loadingController.runWithEmpty(Keys.dataFeatureChannelState, () async {
@@ -55,10 +54,9 @@ class ControllerChannel extends GetxController {
           'private/channels',
         );
 
-        dataChannel = jsonDecode(dataChannel.body);
         channelsDatas = List<Map<String, dynamic>>.from(dataChannel);
       },
-      isEmpty: () => channelsDatas.isEmpty,
+      isEmpty: () => discoverChannel.isEmpty,
     );
   }
 
@@ -97,13 +95,15 @@ class ControllerChannel extends GetxController {
     followedChannel.clear();
     discoverChannel.clear();
 
-    for (var a in channelsDatas) {
-      if (followdIDS.contains(a['channel_id'])) {
-        followedChannel.add(a);
-      } else {
-        discoverChannel.add(a);
+    loadingController.runWithEmpty(Keys.dataFeatureChannelState, () async {
+      for (var a in channelsDatas) {
+        if (followdIDS.contains(a['channel_id'])) {
+          followedChannel.add(a);
+        } else {
+          discoverChannel.add(a);
+        }
       }
-    }
+    }, isEmpty: () => discoverChannel.isEmpty);
   }
 
   Future<bool> addChannel(
@@ -123,7 +123,6 @@ class ControllerChannel extends GetxController {
           apiUrl: 'public/channels',
         );
 
-        res = jsonDecode(res.body);
         return res['success'];
         // if (res['success']) {
         //   return true;

@@ -68,7 +68,10 @@ Widget _buildCommunityContent(BuildContext context) {
       if (index == communityController.communities.length + 1) {
         return Obx(() {
           return communityController.isFetchingMore.value
-              ? widgetLoadingTransparent(context)
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(child: CircularProgressIndicator()),
+                )
               : const SizedBox();
         });
       }

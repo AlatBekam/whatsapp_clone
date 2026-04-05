@@ -39,74 +39,30 @@ class ChatController extends GetxController {
   }
 
   // Future<void> _requestPermission({required bool isGallery}) async {
-  //   Permission permission;
-  //   if (isGallery) {
-  //     permission = Permission.photos;
-  //     permission = Permission.videos;
-  //   } else {
-  //     permission = Permission.camera;
-  //   }
+  //   Permission permission = isGallery ? Permission.photos : Permission.camera;
 
-    if (await permission.isDenied) async {
-      final result = await permission.request();
-      switch (result) {
-        case PermissionStatus.granted:
-          print('access granted');
-          break;
-        case PermissionStatus.denied:
-          print('access denied');
-          break;
-        case PermissionStatus.permanentlyDenied:
-          print('access permanently denied');
-          break;
-        default:
-          print('access denied');
-      }
-    }
-  }
+  //   if (await permission.isDenied) {
+  //     final result = await permission.request();
+  //     switch (result) {
+  //       case PermissionStatus.granted:
+  //         print('access granted');
+  //         break;
+  //       case PermissionStatus.denied:
+  //         print('access denied');
+  //         break;
+  //       case PermissionStatus.permanentlyDenied:
+  //         print('access permanently denied');
+  //         break;
+  //       default:
+  //         print('access denied');
+  //     }
+  //   }
+  // }
 
   Future<void> getImage() async {
-    // await _requestPermission(isGallery: true);
-
-    print("masuk ke get image chat controller");
-    await gambarService.getImage();
-
-    // try {
-    //   XFile? PickFile = await showDialog<XFile?>(
-    //     context: Get.context!,
-    //     builder: (context) => AlertDialog(
-    //       title: Text("Select Image"),
-    //       content: Text("Select image from camera or gallery"),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () {
-    //             Get.back();
-    //           },
-    //           child: Text("Cancel"),
-    //         ),
-    //         TextButton(
-    //           onPressed: () async {
-    //             await requestPermission.req(isGallery: true);
-    //             final file = await picker.pickImage(
-    //               source: ImageSource.gallery,
-    //             );
-    //             print("PickFile: $file");
-    //             Get.back(result: file);
-    //           },
-    //           child: Text("Gallery"),
-    //         ),
-    //         TextButton(
-    //           onPressed: () async {
-    //             await requestPermission.req(isGallery: false);
-    //             final file = await picker.pickImage(source: ImageSource.camera);
-    //             print("PickFile: $file");
-    //             Get.back(result: file);
-    //           },
-    //           child: Text("Camera"),
-    //         ),
-    //       ],
-    //     ),
-      // );
+    await loadingController.runWithEmpty(Keys.getMessage, () async {
+      print("masuk ke get image chat controller");
+      await gambarService.getImage();
 
       if (GambarService.image2 != null) {
         print("PickFile: $GambarService.image2");
@@ -115,9 +71,7 @@ class ChatController extends GetxController {
         await sendMessage();
         update();
       }
-    // } on Exception catch (e) {
-    //   print("error bagian perizinan pada getiamge: $e");
-    // }
+    });
   }
 
   // void _loadArguments() {
@@ -281,11 +235,11 @@ class ChatController extends GetxController {
         apiUrl: "private/chats",
       );
 
-        messageController.clear();
-        image = null;
-        update();
-        await _getChatData(); // Refresh
-        print("Message sent successfully");
+      messageController.clear();
+      image = null;
+      update();
+      await _getChatData(); // Refresh
+      print("Message sent successfully");
       // if (response.statusCode == 200 || response.statusCode == 201) {
       // } else {
       //   throw Exception(

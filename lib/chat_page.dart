@@ -27,11 +27,13 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Obx(() => ChatHeader(
-          title: chatController.title.value ?? "", 
-          userId: chatController.currentUserId1.value, 
-          onCameraTap: () => chatController.getImage(),
-          ))
+        title: Obx(
+          () => ChatHeader(
+            title: chatController.title.value ?? "",
+            userId: chatController.receiverId.value,
+            onCameraTap: () => chatController.getImage(),
+          ),
+        ),
         // Row(
         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
         //   children: [
@@ -126,14 +128,15 @@ class _ChatPageState extends State<ChatPage> {
                               ?.toString()
                               .toLowerCase();
 
-                      return MessageBubble(
-                        message: messageContent,
-                        isMe: isMe,
-                        time: timestamp,
-                        type: messagetype!,
+                          return MessageBubble(
+                            message: messageContent,
+                            isMe: isMe,
+                            time: timestamp,
+                            type: messagetype!,
+                          );
+                        },
                       );
-                    },
-                  );
+                  }
                 }),
               ),
               Container(
@@ -142,16 +145,15 @@ class _ChatPageState extends State<ChatPage> {
                   () => KolomChat(
                     controller: chatController.messageController,
                     Sending: () async {
-                          await loadingController.run(
-                            Keys.sendMessage,
-                            () async {
-                              await chatController.sendMessage();
-                            },
-                          );
-                        },
-                    Loading: loadingController.isLoading(LoadingKey.sendMessage.name),
+                      await loadingController.run(Keys.sendMessage, () async {
+                        await chatController.sendMessage();
+                      });
+                    },
+                    Loading:
+                        loadingController.dataState(Keys.sendMessage) ==
+                        DataState.loading,
                   ),
-                )
+                ),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
