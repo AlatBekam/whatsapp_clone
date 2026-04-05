@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/controllers/loading_controller.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 
@@ -127,26 +128,46 @@ class _addChannelState extends State<addChannel> {
                         }
                       }
                     },
-                    style: controllerChannel.status.value == Status.loading
-                        ? ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: warna.AbuAbu(),
-                            foregroundColor: warna.Putih(),
-                            shadowColor: Colors.transparent,
-                          )
-                        : ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: warna.Hijau(),
-                            foregroundColor: warna.Putih(),
-                            shadowColor: Colors.transparent,
-                          ),
-                    child: controllerChannel.status.value == Status.loading
-                        ? Container(
-                            width: 15,
-                            height: 15,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text('Add Channel'),
+                    style: switch (loadingController.dataState(
+                      Keys.dataFeatureChannelState,
+                    )) {
+                      DataState.empty => ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: warna.Hijau(),
+                        foregroundColor: warna.Putih(),
+                        shadowColor: Colors.transparent,
+                      ),
+                      DataState.loading => ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: warna.AbuAbu(),
+                        foregroundColor: warna.Putih(),
+                        shadowColor: Colors.transparent,
+                      ),
+                      DataState.error => ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: warna.Merah(),
+                        foregroundColor: warna.Putih(),
+                        shadowColor: Colors.transparent,
+                      ),
+                      DataState.success => ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: warna.Hijau(),
+                        foregroundColor: warna.Putih(),
+                        shadowColor: Colors.transparent,
+                      ),
+                    },
+                    child: switch (loadingController.dataState(
+                      Keys.dataFeatureChannelState,
+                    )) {
+                      DataState.empty => Text('Add Channel'),
+                      DataState.loading => Container(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      DataState.error => Text('Error'),
+                      DataState.success => Text('Add Channel'),
+                    },
                   ),
                 );
               }),
