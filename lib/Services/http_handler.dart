@@ -8,7 +8,7 @@ class HttpHandler {
     // SUCCESS
     if (statusCode >= 200 && statusCode < 300) {
       if (response.body.isNotEmpty) {
-        return jsonDecode(response.body);
+        return jsonDecode(response.body); //StringToMap
       }
       return true;
     }
@@ -22,15 +22,15 @@ class HttpHandler {
     } catch (_) {}
 
     switch (statusCode) {
-      case 400:
+      case 400: //request salah
         throw Exception(message);
-      case 401:
+      case 401: //belum terautentikasi atau token tidak valid
         throw Exception("Session expired, Please login again");
-      case 404:
+      case 404: //resource tidak ditemukan
         throw Exception("Data tidak ditemukan");
-      case 409:
+      case 409: //Request bentrok dengan data yang sudah ada
         throw Exception(message);
-      case 500:
+      case 500: //kesalahan server
         throw Exception("Server error");
       default:
         throw Exception(message);

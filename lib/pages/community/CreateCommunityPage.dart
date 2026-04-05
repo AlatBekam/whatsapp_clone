@@ -30,10 +30,10 @@ class _CreateCommunityState extends State<CreateCommunity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: warna.Putih(),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'Komunitas Baru',
-          style: TextStyle(color: warna.Hitam(), fontSize: 19),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 19),
         ),
       ),
       body: Obx((){
@@ -41,8 +41,8 @@ class _CreateCommunityState extends State<CreateCommunity> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: warna.Putih(),
-                border: Border(top: BorderSide(color: warna.AbuAbu(), width: 1)),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border(top: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant, width: 1)),
               ),
               child: Container(
                 padding: EdgeInsets.only(left: 20, right: 20),
