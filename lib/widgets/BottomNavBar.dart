@@ -17,7 +17,7 @@ class BottomNavBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: warna.Putih(),
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(top: BorderSide(color: warna.AbuAbu(), width: 1)),
       ),
       child: Row(
@@ -27,7 +27,7 @@ class BottomNavBar extends StatelessWidget {
             icon: SvgPicture.asset(
               'assets/svg/logochat.svg',
               width: 19,
-              color: warna.Hitam(),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             label: "Chat",
             index: 0,
@@ -38,7 +38,7 @@ class BottomNavBar extends StatelessWidget {
             icon: SvgPicture.asset(
               'assets/svg/logopembaruan.svg',
               width: 20,
-              color: warna.Hitam(),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             label: "Pembaruan",
             index: 1,
@@ -49,7 +49,7 @@ class BottomNavBar extends StatelessWidget {
             icon: SvgPicture.asset(
               'assets/svg/logokomunitas.svg',
               width: 21,
-              color: warna.Hitam(),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             label: "Komunitas",
             index: 2,
@@ -60,7 +60,7 @@ class BottomNavBar extends StatelessWidget {
             icon: SvgPicture.asset(
               'assets/svg/logotelepon.svg',
               width: 20,
-              color: warna.Hitam(),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             label: "Panggilan",
             index: 3,
@@ -127,7 +127,7 @@ class _BottomNavItemState extends State<BottomNavItem>
   @override
   Widget build(BuildContext context) {
     final DefaultTextStyle = TextStyle(
-      color: warna.Hitam(),
+      color: Theme.of(context).colorScheme.onSurface,
       fontSize: 13,
       fontWeight: FontWeight.bold,
     );
@@ -154,7 +154,7 @@ class _BottomNavItemState extends State<BottomNavItem>
               scale: _scale,
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  widget.isSelected ? warna.HijauTua() : warna.Hitam(),
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
                 child: widget.icon,

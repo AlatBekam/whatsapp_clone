@@ -14,18 +14,18 @@ class KomunitasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: warna.Putih(),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'Community',
-          style: TextStyle(color: warna.Hitam(), fontSize: 19),
+          style: TextStyle(color: Theme.of(context).textTheme.labelLarge!.color, fontSize: 19),
         ),
         actions: [
           PopupMenuButton<String>(
-            color: warna.Putih(),
+            color: warna.AbuAbu(),
             icon: SvgPicture.asset(
               'assets/svg/three-dots-vertical.svg',
               width: 19,
-              color: warna.Hitam(),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             onSelected: (value) {
               if (value == "Pengaturan") {
@@ -37,7 +37,7 @@ class KomunitasPage extends StatelessWidget {
                 value: "Pengaturan",
                 child: Text(
                   "Pengaturan",
-                  style: TextStyle(color: warna.Hitam()),
+                  style: TextStyle(color: Theme.of(context).colorScheme.surface),
                 ),
               ),
             ],
@@ -94,7 +94,7 @@ Widget _buildCommunityContent(BuildContext context) {
           return communityController.isFetchingMore.value
               ? widgetLoadingTransparent(context)
               : const SizedBox();
-        });
+        }); 
       }
 
       final community = communityController.communities[index - 1];
@@ -117,7 +117,7 @@ Widget _buildCommunityCard(BuildContext context) {
   return Column(
     children: [
       Material(
-        color: warna.Putih(),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: InkWell(
           onTap: () async {
             var result = await Get.toNamed(Routes.createCommunity);
@@ -157,7 +157,7 @@ Widget _buildCommunityCard(BuildContext context) {
                           color: warna.Hijau(),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: warna.Putih(),
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             width: 1.5,
                           ),
                         ),
@@ -174,7 +174,7 @@ Widget _buildCommunityCard(BuildContext context) {
                 Text(
                   "New Community",
                   style: TextStyle(
-                    color: warna.Hitam(),
+                    color: Theme.of(context).textTheme.labelMedium!.color,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
@@ -196,7 +196,7 @@ Widget CommunityCard(
   return Column(
     children: [
       Material(
-        color: warna.Putih(),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: InkWell(
           onTap: () {
             communityController.goDetail(community);
@@ -243,7 +243,7 @@ Widget CommunityCard(
                 Text(
                   community.communityName,
                   style: TextStyle(
-                    color: warna.Hitam(),
+                    color: Theme.of(context).textTheme.labelMedium!.color,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
@@ -257,7 +257,7 @@ Widget CommunityCard(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Material(
-            color: warna.Putih(),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: InkWell(
               onTap: () {
                 Get.toNamed(Routes.createCommunity);
@@ -290,7 +290,7 @@ Widget CommunityCard(
                         Text(
                           'Pengumuman',
                           style: TextStyle(
-                            color: warna.Hitam(),
+                            color: Theme.of(context).textTheme.labelMedium!.color,
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                           ),
@@ -298,7 +298,7 @@ Widget CommunityCard(
                         Text(
                           'Name: Text',
                           style: TextStyle(
-                            color: warna.AbuAbuTua(),
+                            color: Theme.of(context).textTheme.labelMedium!.color!.withOpacity(0.7),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
@@ -311,7 +311,7 @@ Widget CommunityCard(
             ),
           ),
           Material(
-            color: warna.Putih(),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: InkWell(
               onTap: () {
                 Get.toNamed(Routes.createCommunity);
@@ -346,7 +346,7 @@ Widget CommunityCard(
                         Text(
                           'GRUP KE-1',
                           style: TextStyle(
-                            color: warna.Hitam(),
+                            color: Theme.of(context).textTheme.labelMedium!.color,
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                           ),
@@ -354,7 +354,7 @@ Widget CommunityCard(
                         Text(
                           'Name: Text',
                           style: TextStyle(
-                            color: warna.AbuAbuTua(),
+                            color: Theme.of(context).textTheme.labelMedium!.color!.withOpacity(0.7),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
@@ -367,7 +367,7 @@ Widget CommunityCard(
             ),
           ),
           Material(
-            color: warna.Putih(),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: InkWell(
               onTap: () {
                 Get.toNamed(Routes.createCommunity);
