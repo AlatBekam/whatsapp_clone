@@ -22,7 +22,10 @@ class KomunitasPage extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'Community',
-          style: TextStyle(color: Theme.of(context).textTheme.labelLarge!.color, fontSize: 19),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.labelLarge!.color,
+            fontSize: 19,
+          ),
         ),
         actions: [widgetPopMenuButtonThreeDotsAppBar(context)],
       ),
@@ -73,7 +76,7 @@ Widget _buildCommunityContent(BuildContext context) {
                   child: Center(child: CircularProgressIndicator()),
                 )
               : const SizedBox();
-        }); 
+        });
       }
 
       final community = communityController.communities[index - 1];
@@ -139,11 +142,6 @@ Widget _buildCommunityCard(BuildContext context) {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             width: 1.5,
                           ),
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          size: 15,
-                          color: warna.Putih(),
                         ),
                         child: Icon(Icons.add, size: 15, color: warna.Putih()),
                       ),
@@ -270,7 +268,9 @@ Widget CommunityCard(
                         Text(
                           'Pengumuman',
                           style: TextStyle(
-                            color: Theme.of(context).textTheme.labelMedium!.color,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.labelMedium!.color,
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                           ),
@@ -278,7 +278,9 @@ Widget CommunityCard(
                         Text(
                           'Name: Text',
                           style: TextStyle(
-                            color: Theme.of(context).textTheme.labelMedium!.color!.withOpacity(0.7),
+                            color: Theme.of(
+                              context,
+                            ).textTheme.labelMedium!.color!.withOpacity(0.7),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
@@ -326,7 +328,9 @@ Widget CommunityCard(
                         Text(
                           'GRUP KE-1',
                           style: TextStyle(
-                            color: Theme.of(context).textTheme.labelMedium!.color,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.labelMedium!.color,
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                           ),
@@ -334,7 +338,9 @@ Widget CommunityCard(
                         Text(
                           'Name: Text',
                           style: TextStyle(
-                            color: Theme.of(context).textTheme.labelMedium!.color!.withOpacity(0.7),
+                            color: Theme.of(
+                              context,
+                            ).textTheme.labelMedium!.color!.withOpacity(0.7),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
