@@ -32,14 +32,14 @@ class KomunitasInfoPage extends StatelessWidget {
         }
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: warna.Putih(),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             title: Text(
               communityController.community.communityName,
-              style: TextStyle(color: warna.Hitam(), fontSize: 19),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 19),
             ),
             actions: [
               PopupMenuButton(
-                color: warna.Putih(),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -49,7 +49,7 @@ class KomunitasInfoPage extends StatelessWidget {
                 icon: SvgPicture.asset(
                   'assets/svg/three-dots-vertical.svg',
                   width: 19,
-                  color: warna.Hitam(),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 onSelected: (value) async {
                   if (value == "delete") {
@@ -59,7 +59,7 @@ class KomunitasInfoPage extends StatelessWidget {
                       textCancel: "Batal",
                       textConfirm: "Nonaktifkan",
                       confirmTextColor: Colors.white,
-                      buttonColor: warna.Merah(),
+                      buttonColor: Theme.of(context).colorScheme.error,
                       onConfirm: () async {
                         Get.back();
 
@@ -93,7 +93,7 @@ class KomunitasInfoPage extends StatelessWidget {
             ],
           ),
           body: Container(
-            color: warna.Putih(),
+            color: Theme.of(context).scaffoldBackgroundColor,
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,9 +167,9 @@ class KomunitasInfoPage extends StatelessWidget {
                             "Nama Community",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: warna.Hitam(),
+                              color: Theme.of(context).textTheme.bodyMedium!.color,
                             ),
-                          ),
+                          ), 
 // FORM NAMA COMMUNITY
                           const SizedBox(height: 8),
                           TextFormField(
@@ -192,7 +192,7 @@ class KomunitasInfoPage extends StatelessWidget {
                             "Deskripsi",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: warna.Hitam(),
+                              color: Theme.of(context).textTheme.bodyMedium!.color,
                             ),
                           ),
                           const SizedBox(height: 20),
