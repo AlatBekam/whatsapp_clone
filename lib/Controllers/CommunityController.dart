@@ -1,56 +1,119 @@
 import 'package:get/get.dart';
 import '../Services/api_services.dart';
-import '../Services/http_handler.dart';
 import '../Models/CommunityModel.dart';
 import 'package:flutter/material.dart';
 import '../Services/route_handler.dart';
+import '../widgets/enum_status.dart';
+import 'dart:io';
+import '../Services/gambar_service.dart';
 
 CommunityController communityController = Get.find<CommunityController>();
 
 class CommunityController extends GetxController {
   ApiServices apiServices = ApiServices();
-  AuthService _authService = AuthService();
 
   final TextEditingController nama = TextEditingController();
   final TextEditingController deskripsi = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   Rxn<CommunityModel> selectedCommunity = Rxn<CommunityModel>();
   CommunityModel get community => selectedCommunity.value!;
 
   var communities = <CommunityModel>[].obs;
-  var isLoading = true.obs;
-
+  var status = Status.loading.obs;
   var errorMessage = ''.obs;
+
+  // PAGINATION STATE
+  var currentPage = 1.obs;
+  var hasMore = true.obs;
+  var isFetchingMore = false.obs;
+  final int limit = 3;
 
   @override
   void onInit() {
-    fetchCommunities();
     super.onInit();
+    fetchCommunities();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        fetchCommunities(isLoadMore: true);
+      }
+    });
   }
 
-  // GET COMMUNITIES (SUDAH CLEAN)
-  Future fetchCommunities() async {
+  @override
+  void onClose() {
+    scrollController.dispose();
+    nama.dispose();
+    deskripsi.dispose();
+    super.onClose();
+  }
+
+  // GET COMMUNITIES
+  Future fetchCommunities({bool isLoadMore = false}) async {
+    if (isFetchingMore.value || !hasMore.value && isLoadMore) return;
+
+    if (!isLoadMore) {
+      status.value = Status.loading;
+      currentPage.value = 1;
+      hasMore.value = true;
+      communities.clear();
+    }
+
+    isFetchingMore.value = true;
+
     try {
-      isLoading(true);
+      final data = await apiServices.httpGETWithToken(
+        "private/community?page=${currentPage.value}&limit=$limit",
+      );
 
-      final data = await apiServices.httpGETWithToken("private/community");
-
-      communities.value = (data as List)
+      final List<CommunityModel> newCommunities = (data["data"] as List)
           .map((e) => CommunityModel.fromJson(e))
           .toList();
+
+      if (newCommunities.length < limit) {
+        hasMore.value = false;
+      } else {
+        currentPage.value++;
+      }
+      communities.addAll(newCommunities);
+
+      status.value = communities.isEmpty ? Status.empty : Status.success;
     } catch (e) {
       errorMessage.value = e.toString();
+      status.value = Status.error;
     } finally {
-      isLoading(false);
+      isFetchingMore.value = false;
     }
+
+    // status.value = Status.loading;
+    // try {
+    //   final data = await apiServices.httpGETWithToken("private/community");
+
+    //   communities.value = (data as List)
+    //       .map((e) => CommunityModel.fromJson(e))
+    //       .toList();
+    //   if (communities.isEmpty) {
+    //     status.value = Status.empty;
+    //   } else {
+    //     status.value = Status.success;
+    //   }
+    // } catch (e) {
+    //   errorMessage.value = e.toString();
+    //   status.value = Status.error;
+    // }
   }
 
   // CREATE
   Future createCommunity(String name, String description) async {
+    status.value = Status.loading;
     try {
-     await apiServices.httpPOSTWithToken(
+      String? imageUrl = await uploadCommunityImage();
+      await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
         data: {
+          "community_image_url": imageUrl,
           "community_name": name,
           "description": description,
           "announcement_group_id": null,
@@ -58,42 +121,68 @@ class CommunityController extends GetxController {
       );
 
       await fetchCommunities();
-
+      gambarService.clearImage();
       return true;
     } catch (e) {
+      status.value = Status.error;
       return e.toString();
     }
   }
 
   // UPDATE
   Future updateCommunity(String id, String name, String description) async {
+    status.value = Status.loading;
     try {
+      String? imageUrl = selectedCommunity.value?.communityImageUrl;
+
+      if (gambarService.selectedImage.value != null) {
+        imageUrl = await uploadCommunityImage();
+      }
+
       await apiServices.httpPUTWithToken(
         apiUrl: "private/community/$id",
-        data: {"community_name": name, "description": description},
+        data: {
+          "community_image_url": imageUrl,
+          "community_name": name,
+          "description": description,
+        },
       );
 
       await fetchCommunities();
-
+      gambarService.clearImage();
       return true;
     } catch (e) {
+      status.value = Status.error;
       return e.toString();
     }
   }
 
   // DELETE
   Future deleteCommunity(String id) async {
+    status.value = Status.loading;
     try {
-      await apiServices.httpDELETEWithToken(
-        "private/community/$id",
-      );
+      await apiServices.httpDELETEWithToken("private/community/$id");
 
-      await fetchCommunities();
+      communities.removeWhere((item) => item.communityId == id);
 
+      status.value = communities.isEmpty ? Status.empty : Status.success;
       return true;
     } catch (e) {
+      status.value = Status.error;
       return e.toString();
     }
+  }
+
+  // UPLOAD IMAGE
+  Future<String?> uploadCommunityImage() async {
+    final image = gambarService.selectedImage.value;
+    if (image == null) return null;
+
+    return await apiServices.httpPOSTWithFile(
+      file: File(image.path),
+      apiUrl: "private/upload",
+      paths: "community",
+    );
   }
 
   // NAVIGATION
@@ -106,112 +195,8 @@ class CommunityController extends GetxController {
     nama.clear();
     deskripsi.clear();
   }
+
+  Future initData() async {
+    await fetchCommunities();
+  }
 }
-
-
-// import 'dart:convert';
-// import 'package:get/get.dart';
-// import '../Services/api_services.dart';
-// import '../Models/CommunityModel.dart';
-// import 'package:flutter/material.dart';
-// import '../Services/route_handler.dart';
-
-// CommunityController communityController = Get.find<CommunityController>();
-
-// // extends GetxController berfungsi untuk menggunakan sistem lifecycle dari GetX
-// class CommunityController extends GetxController {
-//   final TextEditingController nama = TextEditingController();
-//   final TextEditingController deskripsi = TextEditingController();
-//   Rxn<CommunityModel> selectedCommunity = Rxn<CommunityModel>();
-//   CommunityModel get community => selectedCommunity.value!;
-
-//   var communities = <CommunityModel>[].obs; //observable (reactive) dari GetX dipake supaya ketika data berubah UI otomatis diupdate
-//   var isLoading = true.obs;
-
-//   @override
-//   // fungsi yg dijalankan ketika controller pertama kali dibuat
-//   void onInit() {
-//     fetchCommunities();
-//     super.onInit();
-//   }
-
-//   //ambil data komunitas dari server
-//   Future fetchCommunities() async {
-//     try {
-//       isLoading(true);
-//       var response = await ApiServices().httpGETWithToken(
-//         "private/community"
-//       );
-//       // print("STATUS: ${response.statusCode}");
-//       // print("BODY: ${response.body}");
-//       if(response.statusCode == 200){
-//         List data = jsonDecode(response.body); //mengubah JSON jadi list
-//         communities.value = data.map((e) => CommunityModel.fromJson(e)).toList(); // mengubah JSON menjadi model
-//       }
-//     } finally {
-//       isLoading(false);
-//     }
-//   }
-
-//   Future createCommunity(String name, String description) async {
-//     var response = await ApiServices().httpPOSTWithToken(
-//       apiUrl: "private/community",
-//       data: {
-//         "community_name": name,
-//         "description": description,
-//         "announcement_group_id": null
-//       }
-//     );
-
-//     if(response.statusCode == 200){
-//       await fetchCommunities();
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   Future updateCommunity(
-//     String id,
-//     String name,
-//     String description
-//   ) async {
-//     var response = await ApiServices().httpPUTWithToken(
-//       apiUrl: "private/community/$id",
-//       data: {
-//         "community_name": name,
-//         "description": description,
-//       },
-//     );
-
-//     if(response.statusCode == 200){
-//       await fetchCommunities();
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   Future deleteCommunity(String id) async {
-//     var response = await ApiServices().httpDELETEWithToken(
-//       "private/community/$id"
-//     );
-//     if(response.statusCode == 200){
-//       await fetchCommunities();
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   // Future<dynamic>? goDetail(dynamic community) {
-//   //   return Get.toNamed(Routes.communityInfo, arguments: community);
-//   // }
-
-//   Future<dynamic>? goDetail(dynamic community) {
-//     selectedCommunity.value = community;
-//     return Get.toNamed(Routes.communityInfo);
-//   }
-  
-//   void clearForm(){
-//   nama.clear();
-//   deskripsi.clear();
-// }
-// }

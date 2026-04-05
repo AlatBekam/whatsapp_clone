@@ -54,7 +54,7 @@ class AppRoutes {
 
     GetPage(name: Routes.community, page: () => KomunitasPage()),
 
-    GetPage(name: Routes.settings, page: () => PengaturanPage()),
+    // GetPage(name: Routes.settings, page: () => PengaturanPage(onThemeChanged: (theme) {})),
 
     GetPage(name: Routes.createCommunity, page: () => CreateCommunity()),
 

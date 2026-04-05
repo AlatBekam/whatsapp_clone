@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/channel_controller.dart';
+import 'package:whatsapp_clone/controllers/loading_controller.dart';
+import 'package:whatsapp_clone/pages/status/no_status_screen.dart';
 import 'package:whatsapp_clone/widgets/enum_status.dart';
 import 'package:whatsapp_clone/widgets/template_add_channel.dart';
+import 'package:whatsapp_clone/widgets/widget_loading.dart';
 import 'package:whatsapp_clone/widgets/widget_loading_transparent.dart';
 
 class channels extends StatefulWidget {
@@ -18,9 +21,9 @@ class _channelsState extends State<channels> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   controllerChannel.initData();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerChannel.initData();
+    });
   }
 
   @override
@@ -56,8 +59,8 @@ class _channelsState extends State<channels> {
         shadowColor: Colors.black,
       ),
 
-      body: Obx(
-        () => Stack(
+      body: Obx(() {
+        return Stack(
           children: [
             ListView(
               children: [
@@ -66,175 +69,210 @@ class _channelsState extends State<channels> {
                   child: Column(
                     spacing: 10,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Explore Channels',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          SizedBox(
-                            width: 90,
-                            height: 30,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                return print('Test');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(0),
-                                backgroundColor: HSLColor.fromColor(
-                                  Theme.of(context).colorScheme.secondary,
-                                ).withAlpha(0.3).toColor(),
-                              ),
-                              child: Text(
-                                'See All',
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
                       Obx(() {
-                        // if (controllerChannel.status.value == Status.loading) {
-                        //   return widgetLoadingTransparent(context);
-                        // }
-                        return Column(
-                          children: [
-                            ...templateAddChannel(
-                              listData: controllerChannel.discoverChannel
-                                  .take(4)
-                                  .toList(),
-                              onStatusTap: (item) {
-                                controllerChannel.funcFollowedChannel(
-                                  item['channel_id'],
-                                );
-                              },
-                            ),
-
-                            if (controllerChannel.discoverChannel.any(
-                              (item) => item['channel_type'] == 'Sport',
-                            ))
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Sport',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
-                                  ),
-                                  SizedBox(
-                                    width: 90,
-                                    height: 30,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        return print('Test');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(0),
-                                        backgroundColor: HSLColor.fromColor(
-                                          Theme.of(
+                        switch (loadingController.dataState(
+                          Keys.dataFeatureChannelState,
+                        )) {
+                          case DataState.empty:
+                            return Text('Empty');
+                          // return NoStatusScreen();
+                          case DataState.error:
+                            return Text('Error');
+                          case DataState.loading:
+                          case DataState.success:
+                            return Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Explore Channels',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                    ),
+                                    SizedBox(
+                                      width: 90,
+                                      height: 30,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          return print('Test');
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(0),
+                                          backgroundColor: HSLColor.fromColor(
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                          ).withAlpha(0.3).toColor(),
+                                        ),
+                                        child: Text(
+                                          'See All',
+                                          style: Theme.of(
                                             context,
-                                          ).colorScheme.secondary,
-                                        ).withAlpha(0.3).toColor(),
-                                      ),
-                                      child: Text(
-                                        'See All',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.labelLarge,
+                                          ).textTheme.labelLarge,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
 
-                            ...templateAddChannel(
-                              listData: controllerChannel.discoverChannel
-                                  .where(
-                                    (tipeChannel) =>
-                                        tipeChannel['channel_type'] == 'Sport',
-                                  )
-                                  .take(3)
-                                  .toList(),
-                              onStatusTap: (item) {
-                                controllerChannel.funcFollowedChannel(
-                                  item['channel_id'],
-                                );
-                              },
-                            ),
-
-                            if (controllerChannel.discoverChannel.any(
-                              (item) => item['channel_type'] == 'Gaming',
-                            ))
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Gaming',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
-                                  ),
-                                  SizedBox(
-                                    width: 90,
-                                    height: 30,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        return print('Test');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(0),
-                                        backgroundColor: HSLColor.fromColor(
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                        ).withAlpha(0.3).toColor(),
+                                Obx(() {
+                                  return Column(
+                                    children: [
+                                      ...templateAddChannel(
+                                        listData: controllerChannel
+                                            .discoverChannel
+                                            .take(4)
+                                            .toList(),
+                                        onStatusTap: (item) {
+                                          controllerChannel.funcFollowedChannel(
+                                            item['channel_id'],
+                                          );
+                                        },
                                       ),
-                                      child: Text(
-                                        'See All',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.labelLarge,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
 
-                            ...templateAddChannel(
-                              listData: controllerChannel.discoverChannel
-                                  .where(
-                                    (tipeChannel) =>
-                                        tipeChannel['channel_type'] == 'Gaming',
-                                  )
-                                  .take(3)
-                                  .toList(),
-                              onStatusTap: (item) {
-                                setState(() {
-                                  controllerChannel.funcFollowedChannel(
-                                    item['channel_id'],
+                                      if (controllerChannel.discoverChannel.any(
+                                        (item) =>
+                                            item['channel_type'] == 'Sport',
+                                      ))
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Sport',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                            SizedBox(
+                                              width: 90,
+                                              height: 30,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  return print('Test');
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: EdgeInsets.all(0),
+                                                  backgroundColor:
+                                                      HSLColor.fromColor(
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .secondary,
+                                                          )
+                                                          .withAlpha(0.3)
+                                                          .toColor(),
+                                                ),
+                                                child: Text(
+                                                  'See All',
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                      ...templateAddChannel(
+                                        listData: controllerChannel
+                                            .discoverChannel
+                                            .where(
+                                              (tipeChannel) =>
+                                                  tipeChannel['channel_type'] ==
+                                                  'Sport',
+                                            )
+                                            .take(3)
+                                            .toList(),
+                                        onStatusTap: (item) {
+                                          controllerChannel.funcFollowedChannel(
+                                            item['channel_id'],
+                                          );
+                                        },
+                                      ),
+
+                                      if (controllerChannel.discoverChannel.any(
+                                        (item) =>
+                                            item['channel_type'] == 'Gaming',
+                                      ))
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Gaming',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                            SizedBox(
+                                              width: 90,
+                                              height: 30,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  return print('Test');
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: EdgeInsets.all(0),
+                                                  backgroundColor:
+                                                      HSLColor.fromColor(
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .secondary,
+                                                          )
+                                                          .withAlpha(0.3)
+                                                          .toColor(),
+                                                ),
+                                                child: Text(
+                                                  'See All',
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                      ...templateAddChannel(
+                                        listData: controllerChannel
+                                            .discoverChannel
+                                            .where(
+                                              (tipeChannel) =>
+                                                  tipeChannel['channel_type'] ==
+                                                  'Gaming',
+                                            )
+                                            .take(3)
+                                            .toList(),
+                                        onStatusTap: (item) {
+                                          setState(() {
+                                            controllerChannel
+                                                .funcFollowedChannel(
+                                                  item['channel_id'],
+                                                );
+                                          });
+                                        },
+                                      ),
+                                    ],
                                   );
-                                });
-                              },
-                            ),
-                          ],
-                        );
+                                }),
+                              ],
+                            );
+                        }
                       }),
                     ],
                   ),
                 ),
               ],
             ),
-
-            if (controllerChannel.status.value == Status.loading)
+            if (loadingController.dataState(Keys.dataFeatureChannelState) ==
+                DataState.loading)
               widgetLoadingTransparent(context),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 }

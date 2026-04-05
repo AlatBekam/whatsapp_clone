@@ -39,7 +39,6 @@ class _homeState extends State<home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // loadUserId();
   }
 
   final List<Widget> _pages = [
@@ -184,7 +183,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _getUser() async {
     try {
       var data = await api.httpGET('public/users');
-      data = jsonDecode(data.body);
+      // data = jsonDecode(data.body);
       // print("DATA: $data");
       setState(() {
         datauser = List<Map<String, dynamic>>.from(data);
@@ -272,7 +271,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: warna.Putih(),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: warna.Hijau(),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -286,7 +285,7 @@ class _ChatPageState extends State<ChatPage> {
                   'assets/svg/camera.svg',
                   width: 25,
                   // ignore: deprecated_member_use
-                  color: warna.Hitam(),
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
               ],
             ),
