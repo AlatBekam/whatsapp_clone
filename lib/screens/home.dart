@@ -39,7 +39,6 @@ class _homeState extends State<home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // loadUserId();
   }
 
   final List<Widget> _pages = [

@@ -6,20 +6,22 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/Services/api_services.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/Controllers/LoadingController.dart';
 import 'package:whatsapp_clone/Services/gambar_service.dart';
 import 'package:whatsapp_clone/Services/Permission.dart';
+import 'package:whatsapp_clone/controllers/loading_controller.dart';
 
 class ChatController extends GetxController {
+  ApiServices _apiServices = ApiServices();
+  AuthService _authService = AuthService();
+
   RxList<Map<String, dynamic>> messages = RxList();
   final TextEditingController messageController = TextEditingController();
   var isSending = false.obs;
   String? currentUserId;
-  RxnString currentUserId1 = RxnString();
+  RxnString receiverId = RxnString();
   RxnString title = RxnString();
   String? currentChatId;
   bool _argsLoaded = false;
-  var isLoading = false.obs;
   final picker = ImagePicker();
   File? image;
   RequestPermission requestPermission = RequestPermission();
@@ -45,19 +47,23 @@ class ChatController extends GetxController {
   //     permission = Permission.camera;
   //   }
 
-  //   if (await permission.isDenied) {
-  //     final result = await permission.request();
-  //     if (result.isGranted) {
-  //       print('access granted');
-  //     }
-  //     if (result.isDenied) {
-  //       print('access denied');
-  //     }
-  //     if (result.isPermanentlyDenied) {
-  //       print('access permanently denied');
-  //     }
-  //   }
-  // }
+    if (await permission.isDenied) async {
+      final result = await permission.request();
+      switch (result) {
+        case PermissionStatus.granted:
+          print('access granted');
+          break;
+        case PermissionStatus.denied:
+          print('access denied');
+          break;
+        case PermissionStatus.permanentlyDenied:
+          print('access permanently denied');
+          break;
+        default:
+          print('access denied');
+      }
+    }
+  }
 
   Future<void> getImage() async {
     // await _requestPermission(isGallery: true);
@@ -117,10 +123,10 @@ class ChatController extends GetxController {
   // void _loadArguments() {
   //   final args = Get.arguments;
   //   if (args is Map) {
-  //     currentUserId1.value = args['user_id']?.toString();
+  //     receiverId.value = args['user_id']?.toString();
   //     currentChatId = args['chat_id']?.toString();
   //     print(
-  //       "Args loaded: user_id=${currentUserId1.value}, chat_id=$currentChatId",
+  //       "Args loaded: user_id=${receiverId.value}, chat_id=$currentChatId",
   //     );
   //   }
   //   _argsLoaded = true;
@@ -130,7 +136,7 @@ class ChatController extends GetxController {
 
   Future<void> _getCurrentUserId() async {
     try {
-      final token = await AuthService().getToken();
+      final token = await _authService.getToken();
       if (token != null) {
         Map<String, dynamic> decodeToken = JwtDecoder.decode(token);
 
@@ -149,11 +155,11 @@ class ChatController extends GetxController {
       return;
     }
 
-    await loadingController.run(LoadingKey.getMessage.name, () async {
+    await loadingController.runWithEmpty(Keys.getMessage, () async {
       final String? targetChatId = currentChatId;
 
       print(
-        "Loading chat for user: ${currentUserId1.value}, chatId: $targetChatId",
+        "Loading chat for user: ${receiverId.value}, chatId: $targetChatId",
       );
 
       // isLoading.value = true;
@@ -179,9 +185,9 @@ class ChatController extends GetxController {
               matches = true;
             } else if (chatUsers is List) {
               matches = chatUsers.any(
-                (id) => id.toString() == currentUserId1.value,
+                (id) => id.toString() == receiverId.value,
               );
-            } else if (chatUsers?.toString() == currentUserId1.value) {
+            } else if (chatUsers?.toString() == receiverId.value) {
               matches = true;
             }
 
@@ -211,7 +217,7 @@ class ChatController extends GetxController {
       } finally {
         // isLoading.value = false;
       }
-    });
+    }, isEmpty: () => messages.isEmpty);
     // if (_currentUserId == null) {
     //   print("Current user ID not loaded yet");
     //   return;
@@ -228,8 +234,11 @@ class ChatController extends GetxController {
 
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
+    print("ini messageText di sendmessage: ${messageText}");
+    print("ini receiverId: ${receiverId.value}");
+    print("ini currentUserId: ${currentUserId}");
     if (messageText.isEmpty && image == null ||
-        (currentUserId1.value?.isEmpty ?? true) ||
+        (receiverId.value?.isEmpty ?? true) ||
         currentUserId == null) {
       Get.snackbar("Error", "Cannot send message: Missing content or user ID");
       return;
@@ -244,9 +253,10 @@ class ChatController extends GetxController {
 
       // kalau ada gambar
       if (image != null) {
-        final url = await ApiServices().uploadImageWithToken(
+        final url = await _apiServices.httpPOSTWithFile(
           file: image!,
           apiUrl: "private/upload",
+          paths: "chats/${currentChatId}",
         );
 
         if (url == null) {
@@ -259,12 +269,12 @@ class ChatController extends GetxController {
 
       final requestData = {
         'message': messageContent,
-        'receiver_id': currentUserId1.value,
+        'receiver_id': receiverId.value,
         'type': type,
         'sender_id': currentUserId,
         'chat_id': currentChatId ?? '',
       };
-      print("Sending to receiver ${currentUserId1.value}: $requestData");
+      print("Sending to receiver ${receiverId.value}: $requestData");
 
       final response = await ApiServices().httpPOSTWithToken(
         data: requestData,
@@ -291,10 +301,6 @@ class ChatController extends GetxController {
     }
   }
 
-  // Future<String?> uploadImage({required File imageFile }) async {
-
-  // }
-
   bool checkIsMe(Map<String, dynamic> message) {
     if (currentUserId == null) return false;
 
@@ -310,11 +316,11 @@ class ChatController extends GetxController {
     required String title,
     required String userId,
     String? chatId,
-  }) {
-    currentUserId1.value = userId;
+  }) async {
+    receiverId.value = userId;
     currentChatId = chatId;
     chatController.title.value = title;
-    _getChatData();
+    await _getChatData();
     return Get.toNamed('/chat');
   }
 
@@ -322,6 +328,11 @@ class ChatController extends GetxController {
   void onClose() {
     messageController.dispose();
     super.onClose();
+  }
+
+  Future initData() async {
+    await _getCurrentUserId();
+    await _getChatData();
   }
 }
 

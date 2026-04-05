@@ -35,11 +35,13 @@ class CommunityController extends GetxController {
     fetchCommunities();
 
     scrollController.addListener(() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
         fetchCommunities(isLoadMore: true);
       }
     });
   }
+
   @override
   void onClose() {
     scrollController.dispose();
@@ -66,11 +68,10 @@ class CommunityController extends GetxController {
         "private/community?page=${currentPage.value}&limit=$limit",
       );
 
-      final List<CommunityModel> newCommunities = 
-        (data["data"] as List)
+      final List<CommunityModel> newCommunities = (data["data"] as List)
           .map((e) => CommunityModel.fromJson(e))
           .toList();
-      
+
       if (newCommunities.length < limit) {
         hasMore.value = false;
       } else {
@@ -85,7 +86,7 @@ class CommunityController extends GetxController {
     } finally {
       isFetchingMore.value = false;
     }
-      
+
     // status.value = Status.loading;
     // try {
     //   final data = await apiServices.httpGETWithToken("private/community");
@@ -108,8 +109,8 @@ class CommunityController extends GetxController {
   Future createCommunity(String name, String description) async {
     status.value = Status.loading;
     try {
-     String? imageUrl = await uploadCommunityImage();
-     await apiServices.httpPOSTWithToken(
+      String? imageUrl = await uploadCommunityImage();
+      await apiServices.httpPOSTWithToken(
         apiUrl: "private/community",
         data: {
           "community_image_url": imageUrl,
@@ -158,20 +159,16 @@ class CommunityController extends GetxController {
 
   // DELETE
   Future deleteCommunity(String id) async {
-    status.value = Status.loading; 
+    status.value = Status.loading;
     try {
-      await apiServices.httpDELETEWithToken(
-        "private/community/$id",
-      );
+      await apiServices.httpDELETEWithToken("private/community/$id");
 
       communities.removeWhere((item) => item.communityId == id);
 
-      status.value = communities.isEmpty
-        ? Status.empty
-        : Status.success;
+      status.value = communities.isEmpty ? Status.empty : Status.success;
       return true;
     } catch (e) {
-      status.value = Status.error; 
+      status.value = Status.error;
       return e.toString();
     }
   }
@@ -197,5 +194,9 @@ class CommunityController extends GetxController {
   void clearForm() {
     nama.clear();
     deskripsi.clear();
+  }
+
+  Future initData() async {
+    await fetchCommunities();
   }
 }

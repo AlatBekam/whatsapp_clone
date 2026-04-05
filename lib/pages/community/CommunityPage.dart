@@ -4,11 +4,16 @@ import 'package:get/get.dart';
 import 'package:whatsapp_clone/controllers/CommunityController.dart';
 import 'package:whatsapp_clone/services/theme/theme.dart';
 import 'package:whatsapp_clone/services/route_handler.dart';
+import 'package:whatsapp_clone/widgets/widget_pop_menu_button_three_dots_appbar.dart';
 import '../../widgets/widget_loading_transparent.dart';
 import '../../widgets/enum_status.dart';
 
 class KomunitasPage extends StatelessWidget {
-  const KomunitasPage({super.key});
+  final CommunityController controller = Get.find();
+
+  KomunitasPage({super.key}) {
+    controller.initData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,37 +24,10 @@ class KomunitasPage extends StatelessWidget {
           'Community',
           style: TextStyle(color: warna.Hitam(), fontSize: 19),
         ),
-        actions: [
-          PopupMenuButton<String>(
-            color: warna.Putih(),
-            icon: SvgPicture.asset(
-              'assets/svg/three-dots-vertical.svg',
-              width: 19,
-              color: warna.Hitam(),
-            ),
-            onSelected: (value) {
-              if (value == "Pengaturan") {
-                Get.toNamed(Routes.settings);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: "Pengaturan",
-                child: Text(
-                  "Pengaturan",
-                  style: TextStyle(color: warna.Hitam()),
-                ),
-              ),
-            ],
-          ),
-        ],
+        actions: [widgetPopMenuButtonThreeDotsAppBar(context)],
       ),
-      body: Obx((){
-        return Stack(
-          children: [
-            _buildCommunityContent(context),
-          ],
-        );
+      body: Obx(() {
+        return Stack(children: [_buildCommunityContent(context)]);
       }),
     );
   }
@@ -57,9 +35,7 @@ class KomunitasPage extends StatelessWidget {
 
 Widget _buildCommunityContent(BuildContext context) {
   if (communityController.status.value == Status.error) {
-    return Center(
-      child: Text("Gagal memuat data"),
-    );
+    return Center(child: Text("Gagal memuat data"));
   }
 
   if (communityController.status.value == Status.empty) {
@@ -76,7 +52,7 @@ Widget _buildCommunityContent(BuildContext context) {
             ],
           ),
         ),
-      ] ,
+      ],
     );
   }
 
@@ -84,11 +60,11 @@ Widget _buildCommunityContent(BuildContext context) {
     controller: communityController.scrollController,
     itemCount: communityController.communities.length + 2,
     itemBuilder: (context, index) {
-// CREATE COMMUNITY
+      // CREATE COMMUNITY
       if (index == 0) {
         return _buildCommunityCard(context);
       }
-// COMMUNITY LIST
+      // COMMUNITY LIST
       if (index == communityController.communities.length + 1) {
         return Obx(() {
           return communityController.isFetchingMore.value
@@ -100,17 +76,17 @@ Widget _buildCommunityContent(BuildContext context) {
       final community = communityController.communities[index - 1];
 
       return CommunityCard(context, community);
-    }
+    },
   );
-//       Column(
-//         children: List.generate(communityController.communities.length, (
-//           index,
-//         ) {
-//           var community = communityController.communities[index];
-//           return CommunityCard(context, community);
-//         }),
-//       ),
-//     ],
+  //       Column(
+  //         children: List.generate(communityController.communities.length, (
+  //           index,
+  //         ) {
+  //           var community = communityController.communities[index];
+  //           return CommunityCard(context, community);
+  //         }),
+  //       ),
+  //     ],
 }
 
 Widget _buildCommunityCard(BuildContext context) {
@@ -150,22 +126,15 @@ Widget _buildCommunityCard(BuildContext context) {
                     Positioned(
                       bottom: -1,
                       right: -1,
-                        child: Container(
+                      child: Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
                           color: warna.Hijau(),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: warna.Putih(),
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: warna.Putih(), width: 1.5),
                         ),
-                        child: Icon(
-                          Icons.add,
-                          size: 15,
-                          color: warna.Putih(),
-                        ),
+                        child: Icon(Icons.add, size: 15, color: warna.Putih()),
                       ),
                     ),
                   ],
@@ -184,7 +153,7 @@ Widget _buildCommunityCard(BuildContext context) {
           ),
         ),
       ),
-    ]
+    ],
   );
 }
 

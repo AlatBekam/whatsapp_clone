@@ -8,51 +8,49 @@ class NoStatusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'No status from your friends, \nstart making status or add a new friend!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'No status from your friends, \nstart making status or add a new friend!',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
 
-              SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              SvgPicture.asset(
-                'assets/svg/person-group.svg',
-                width: 200,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            SvgPicture.asset(
+              'assets/svg/person-group.svg',
+              width: 200,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
 
-              SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 10,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await Get.toNamed(Routes.addStatus);
-                    },
-                    child: Text('Add Status'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      print('asda');
-                    },
-                    child: Text('Add Friend'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await Get.toNamed(Routes.addStatus);
+                  },
+                  child: const Text('Add Status'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print('asda');
+                  },
+                  child: const Text('Add Friend'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
