@@ -169,7 +169,7 @@ class KomunitasInfoPage extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).textTheme.bodyMedium!.color,
                             ),
-                          ),
+                          ), 
 // FORM NAMA COMMUNITY
                           const SizedBox(height: 8),
                           TextFormField(
