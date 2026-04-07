@@ -52,4 +52,4 @@ We focused on finalizing the application, emphasizing bug finding and fixing the
 In this project, we were essentially focused on **learning everything a mobile developer** needs to understand. Therefore, we **didn't create a complete WhatsApp clone**, only **specific sections**, such as chat, status, and community.
 
 Sincerely,
-AlatBekam
+**AlatBekam**
