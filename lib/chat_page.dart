@@ -143,6 +143,7 @@ class _ChatPageState extends State<ChatPage> {
                 padding: const EdgeInsets.all(16),
                 child: Obx(
                   () => KolomChat(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     controller: chatController.messageController,
                     Sending: () async {
                       await loadingController.run(Keys.sendMessage, () async {

@@ -5,11 +5,13 @@ class KolomChat extends StatelessWidget {
   final TextEditingController controller;
   final Future<void> Function() Sending;
   final bool Loading;
+  final Color color;
 
   const KolomChat({
     required this.controller,
     required this.Sending,
     required this.Loading,
+    required this.color,
   });
 
   @override
@@ -20,6 +22,14 @@ class KolomChat extends StatelessWidget {
                       child: TextField(
                         controller: controller,
                         decoration: InputDecoration(
+                          hintStyle: TextStyle(color: color),
+                          prefixIconColor: color,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: color,
+                            ),
+                          ),
                           hintText: 'Type a message',
                           prefixIcon: const Icon(Icons.emoji_emotions),
                           contentPadding: const EdgeInsets.symmetric(

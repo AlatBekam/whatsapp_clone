@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/Services/gambar_service.dart';
 import 'package:whatsapp_clone/Services/Permission.dart';
 import 'package:whatsapp_clone/controllers/loading_controller.dart';
+import 'package:whatsapp_clone/preview_image.dart';
 
 class ChatController extends GetxController {
   ApiServices _apiServices = ApiServices();
@@ -67,9 +68,10 @@ class ChatController extends GetxController {
       if (GambarService.image2 != null) {
         print("PickFile: $GambarService.image2");
         image = File(GambarService.image2!.path);
+        Get.to(PreviewImage(image: image!));
         update();
-        await sendMessage();
-        update();
+        // await sendMessage(); // Hapus ini agar tidak kirim otomatis
+        // update();
       }
     });
   }
